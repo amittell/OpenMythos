@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "open-mythos"
-version = "0.4.0"
+version = "0.5.0"
 description = "OpenMythos — open-source theoretical reconstruction of the Claude Mythos Recurrent-Depth Transformer architecture"
 license = "MIT"
 authors = ["Kye Gomez <kye@swarms.world>"]

@@ -253,7 +253,9 @@ class GQAttention(nn.Module):
             k = k.to(torch.bfloat16)
             v = v.to(torch.bfloat16)
             dropout_p = self.dropout_p if self.training else 0.0
-            out = flash_attn_func(q, k, v, dropout_p=dropout_p, causal=(mask is not None))
+            out = flash_attn_func(
+                q, k, v, dropout_p=dropout_p, causal=(mask is not None)
+            )
             out = out.to(orig_dtype).contiguous().view(B, T, -1)
         else:
             # Fallback: manual scaled dot-product with explicit KV head expansion.
@@ -972,18 +974,27 @@ class OpenMythos(nn.Module):
                 nn.init.normal_(m.weight, std=0.02)
 
     @staticmethod
-    def _causal_mask(seq_len: int, device: torch.device) -> torch.Tensor:
+    def _causal_mask(
+        seq_len: int, device: torch.device, dtype: torch.dtype
+    ) -> torch.Tensor:
         """
         Build an additive causal mask: 0 on and below the diagonal, -inf above.
 
         Args:
             seq_len -- sequence length
             device  -- target device
+            dtype   -- tensor dtype (must match activation dtype so the additive
+                       mask doesn't upcast the attention logits in the fallback
+                       attention path — e.g. bf16 weights with an fp32 mask
+                       promotes attn to fp32 and then breaks the fp32-vs-bf16
+                       matmul against V)
 
         Returns:
             Tensor of shape (1, 1, seq_len, seq_len) broadcastable over (B, H, T, S)
         """
-        mask = torch.full((1, 1, seq_len, seq_len), float("-inf"), device=device)
+        mask = torch.full(
+            (1, 1, seq_len, seq_len), float("-inf"), device=device, dtype=dtype
+        )
         return torch.triu(mask, diagonal=1)
 
     def forward(
@@ -1017,7 +1028,7 @@ class OpenMythos(nn.Module):
         freqs_cis = (
             self.freqs_cis_mla if self.cfg.attn_type == "mla" else self.freqs_cis
         )[start_pos : start_pos + T]
-        mask = self._causal_mask(T, device) if T > 1 else None
+        mask = self._causal_mask(T, device, x.dtype) if T > 1 else None
 
         for i, layer in enumerate(self.prelude):
             x = layer(x, freqs_cis, mask, kv_cache, cache_key=f"prelude_{i}")
