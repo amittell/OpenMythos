@@ -1,16 +1,43 @@
 #!/usr/bin/env python3
 """
-Side-by-side training of OpenMythos vs. a vanilla GQA transformer on a small
-HuggingFace dataset (wikitext-2 by default).
+Side-by-side training + benchmark of OpenMythos vs. a vanilla transformer on a
+small HuggingFace dataset (TinyStories by default, streamed).
 
-Both models share the same tiny config and see the exact same batches in the
-same order, so per-step loss + throughput are directly comparable. The baseline
-is a dense GQA + SwiGLU stack whose unique-layer depth matches the recurrent
-block's unique-parameter depth (prelude + 1 + coda), so parameter counts land
-in the same ballpark.
+Both models share the same tiny MLA config and see the exact same batches in
+the same order, so per-step train loss and throughput are directly comparable.
+The baseline is a dense stack of the same TransformerBlock primitive with
+`use_moe=False`; its unique-layer depth matches the recurrent block's
+unique-parameter depth (prelude + 1 + coda), so total parameter counts land in
+the same ballpark. Attention kernel is shared (MLA in both models), so any
+measured delta reflects the looped recurrent-depth architecture rather than
+kernel differences.
 
-    python training/small_benchmark.py
-    python training/small_benchmark.py --steps 500 --device cuda
+What the script measures
+------------------------
+1. Per-step training loss + tokens/sec for both models, fed identical batches.
+2. Periodic held-out eval loss on a separate dataset split (--eval-every).
+3. Depth-extrapolation sweep at the end: OpenMythos is trained at
+   cfg.max_loop_iters, then evaluated at n_loops in --depth-sweep
+   (default 1,2,4,8,16). This is the experiment the recurrent-depth
+   architecture is designed to win — eval loss should keep dropping past
+   the trained depth if depth extrapolation is working.
+4. Summary table with initial/final/avg train loss, wall-clock, avg tok/s,
+   and sec/step for both models.
+
+Defaults are tuned for a laptop CPU run in reasonable time; pass --device cuda
+and bump --steps / --batch-size / --seq-len for a real comparison.
+
+    # Default CPU smoke run (TinyStories, 1k steps, batch 32, seq 256)
+    python tests/small_benchmark.py
+
+    # Heavier GPU run
+    python tests/small_benchmark.py --steps 5000 --batch-size 64 --seq-len 512 --device cuda
+
+    # Wikitext instead of TinyStories
+    python tests/small_benchmark.py --dataset wikitext --dataset-config wikitext-2-raw-v1
+
+    # Aggressive depth extrapolation sweep
+    python tests/small_benchmark.py --depth-sweep 1,2,4,8,16,32
 """
 
 from __future__ import annotations
