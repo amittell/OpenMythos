@@ -40,6 +40,12 @@ pip install open-mythos
 #uv pip install open-mythos
 ```
 
+To enable Flash Attention 2 in `GQAttention` (requires CUDA and build tools):
+
+```bash
+pip install open-mythos[flash]
+```
+
 ## Usage
 
 ```python
