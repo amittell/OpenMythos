@@ -20,7 +20,7 @@ set -uo pipefail
 
 LOG=/home/alexm/OpenMythos/training/auto_eval_round29.log
 TRAIN_LOG=/tmp/train_r0.log
-CKPT_DIR=/home/alexm/OpenMythos/checkpoints_3b_varT_act_v3_round29_fixedT8
+CKPT_DIR=/home/alexm/OpenMythos/checkpoints_3b_varT_act_v3_round29_T1
 DOCS_DIR=/home/alexm/OpenMythos/docs
 PAPER_FIG_DIR=$DOCS_DIR/paper/figures
 NCCL_BASE='NCCL_DEBUG=WARN NCCL_IB_HCA=rocep1s0f1 NCCL_SOCKET_IFNAME=bond0 GLOO_SOCKET_IFNAME=bond0 TORCH_NCCL_BLOCKING_WAIT=1 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 PATH=/home/alexm/.local/bin:$PATH'
@@ -30,8 +30,13 @@ mkdir -p "$PAPER_FIG_DIR"
 
 log() { echo "[$(date '+%F %T')] $*" | tee -a "$LOG"; }
 
-log "auto_eval_round29 watcher started; tailing $TRAIN_LOG for 'Training complete.'"
-tail -F -n 0 "$TRAIN_LOG" 2>/dev/null | grep -m 1 'Training complete\.'
+log "auto_eval_round29 watcher started; checking $TRAIN_LOG for 'Training complete.'"
+if grep -q 'Training complete\.' "$TRAIN_LOG" 2>/dev/null; then
+    log "Training already complete; skipping wait"
+else
+    log "tailing $TRAIN_LOG for 'Training complete.'"
+    tail -F -n 0 "$TRAIN_LOG" 2>/dev/null | grep -m 1 'Training complete\.'
+fi
 log "round 2.9 completion detected"
 
 LATEST=$(ls "$CKPT_DIR"/step_*_rank0.pt 2>/dev/null | sort | tail -1 || true)
