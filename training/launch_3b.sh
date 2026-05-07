@@ -42,15 +42,16 @@ done
 NNODES=${#ACTIVE[@]}
 echo "Launching $SCRIPT on $NNODES nodes: ${ACTIVE[@]} (port $PORT, master $MASTER)"
 
-# Kill any stale torchrun procs cluster-wide (use separate pkill calls; \| is
-# not alternation in POSIX ERE and silently matches nothing)
+# Kill any stale python training procs cluster-wide. Match python-process
+# command lines specifically (not SSH wrappers that might contain the script
+# name in their argv on the master node, which would self-kill the launcher).
 for r in "${ACTIVE[@]}"; do
   ssh -q alexm@${NODE_HOST[$r]} '
-    pkill -9 -f torchrun 2>/dev/null
-    pkill -9 -f 3b_fine_web_edu 2>/dev/null
-    pkill -9 -f 3b_varT 2>/dev/null
-    pkill -9 -f 3b_loops 2>/dev/null
-    pkill -9 -f shakeout_1b 2>/dev/null
+    pkill -9 -f "python3 .*training/3b_fine_web_edu" 2>/dev/null
+    pkill -9 -f "python3 .*training/3b_varT" 2>/dev/null
+    pkill -9 -f "python3 .*training/3b_loops" 2>/dev/null
+    pkill -9 -f "python3 .*training/shakeout_1b" 2>/dev/null
+    pkill -9 -f "python3 .*torch.distributed.run" 2>/dev/null
     true
   ' &
 done
