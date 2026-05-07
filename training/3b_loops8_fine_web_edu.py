@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 """
-OpenMythos pretraining on FineWeb-Edu with FSDP + AdamW.
+mythos_3b pretraining on FineWeb-Edu, trained at 8 recurrent loops.
 
-Single GPU:
-    python training/3b_fine_web_edu.py
+Sibling of 3b_fine_web_edu.py, same recipe but max_loop_iters=8 during training
+(instead of the variant default of 16). Trades full-depth training for ~2x
+throughput, and lets us exercise depth extrapolation at inference time
+(eval at 16+ loops on a model trained at 8). The signature looped-transformer
+experiment and the only practical path to a trainable 3B on 4 DGX Spark nodes.
 
-Multi-GPU:
-    torchrun --nproc_per_node=$(python -c "import torch; print(torch.cuda.device_count())") training/3b_fine_web_edu.py
+Also shortens seq_len/micro_batch to fit 3B comfortably on GB10 and
+increases checkpoint frequency for early-run safety.
+
+Launch via training/launch_3b.sh with SCRIPT=training/3b_loops8_fine_web_edu.py.
 """
 
 import os
@@ -371,18 +376,23 @@ def main():
     # ------------------------------------------------------------------
     # Hyperparameters
     # ------------------------------------------------------------------
-    seq_len = 2048
-    micro_batch = 4
+    seq_len = 1024
+    micro_batch = 1
     target_tokens = 30_000_000_000
-    grad_accum = max(1, 256 // (world_size * micro_batch))
+    # Smaller accum than 3b_fine_web_edu's 256 microbatches to keep per-opt-step
+    # wallclock to minutes. Full batch = world_size*1*8*1024 ≈ 32k tokens at 4 nodes.
+    # Reduced micro_batch from 2 to 1 after OOM-killer killed DataLoader workers
+    # on first mythos_3b launch — the 3B model + 64 MoE experts + 8 loops leaves
+    # little RAM headroom on 128 GB unified memory once tokenizer workers spin up.
+    grad_accum = 8
     global_batch_tok = world_size * micro_batch * grad_accum * seq_len
     total_steps = target_tokens // global_batch_tok
     warmup_steps = 2000
     lr = 3e-4
     wd = 0.1
-    log_every = 10
-    ckpt_every = 1000
-    ckpt_dir = "checkpoints"
+    log_every = 5
+    ckpt_every = 50
+    ckpt_dir = "checkpoints_3b_loops8"
     dataset_subset = "sample-10BT"  # → sample-100BT or "default" for full run
 
     if master:
@@ -397,6 +407,7 @@ def main():
     cfg = mythos_3b()
     cfg.vocab_size = vocab_size
     cfg.max_seq_len = seq_len
+    cfg.max_loop_iters = 8  # train at 8 loops; inference can extrapolate to 16+
 
     bf16_ok = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
     amp_dtype = torch.bfloat16 if bf16_ok else torch.float16
@@ -460,7 +471,9 @@ def main():
     # Dataset + DataLoader
     # ------------------------------------------------------------------
     dataset = FineWebEduDataset(encoding, seq_len, dataset_subset, rank, world_size)
-    loader = DataLoader(dataset, batch_size=micro_batch, num_workers=4, pin_memory=True)
+    # num_workers=1 (was 4): each worker holds a copy of the 200k-vocab tokenizer
+    # and buffered text; at 3B FSDP + 8 loops we hit OOM with 4 workers/rank.
+    loader = DataLoader(dataset, batch_size=micro_batch, num_workers=1, pin_memory=True)
 
     # ------------------------------------------------------------------
     # Training loop

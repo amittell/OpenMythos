@@ -1,0 +1,157 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_pondernet_joint/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.3058521151542664,
+      "ppl": 27.271770379417283,
+      "tokens_measured": 65536,
+      "elapsed_s": 23.87,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.294580966234207,
+      "ppl": 26.966111990632548,
+      "tokens_measured": 65536,
+      "elapsed_s": 38.92,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.2945806235074997,
+      "ppl": 26.966102748627357,
+      "tokens_measured": 65536,
+      "elapsed_s": 43.08,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.2945806235074997,
+      "ppl": 26.966102748627357,
+      "tokens_measured": 65536,
+      "elapsed_s": 42.48,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.2936893105506897,
+      "ppl": 26.9420782201301,
+      "tokens_measured": 65536,
+      "elapsed_s": 20.38,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.2906185686588287,
+      "ppl": 26.859472946533035,
+      "tokens_measured": 65536,
+      "elapsed_s": 37.96,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.290244162082672,
+      "ppl": 26.8494184655791,
+      "tokens_measured": 65536,
+      "elapsed_s": 72.34,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.2900234311819077,
+      "ppl": 26.843492623288505,
+      "tokens_measured": 65536,
+      "elapsed_s": 136.15,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.131080075741183,
+      "ppl": 62.24511608127145,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 23.66,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.133951498387123,
+      "ppl": 62.42410497058018,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 28.51,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.133951498387123,
+      "ppl": 62.42410497058018,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 31.7,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.133951498387123,
+      "ppl": 62.42410497058018,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 28.69,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.7071736454963684,
+      "ppl": 40.73850220911819,
+      "tokens_measured": 65536,
+      "elapsed_s": 22.91,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.706760823726654,
+      "ppl": 40.72168793942778,
+      "tokens_measured": 65536,
+      "elapsed_s": 39.78,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.706760823726654,
+      "ppl": 40.72168793942778,
+      "tokens_measured": 65536,
+      "elapsed_s": 37.88,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.706760823726654,
+      "ppl": 40.72168793942778,
+      "tokens_measured": 65536,
+      "elapsed_s": 31.79,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, the architecture of the complex network is described in a variety of different architectural and architectural designs and architecture of the complex infrastructure.",
+    "8": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, the architecture of the complex network is described by a diagram that identifies the main components of the network and their corresponding functional components",
+    "16": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, the architecture of the complex network is described by a diagram that identifies the main components of the network and their corresponding functional components",
+    "32": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, the architecture of the complex network is described by a diagram that identifies the main components of the network and their corresponding functional components"
+  }
+}

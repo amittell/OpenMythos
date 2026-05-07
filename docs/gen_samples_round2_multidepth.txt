@@ -1,0 +1,197 @@
+# Multi-depth generation samples (step 12207, depths=[2, 6, 12, 24])
+
+
+## Sample 1
+
+Prompt: `Once upon a time in a small village nestled between two mountains,`
+
+
+**K=2:** Once upon a time in a small village nestled between two mountains, is the place where the Indians had come to their own land.
+The people gathered at the village called themselves "Saddam" in the village called themselves "Saddam" and "Saddam" which were the people of the village. The people of Saddam were called "Saddam," and the people of the village were called "Saddam."
+The Indians called themselves "Saddam," and the them were called "Saddam." They referred the "S
+
+
+**K=6:** Once upon a time in a small village nestled between two mountains, is the place where the Indians had come to their own land.
+The people gathered at the village called themselves "Saddam" in the village called themselves "Saddam" and "Saddam" which were the people of the village. The people of Saddam were called "Saddam," and the people of the village were called "Saddam."
+The Indians called themselves "Saddam," and the them were called "Saddam." They referred the "S
+
+
+**K=12:** Once upon a time in a small village nestled between two mountains, is the place where the Indians had come to their own land.
+The people gathered at the village called themselves "Saddam" in the village called themselves "Saddam" and "Saddam" which were the people of the village. The people of Saddam were called "Saddam," and the people of the village were called "Saddam."
+The Indians called themselves "Saddam," and the them were called "Saddam." They referred the "S
+
+
+**K=24:** Once upon a time in a small village nestled between two mountains, is the place where the Indians had come to their own land.
+The people gathered at the village called themselves "Saddam" in the village called themselves "Saddam" and "Saddam" which were the people of the village. The people of Saddam were called "Saddam," and the people of the village were called "Saddam."
+The Indians called themselves "Saddam," and the them were called "Saddam." They referred the "S
+
+
+## Sample 2
+
+Prompt: `The key difference between mitosis and meiosis is that`
+
+
+**K=2:** The key difference between mitosis and meiosis is that it is much more complex than other types of tissue. Because they are so different from the others, they all contain different levels of cytokines and other chemicals that are responsible for the damage they cause. So, we see that the primary function of the immune system is to fight against free radicals, specifically to fight against free radicals, free radicals, and free radicals. The only thing that can result in a free radical damage is a white blood cell. The cells of the immune system are made up of
+
+
+**K=6:** The key difference between mitosis and meiosis is that it is much more complex than other types of tissue. Because they are so different from the others, they all contain different levels of cytokines and other chemicals that are responsible for the damage they cause. So, we see that the primary function of the immune system is to fight against free radicals, specifically to fight against free radicals, free radicals, and free radicals. The only thing that can result in a free radical damage is a white blood cell. The cells of the immune system are made up of
+
+
+**K=12:** The key difference between mitosis and meiosis is that it is much more complex than other types of tissue. Because they are so different from the others, they all contain different levels of cytokines and other chemicals that are responsible for the damage they cause. So, we see that the primary function of the immune system is to fight against free radicals, specifically to fight against free radicals, free radicals, and free radicals. The only thing that can result in a free radical damage is a white blood cell. The cells of the immune system are made up of
+
+
+**K=24:** The key difference between mitosis and meiosis is that it is much more complex than other types of tissue. Because they are so different from the others, they all contain different levels of cytokines and other chemicals that are responsible for the damage they cause. So, we see that the primary function of the immune system is to fight against free radicals, specifically to fight against free radicals, free radicals, and free radicals. The only thing that can result in a free radical damage is a white blood cell. The cells of the immune system are made up of
+
+
+## Sample 3
+
+Prompt: `To compute the area of a triangle, you`
+
+
+**K=2:** To compute the area of a triangle, you can calculate a point where the circle takes a new shape and then use the value of the area of the circle. Using this method, it will calculate a particular line in the circle. A point that has the value of the circle is 16. The value of the circle is 32. This creates the value of the circle.
+The formula for the circle is
+In this example the value of the circle has 16, while the 16th, 16th, 18th,
+
+
+**K=6:** To compute the area of a triangle, you can calculate a point where the circle takes a new shape and then use the value of the area of the circle. Using this method, it will calculate a particular line in the circle. A point that has the value of the circle is 16. The value of the circle is 32. This creates the value of the circle.
+The formula for the circle is
+In this example the value of the circle has 16, while the 16th, 16th, 18th,
+
+
+**K=12:** To compute the area of a triangle, you can calculate a point where the circle takes a new shape and then use the value of the area of the circle. Using this method, it will calculate a particular line in the circle. A point that has the value of the circle is 16. The value of the circle is 32. This creates the value of the circle.
+The formula for the circle is
+In this example the value of the circle has 16, while the 16th, 16th, 18th,
+
+
+**K=24:** To compute the area of a triangle, you can calculate a point where the circle takes a new shape and then use the value of the area of the circle. Using this method, it will calculate a particular line in the circle. A point that has the value of the circle is 16. The value of the circle is 32. This creates the value of the circle.
+The formula for the circle is
+In this example the value of the circle has 16, while the 16th, 16th, 18th,
+
+
+## Sample 4
+
+Prompt: `Q: What is the capital of France?
+A:`
+
+
+**K=2:** Q: What is the capital of France?
+A: First of all, the city was a major part of the early modern period. For example, in the 12th century, the city was a place of great economic and cultural activity. The city included a large, rich population of the city, a large proportion of its population. The city was rich in the economic climate of 1871 during the reign of Queen Victoria and Queen Victoria.
+By 1865, the city was one of the largest cities in Europe. In 1868,
+
+
+**K=6:** Q: What is the capital of France?
+A: First of all, the city was a major part of the early modern period. For example, in the 12th century, the city was a place of great economic and cultural activity. The city included a large, rich population of the city, a large proportion of its population. The city was rich in the economic climate of 1871 during the reign of Queen Victoria and Queen Victoria.
+By 1865, the city was one of the largest cities in Europe. In 1868,
+
+
+**K=12:** Q: What is the capital of France?
+A: First of all, the city was a major part of the early modern period. For example, in the 12th century, the city was a place of great economic and cultural activity. The city included a large, rich population of the city, a large proportion of its population. The city was rich in the economic climate of 1871 during the reign of Queen Victoria and Queen Victoria.
+By 1865, the city was one of the largest cities in Europe. In 1868,
+
+
+**K=24:** Q: What is the capital of France?
+A: First of all, the city was a major part of the early modern period. For example, in the 12th century, the city was a place of great economic and cultural activity. The city included a large, rich population of the city, a large proportion of its population. The city was rich in the economic climate of 1871 during the reign of Queen Victoria and Queen Victoria.
+By 1865, the city was one of the largest cities in Europe. In 1868,
+
+
+## Sample 5
+
+Prompt: `In Python, a list comprehension is written as`
+
+
+**K=2:** In Python, a list comprehension is written as a form of mathematical notation. It is used to prove the logic of the expression. It consists of a form or data element, with the result that the expression is written. For example, in Python, a database is written as a form of a form of the output. For example, a table of numbers for the statement "A" (the code that has 2 symbols in a row) can be written as a list of values (the code that has 2 symbols) or data elements
+
+
+**K=6:** In Python, a list comprehension is written as a form of mathematical notation. It is used to prove the logic of the expression. It consists of a form or data element, with the result that the expression is written. For example, in Python, a database is written as a form of a form of the output. For example, a table of numbers for the statement "A" (the code that has 2 symbols in a row) can be written as a list of values (the code that has 2 symbols) or data elements
+
+
+**K=12:** In Python, a list comprehension is written as a form of mathematical notation. It is used to prove the logic of the expression. It consists of a form or data element, with the result that the expression is written. For example, in Python, a database is written as a form of a form of the output. For example, a table of numbers for the statement "A" (the code that has 2 symbols in a row) can be written as a list of values (the code that has 2 symbols) or data elements
+
+
+**K=24:** In Python, a list comprehension is written as a form of mathematical notation. It is used to prove the logic of the expression. It consists of a form or data element, with the result that the expression is written. For example, in Python, a database is written as a form of a form of the output. For example, a table of numbers for the statement "A" (the code that has 2 symbols in a row) can be written as a list of values (the code that has 2 symbols) or data elements
+
+
+## Sample 6
+
+Prompt: `The Roman Empire fell primarily because`
+
+
+**K=2:** The Roman Empire fell primarily because of a lack of political power.
+On the other hand, the Roman Empire grew as a result of a Roman imperial period. The Roman Empire also began to become a significant part of the Roman Empire in the first half of the 7th century. The Roman Empire was divided into two regions: the Roman Empire and the Roman Empire.
+When Emperor Napoleon conquered the Roman Empire, it was ruled that the Roman Empire was not divided until the first half of the 2nd century. The Roman Empire was
+
+
+**K=6:** The Roman Empire fell primarily because of a lack of political power.
+On the other hand, the Roman Empire grew as a result of a Roman imperial period. The Roman Empire also began to become a significant part of the Roman Empire in the first half of the 7th century. The Roman Empire was divided into two regions: the Roman Empire and the Roman Empire.
+When Emperor Napoleon conquered the Roman Empire, it was ruled that the Roman Empire was not divided until the first half of the 2nd century. The Roman Empire was
+
+
+**K=12:** The Roman Empire fell primarily because of a lack of political power.
+On the other hand, the Roman Empire grew as a result of a Roman imperial period. The Roman Empire also began to become a significant part of the Roman Empire in the first half of the 7th century. The Roman Empire was divided into two regions: the Roman Empire and the Roman Empire.
+When Emperor Napoleon conquered the Roman Empire, it was ruled that the Roman Empire was not divided until the first half of the 2nd century. The Roman Empire was
+
+
+**K=24:** The Roman Empire fell primarily because of a lack of political power.
+On the other hand, the Roman Empire grew as a result of a Roman imperial period. The Roman Empire also began to become a significant part of the Roman Empire in the first half of the 7th century. The Roman Empire was divided into two regions: the Roman Empire and the Roman Empire.
+When Emperor Napoleon conquered the Roman Empire, it was ruled that the Roman Empire was not divided until the first half of the 2nd century. The Roman Empire was
+
+
+## Sample 7
+
+Prompt: `Dear Claude,
+
+I wanted to write to you because`
+
+
+**K=2:** Dear Claude,
+
+I wanted to write to you because it was the best way to learn.
+- A group from Oxford and Cambridge to Cambridge has been working in the world for so many years. We have been working with teachers from the past years to have a lot of interest in how to do this. The idea was to try to see a little bit easier. I think it is very important to understand the subject of your interest and what it means to be a teaching method.
+- If you are a teacher and want to know more about the subject,
+
+
+**K=6:** Dear Claude,
+
+I wanted to write to you because it was the best way to learn.
+- A group from Oxford and Cambridge to Cambridge has been working in the world for so many years. We have been working with teachers from the past years to have a lot of interest in how to do this. The idea was to try to see a little bit easier. I think it is very important to understand the subject of your interest and what it means to be a teaching method.
+- If you are a teacher and want to know more about the subject,
+
+
+**K=12:** Dear Claude,
+
+I wanted to write to you because it was the best way to learn.
+- A group from Oxford and Cambridge to Cambridge has been working in the world for so many years. We have been working with teachers from the past years to have a lot of interest in how to do this. The idea was to try to see a little bit easier. I think it is very important to understand the subject of your interest and what it means to be a teaching method.
+- If you are a teacher and want to know more about the subject,
+
+
+**K=24:** Dear Claude,
+
+I wanted to write to you because it was the best way to learn.
+- A group from Oxford and Cambridge to Cambridge has been working in the world for so many years. We have been working with teachers from the past years to have a lot of interest in how to do this. The idea was to try to see a little bit easier. I think it is very important to understand the subject of your interest and what it means to be a teaching method.
+- If you are a teacher and want to know more about the subject,
+
+
+## Sample 8
+
+Prompt: `Photosynthesis is the process by which plants`
+
+
+**K=2:** Photosynthesis is the process by which plants grow. In this process, the plants will grow and reproduce themselves.
+In addition, a plant will grow at a height of about 2–3 inches in diameter. Plants will grow at a height of around 5 feet (1–2.5 meters) in height.
+To ensure the plant receives adequate sunlight, the plant will develop a high-quality light source. This will give a plant that receives the correct light from the bright side of the plant. Plants will be able to use light from
+
+
+**K=6:** Photosynthesis is the process by which plants grow. In this process, the plants will grow and reproduce themselves.
+In addition, a plant will grow at a height of about 2–3 inches in diameter. Plants will grow at a height of around 5 feet (1–2.5 meters) in height.
+To ensure the plant receives adequate sunlight, the plant will develop a high-quality light source. This will give a plant that receives the correct light from the bright side of the plant. Plants will be able to use light from
+
+
+**K=12:** Photosynthesis is the process by which plants grow. In this process, the plants will grow and reproduce themselves.
+In addition, a plant will grow at a height of about 2–3 inches in diameter. Plants will grow at a height of around 5 feet (1–2.5 meters) in height.
+To ensure the plant receives adequate sunlight, the plant will develop a high-quality light source. This will give a plant that receives the correct light from the bright side of the plant. Plants will be able to use light from
+
+
+**K=24:** Photosynthesis is the process by which plants grow. In this process, the plants will grow and reproduce themselves.
+In addition, a plant will grow at a height of about 2–3 inches in diameter. Plants will grow at a height of around 5 feet (1–2.5 meters) in height.
+To ensure the plant receives adequate sunlight, the plant will develop a high-quality light source. This will give a plant that receives the correct light from the bright side of the plant. Plants will be able to use light from
+

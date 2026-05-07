@@ -1,0 +1,157 @@
+{
+  "ckpt_path": "checkpoints_3b_varT_fast/step_0012207_full.pt",
+  "step": 12207,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 4.112979784607887,
+      "ppl": 61.128596505987964,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.94,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.112979784607887,
+      "ppl": 61.128596505987964,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.58,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.112979784607887,
+      "ppl": 61.128596505987964,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.68,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.112979784607887,
+      "ppl": 61.128596505987964,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.44,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 4.245488911867142,
+      "ppl": 69.78987290122544,
+      "tokens_measured": 65536,
+      "elapsed_s": 20.94,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.2521863877773285,
+      "ppl": 70.25885764770645,
+      "tokens_measured": 65536,
+      "elapsed_s": 34.22,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.252454608678818,
+      "ppl": 70.27770506936554,
+      "tokens_measured": 65536,
+      "elapsed_s": 64.08,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.252433314919472,
+      "ppl": 70.27620860875909,
+      "tokens_measured": 65536,
+      "elapsed_s": 130.47,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.134776340375459,
+      "ppl": 62.47561623485048,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 8.79,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.134776340375459,
+      "ppl": 62.47561623485048,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 9.68,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.134776340375459,
+      "ppl": 62.47561623485048,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 9.69,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.134776340375459,
+      "ppl": 62.47561623485048,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 9.63,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.824233055114746,
+      "ppl": 45.79766261059901,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.42,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.824233055114746,
+      "ppl": 45.79766261059901,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.11,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.824233055114746,
+      "ppl": 45.79766261059901,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.99,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.824233055114746,
+      "ppl": 45.79766261059901,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.05,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture, a new kind of \"pension\" of the 16th century, is now often referred to as the \"pension\" of a \"pension\" of the 17th century.",
+    "8": "The recurrent-depth transformer architecture, a new kind of \"pension\" of the 16th century, is now often referred to as the \"pension\" of a \"pension\" of the 17th century.",
+    "16": "The recurrent-depth transformer architecture, a new kind of \"pension\" of the 16th century, is now often referred to as the \"pension\" of a \"pension\" of the 17th century.",
+    "32": "The recurrent-depth transformer architecture, a new kind of \"pension\" of the 16th century, is now often referred to as the \"pension\" of a \"pension\" of the 17th century."
+  }
+}

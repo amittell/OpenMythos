@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 import torch
+import torch.distributed as dist
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -241,8 +242,8 @@ class GQAttention(nn.Module):
         scale = self.head_dim**-0.5
         attn = torch.matmul(q, k.transpose(-2, -1)) * scale
         if mask is not None:
-            attn = attn + mask
-        attn = self.attn_drop(F.softmax(attn, dim=-1))
+            attn = attn + mask.to(attn.dtype)
+        attn = self.attn_drop(F.softmax(attn, dim=-1)).to(v.dtype)
         out = torch.matmul(attn, v)
         out = out.transpose(1, 2).contiguous().view(B, T, -1)
         return self.wo(out)
@@ -383,8 +384,8 @@ class MLAttention(nn.Module):
         scale = self.q_head_dim**-0.5
         attn = torch.matmul(q, k.transpose(-2, -1)) * scale
         if mask is not None:
-            attn = attn + mask
-        attn = self.attn_drop(F.softmax(attn, dim=-1))
+            attn = attn + mask.to(attn.dtype)
+        attn = self.attn_drop(F.softmax(attn, dim=-1)).to(v.dtype)
         out = torch.matmul(attn, v)  # (B, H, T, v_dim)
         out = out.transpose(1, 2).contiguous().view(B, T, -1)
         return self.wo(out)
@@ -857,7 +858,14 @@ class RecurrentBlock(nn.Module):
             # Only short-circuit when there is no KV cache to keep consistent.
             # With a cache, every loop depth must run on every forward pass so
             # later decode steps find populated keys at every cache_key.
-            if halted.all() and kv_cache is None:
+            # Also skip the short-circuit under distributed training: different
+            # ranks see different data and can halt at different iterations,
+            # which desynchronises FSDP/DDP collectives and hangs the run.
+            if (
+                halted.all()
+                and kv_cache is None
+                and not (dist.is_available() and dist.is_initialized())
+            ):
                 break
 
         return h_out

@@ -1,0 +1,157 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_act_finetune_anti10/step_0001220_full.pt",
+  "step": 1220,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.8521691262722015,
+      "ppl": 47.095107753361816,
+      "tokens_measured": 65536,
+      "elapsed_s": 21.85,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.8082426637411118,
+      "ppl": 45.07116403965945,
+      "tokens_measured": 65536,
+      "elapsed_s": 33.41,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.7920196652412415,
+      "ppl": 44.34587371210385,
+      "tokens_measured": 65536,
+      "elapsed_s": 69.5,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.7832824885845184,
+      "ppl": 43.96010370392066,
+      "tokens_measured": 65536,
+      "elapsed_s": 132.97,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.7412647753953934,
+      "ppl": 42.151268352521214,
+      "tokens_measured": 65536,
+      "elapsed_s": 20.61,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.740303114056587,
+      "ppl": 42.11075259170773,
+      "tokens_measured": 65536,
+      "elapsed_s": 34.99,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.7402709424495697,
+      "ppl": 42.10939784291648,
+      "tokens_measured": 65536,
+      "elapsed_s": 65.04,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.740236982703209,
+      "ppl": 42.10796784272769,
+      "tokens_measured": 65536,
+      "elapsed_s": 122.87,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.164591406448258,
+      "ppl": 64.36637738304162,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 19.83,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.144379638648273,
+      "ppl": 63.078478311344945,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 26.86,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.138640873577829,
+      "ppl": 62.717522454372556,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 45.88,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.135510830388729,
+      "ppl": 62.52152080720917,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 76.15,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.7877900153398514,
+      "ppl": 44.15870230553139,
+      "tokens_measured": 65536,
+      "elapsed_s": 19.24,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.769503504037857,
+      "ppl": 43.35853215471007,
+      "tokens_measured": 65536,
+      "elapsed_s": 32.87,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.7641959190368652,
+      "ppl": 43.12901269560545,
+      "tokens_measured": 65536,
+      "elapsed_s": 61.72,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.7617604583501816,
+      "ppl": 43.02410148614939,
+      "tokens_measured": 65536,
+      "elapsed_s": 139.71,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture, a new kind of architecture, which will allow you to create your own visual and physical design in accordance with the principles of design and layout.\nThe main components to the architecture of the building are the",
+    "8": "The recurrent-depth transformer architecture, a new kind of architecture, which will allow you to create your own visual and physical design in accordance with the principles of design and layout.\nThe main components to the architecture of the building are the",
+    "16": "The recurrent-depth transformer architecture, a new kind of architecture, which will allow you to create your own visual and physical design in accordance with the principles of design and layout.\nThe main components to the architecture of the building are the",
+    "32": "The recurrent-depth transformer architecture, a new kind of architecture, which will allow you to create your own visual and physical design in accordance with the principles of design and layout.\nThe main components to the architecture of the building are the"
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_pondernet_round27_lp01/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "trained_max_loop_iters": 12,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results": {
+    "4": {
+      "histogram": [
+        0,
+        0,
+        0,
+        1,
+        65535
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 3.9999847412109375,
+      "median_halt_step": 4,
+      "elapsed_s": 18.72,
+      "max_budget": 4,
+      "frac_using_full_budget": 0.9999847412109375
+    },
+    "8": {
+      "histogram": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        7,
+        46,
+        301,
+        65181
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 7.9936065673828125,
+      "median_halt_step": 8,
+      "elapsed_s": 35.02,
+      "max_budget": 8,
+      "frac_using_full_budget": 0.9945831298828125
+    },
+    "16": {
+      "histogram": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        7,
+        46,
+        301,
+        2844,
+        15660,
+        25032,
+        15237,
+        4757,
+        1138,
+        318,
+        108,
+        87
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 10.122406005859375,
+      "median_halt_step": 10,
+      "elapsed_s": 70.25,
+      "max_budget": 16,
+      "frac_using_full_budget": 0.0013275146484375
+    },
+    "32": {
+      "histogram": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        7,
+        46,
+        301,
+        2844,
+        15660,
+        25032,
+        15237,
+        4757,
+        1138,
+        318,
+        108,
+        42,
+        20,
+        8,
+        6,
+        5,
+        2,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 10.124252319335938,
+      "median_halt_step": 10,
+      "elapsed_s": 154.73,
+      "max_budget": 32,
+      "frac_using_full_budget": 0.0
+    }
+  }
+}

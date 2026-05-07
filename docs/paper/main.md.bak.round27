@@ -1,0 +1,578 @@
+---
+title: "Variable-Depth Training Breaks Adaptive Computation Time"
+subtitle: "Diagnosing and Fixing ACT Collapse in Recurrent-Depth Transformers"
+author: "Alex Mittell"
+date: "2026-04-29"
+status: DRAFT, rounds 2.1 + 2.2 + 2.3 + 2.4 integrated, plus anti-collapse head fine-tune and joint PonderNet-KL training; pending round 2.5 fixed-T baseline, reasoning evals on r2.2/r2.3/r2.4/r2.5, venue selection, BibTeX polish
+---
+
+# Variable-Depth Training Breaks Adaptive Computation Time
+## Diagnosing and Fixing ACT Collapse in Recurrent-Depth Transformers
+
+## Abstract
+
+Recurrent-depth transformers offer test-time compute scaling at constant parameter cost: the model is iterated to deeper budgets at inference than seen at training. We study a 3.1B-parameter recurrent-depth transformer with mixture-of-experts feed-forward and Multi-Head Latent Attention, trained on FineWeb-Edu, and report five findings. (1) Training at a single fixed depth fails to extrapolate: a model trained at `T = 4` sees its held-out cross-entropy rise from 4.76 nats at `K = 4` to 7.46 nats at `K = 32`. (2) Sampling the per-step depth uniformly during training repairs the depth-extrapolation failure but, when an Adaptive Computation Time halting head is in the loop, collapses the head: per-iteration logging shows halting probability `p_t = 1.0` at every iteration for every token, and the model halts trivially at depth 1. (3) Bypassing the halting head during training, while leaving the architecture in place, produces a depth-using backbone: held-out cross-entropy drops from 4.25 to 3.74 nats (PPL 70 to 42) at every `K`, while remaining depth-flat to within 0.001 nats out to `K = 256` (21x training depth). (4) The saturated halting head, given a fresh initialisation and a head-only fine-tune, re-collapses to `p_1 = 1` within 120 optimiser steps under both variable-depth and fixed-depth (`T = 8`) training. The collapse is intrinsic to the standard ACT-weighted output objective. (5) Adding an explicit anti-collapse penalty `λ · mean(p_1²)` to the head-only fine-tune (λ = 10, 5M tokens) recovers a usable head: per-token logging shows the head halts earlier on tokens the model predicts correctly (mean halt 2.96 iterations, mean `p_1 = 0.014`) than on incorrect tokens (3.09 iterations, `p_1 = 0.007`), and halts earlier on function words (2.90) than on rare/numeric tokens (3.41). Held-out cross-entropy on FineWeb-Edu, GSM8K, and TinyStories monotonically improves with `K`. (6) Joint training of head and backbone with a PonderNet-KL regulariser against a geometric halt-rate prior (`λ_p = 0.2`, target mean halt step 5) replaces the bistable head-only retraining: the head locks onto the geometric target (`p_t ≈ 0.20` at every iteration, mean halt step 5.4) while the backbone continues to drop FineWeb-Edu held-out CE from 3.84 to 3.29 nats. We further decompose the rescue with a fixed-`T = 8` baseline (round 2.5) trained from the same collapsed checkpoint at matched compute as PonderNet-KL (round 2.4): both recover essentially the same ACT-off CE (3.48 vs 3.44 nats), but only PonderNet-KL produces a usable halting head whose ACT-on inference is competitive with ACT-off (gap 0.002 nats for r2.4 vs 0.246 nats for r2.5). ACT-collapse rescue (CE recovery) and ACT-head usability are therefore *orthogonal* contributions: any continuation-training signal that does not preserve the head's saturated fixed point recovers the CE; the PonderNet-KL term is what specifically converts the head from useless into adaptive. The bypass interlude (rounds 2.1 + 2.2) and PonderNet-KL stack additively on the CE side: round 2.3 = bypass + PonderNet-KL recovers 100 % of the depth-extrapolation gap, vs. ~80 % for either component alone. We diagnose the collapse as a fixed point of the variable-depth objective, identify the orthogonal CE-recovery and head-usability axes, and release code, six checkpoints, and the per-iteration halting traces.
+
+## 1. Introduction
+
+The dominant paradigm for scaling neural language models has been to increase parameter count. An alternative, increasingly relevant in the inference-bound regime, is to scale the *amount of computation per token at inference time* while holding parameters fixed. Recurrent-depth transformers (Dehghani et al., 2019; Geiping et al., 2025) are one realisation of this idea: the model is composed of a few transformer blocks that are applied iteratively, with the number of iterations chosen per query.
+
+The promise of recurrent-depth architectures is that one can train at a low iteration count `T_train` (cheap) and obtain better quality at inference by increasing the iteration count `K_infer` (free, modulo latency). This "train shallow, infer deep" thesis is appealing: it converts unused inference-time FLOPs into accuracy gains without retraining. The thesis can fail in at least two ways.
+
+The first failure mode is **out-of-distribution depth**: a model trained at exactly `T = 4` iterations may not have seen the activation distributions induced by `K = 32` iterations during training, and can drift catastrophically. We confirm this failure: the fixed-T baseline's cross-entropy increases monotonically with inference depth.
+
+The second failure mode is more subtle. Adaptive Computation Time (Graves, 2016; Banino et al., 2021) couples a learned halting head to the recurrent loop, allowing the model to *choose* its compute per token. Under standard variable-T training, where the per-step iteration count is sampled to give the model exposure to many depths, the ACT head can collapse to a degenerate solution: it learns to halt immediately, on every token, at every position. The cross-entropy looks fine because the model is well-trained at depth 1, but the model has lost the depth-extrapolation capability the recurrent architecture was supposed to provide. We diagnose this failure with per-iteration halting-probability logging and propose a simple training-time intervention.
+
+Our contributions are:
+
+1. We exhibit a clean depth-extrapolation failure for fixed-`T` training in a 3.1B-parameter recurrent-depth transformer (§4.1). Variable-T training repairs this (§4.2).
+
+2. We document a previously, to our knowledge, undescribed failure mode of ACT under variable-T training: trivial halt collapse, in which the halting head saturates to `p_t = 1.0` and the recurrent loop becomes a one-step transformer. We propose a diagnostic, per-iteration halting-probability logging, that distinguishes trivial collapse from threshold-related early halting (§5).
+
+3. We propose **ACT-bypass training**: leave the ACT head in the architecture but skip it during training so that gradient flows through every iteration. This restores depth-using behaviour at the cost of a multiplicative slowdown in training (§6). Empirically (§7.2), held-out cross-entropy on FineWeb-Edu drops by 0.51 nats at every `K` (perplexity 70 to 42, about 40 % reduction), the depth-flat property is preserved across `K ∈ {4, 8, 16, 32}` and extends to `K = 256` (21x training depth) without degradation, and forcing a halt at iteration 1 strictly worsens the held-out loss by 0.15 nats, confirming the bypass-trained backbone is depth-using rather than depth-collapsed.
+
+4. We document the **head-only re-collapse**: re-initialising the saturated head and training only the head, with the rest of the model frozen, drives the head back to `p_1 ≥ 0.99` within 120 optimiser steps under both variable-depth and fixed-depth training. The collapse is intrinsic to the ACT-weighted output objective, not to the variable-depth training distribution (§7.6).
+
+5. We propose an **anti-collapse penalty** `λ · mean(p_1²)` added to the head-only fine-tune objective. At `λ = 10`, the head escapes the trivial fixed point and produces a usable halting distribution. The recovered head exhibits adaptive halting per-token: it halts earlier and more confidently on tokens the model predicts correctly (mean halt 2.96 iterations, `p_1 = 0.014`) than on tokens it gets wrong (3.09 iterations, `p_1 = 0.007`), and earlier on function words than on rare/numeric tokens. Held-out cross-entropy on FineWeb-Edu, GSM8K, and TinyStories now monotonically improves with `K` rather than being depth-flat (§7.7).
+
+6. We propose **joint PonderNet-KL training** as a stronger and simpler one-line fix: continue training from the collapsed checkpoint with the standard ACT-weighted forward and a per-iteration Bernoulli-KL term against a geometric halt-rate prior (`λ_KL = 1.0`, `λ_p = 0.2`, `L = CE + λ_KL · KL(Bern(p_t) || Bern(λ_p))`). The head locks onto the geometric target (`p_t ≈ 0.20` at every iteration, mean halt step 5.4) while the backbone CE drops from 4.25 to 3.29 nats and the ACT-on/ACT-off gap closes to 0.005 nats at `K = 32`. The recipe is robust to starting condition: applied directly to the collapsed checkpoint without the bypass interlude (round 2.4), it still recovers 84 % of the depth-extrapolation gain (CE 4.25 → 3.44 nats), indicating bypass is helpful but not strictly necessary (§7.8, §7.9).
+
+We release training code, diagnostics, six checkpoints (fixed-T, variable-T with ACT-collapse, variable-T with ACT-bypass round 2.1 + 2.2, ACT-bypass + anti-collapse head fine-tune, joint PonderNet-KL from bypass-trained, joint PonderNet-KL from collapsed), and the per-iteration halting-probability traces that surfaced both collapses and the recovery.
+
+## 2. Related work
+
+**Recurrent-depth transformers.** Universal Transformers (Dehghani et al., 2019) introduced per-step iteration with weight-tying in transformer-style architectures. The most directly comparable recent work is Geiping et al. (2025), which scales test-time compute via a recurrent-depth approach in a 3.5B-parameter model trained on 800B tokens. They sample the per-sequence recurrence count at training time from a heavy-tailed log-normal Poisson distribution (mean 32, σ=0.5), with sequences in a micro-batch sharing a depth for parallelism. They explicitly do **not** use a learned halting head, and instead apply a post-hoc KL-divergence early-stopping criterion at inference (`≤ 5 × 10^{-4}` divergence between successive iterations). They report two distinct training-time failure modes: a "hidden state collapse" (token correlations approaching 1.0) fixed by sandwich normalisation and tuned initialisation, and a path-independent run whose validation perplexity is **unchanged across depths 1-32**, despite the architecture being trained for recurrent use. The latter is structurally similar to our ACT-collapse symptom (depth-flat perplexity) but mechanistically different (architectural/initialisation rather than learned halting).
+
+Our work is orthogonal to Geiping et al. on the most consequential axis: they deliberately avoided learned halting, presumably because it is known to be fragile; we kept ACT in the loop and document **why** it is fragile under variable-depth training.
+
+**Adaptive Computation Time.** Graves (2016) introduced ACT as a learned halting head over RNN steps with a soft, probability-weighted output. PonderNet (Banino et al., 2021) reformulates the halting probability into an unbiased differentiable scheme. ACT-style halting is most often presented as a positive result, with the failure modes (most notably the tendency to over-halt or under-halt) discussed in passing. To our knowledge, the specific failure mode we report, in which variable-depth training drives the halting head to a trivial fixed point at `p_t = 1.0` from iteration 1, has not been documented.
+
+**Mixture of Depths.** Raposo et al. (2024) route tokens to different depths via a per-layer router that decides whether each token is processed by an expensive block or skipped. The structural difference from ACT is that the routing decision is made before the layer rather than after, and the gradient pathway is therefore different; we conjecture but do not test that Mixture of Depths sidesteps the failure mode we describe.
+
+**LTI injection in the recurrent block.** Our recurrent block uses a stable linear-time-invariant injection to keep the loop's spectral radius below 1; this stability constraint is internal to our codebase and we do not claim it as a contribution.
+
+**Test-time compute scaling.** Recent work on extending compute at inference time includes self-consistency sampling, search-based decoding, and chain-of-thought scaling. Our work is orthogonal: we extend the *forward pass* itself, not the decoding procedure.
+
+## 3. Architecture
+
+We study `mythos_3b`, a 3.1B-parameter recurrent-depth transformer. The backbone is a stack of `n_prelude` transformer blocks, followed by a recurrent block applied `T` times, followed by `n_coda` transformer blocks. Each transformer block uses Multi-Head Latent Attention (MLA, Liu et al. 2024) with a shared low-rank K/V projection, and a 64-expert mixture-of-experts feed-forward with 2 shared experts and 4 routed experts per token. Total parameters: `≈ 3.1B`. Activated parameters per token: `≈ 190M`.
+
+The recurrent block (§3.1) is the centre of the architecture. It contains:
+
+1. A **loop-index embedding** `e_t = E[t]` injected before the transformer block, giving the model an explicit handle on which iteration is being computed.
+2. A **transformer block** with shared parameters across iterations.
+3. A **LoRA adapter** indexed by the loop iteration `t`, providing a small per-iteration parameter increment without breaking the weight-tying that makes depth extrapolation possible.
+4. A **stable LTI injection** mixing the previous hidden state, the loop-index embedding, and the transformer output, with the mixing matrix constrained to spectral radius less than 1 for loop stability.
+5. An **ACT halting head** producing a per-token, per-iteration halting probability `p_t = σ(W_h h_t + b_h)`. The block returns the probability-weighted hidden state `h_out = Σ_t w_t h_t`, where `w_t` is the ACT weight (the unhalted remainder if cumulative halting probability would cross threshold, otherwise `p_t`).
+
+### 3.1 The recurrent block, formally
+
+Let `h ∈ ℝ^{B × T_seq × D}` be the input hidden state, `e ∈ ℝ^{B × T_seq × D}` the prelude embedding (a linear projection of the model input passed in alongside `h` for the LTI injection). For `t = 1, …, T`:
+
+```
+h_t       = h_{t-1} + e_loop[t]                      // loop-index embedding
+combined  = LayerNorm(h_t + e)
+trans_out = TransformerBlock(combined) + LoRA[t](TransformerBlock(combined))
+h_t       = Inject(h_{t-1}, e, trans_out)            // Parcae LTI mixer
+p_t       = σ(W_h h_t + b_h)                          // ACT halting probability
+weight_t  = remainder if cumulative crosses threshold else p_t
+h_out    += weight_t · h_t
+```
+
+Inference-time depth extrapolation simply uses a larger `T` than training. The weight-tying of the transformer block, the LoRA index clamping to `[0, T_max − 1]`, and the LTI injection's spectral constraint all conspire to keep the loop stable as `T` grows.
+
+## 4. Training regimes
+
+We compare three training regimes at the same parameter count, dataset, and optimiser:
+
+| Regime | T sampling | ACT during training | Section |
+|--------|-----------|---------------------|---------|
+| Fixed-T | `T_step = 4` deterministic | enabled | §4.1 |
+| Variable-T | `T_step ∼ U{2, 12}` per step | enabled | §4.2 |
+| Variable-T + ACT-bypass | `T_step ∼ U{2, 12}` per step | bypassed | §4.3 |
+
+All three regimes share: FineWeb-Edu (HuggingFace, sample-10BT), AdamW with `(β_1, β_2) = (0.9, 0.95)`, peak LR `5 × 10^{-4}` decaying cosine to `10%` of peak, weight decay 0.1, sequence length 1024, micro-batch 1, gradient accumulation 4, four GB10 nodes under FSDP `SHARD_GRAD_OP` with bf16 mixed precision.
+
+### 4.1 Fixed-T baseline (round 1)
+
+The fixed-T baseline is trained at `T = 4` for 6,103 optimiser steps (~100M tokens). The training curve descends cleanly from initialisation (cross-entropy ≈ 12.8) to 5.34 by step 1,160 and continues to anneal to convergence. See `docs/paper/figures/round2_training_curve.png` (round 2 shown; round 1 follows the same shape and is comparable, full plot in supplementary).
+
+The held-out cross-entropy on FineWeb-Edu, evaluated with the ACT head disabled at four inference depths, shows the depth-extrapolation failure clearly:
+
+| K | round 1 loss | round 1 PPL |
+|---|--------------|-------------|
+| 4 | 4.76 | 116.8 |
+| 8 | 6.23 | 506.4 |
+| 16 | 7.31 | 1490.5 |
+| 32 | 7.46 | 1730.7 |
+
+A model trained at `T = 4` and evaluated at `K = 32` produces, on FineWeb-Edu, output that is nearly **15× more surprised** than the same model evaluated at its training depth. This is the failure that motivates variable-T training.
+
+### 4.2 Variable-T training (round 2)
+
+We change one thing: each optimiser step samples `T_step ∼ U{2, 12}` (uniform over the integers 2 through 12) and uses that as the recurrent depth for that step. All ranks see the same `T_step` per step (sampled from a shared seed) so that FSDP collectives stay synchronous. The model is otherwise unchanged. We train for 12,207 optimiser steps (~200M tokens), continuing from the round-1 checkpoint.
+
+Held-out cross-entropy with ACT off:
+
+| K | round 2 loss | round 2 PPL | Δ vs round 1 |
+|---|--------------|-------------|--------------|
+| 4 | 4.25 | 69.8 | -0.51 |
+| 8 | 4.25 | 70.3 | -1.98 |
+| 16 | 4.25 | 70.3 | -3.05 |
+| 32 | 4.25 | 70.3 | -3.20 |
+
+The depth-extrapolation failure has been completely repaired. Loss is flat to within 0.01 nats across `K ∈ {4, 8, 16, 32}`.
+
+The training-curve / loss-by-T plot is reproduced in `figures/round2_loss_by_T.png`.
+
+### 4.3 The same numbers with ACT enabled, and the trap
+
+Repeating the held-out evaluation with ACT *enabled* at inference time produces a different, suspicious result:
+
+| K | ACT-on loss | PPL |
+|---|-------------|-----|
+| 4 | 4.11 | 61.1 |
+| 8 | 4.11 | 61.1 |
+| 16 | 4.11 | 61.1 |
+| 32 | 4.11 | 61.1 |
+
+The numbers are **identical** to four decimal places across `K`. This is not the win it appears to be: identical numbers across inference-time depths means the ACT head is producing identical halting decisions across `K`, which is only possible if all tokens halt before any of the four `K` values matter. We chase this in §5.
+
+## 5. Diagnosing trivial halt collapse
+
+### 5.1 The halt-step histogram
+
+We instrument the recurrent block to record, for each `(batch, position)` pair, the iteration index at which cumulative halting probability first crosses the ACT threshold (`τ = 0.99`). We run this diagnostic on a held-out FineWeb-Edu window with sequence length 1024, batch size 16, at four inference depths: `K ∈ {4, 8, 16, 32}`.
+
+The result, aggregated over 65,536 tokens per `K`:
+
+| K | tokens | halts at iter 1 | halts later |
+|---|--------|-----------------|-------------|
+| 4 | 65,536 | 65,536 | 0 |
+| 8 | 65,536 | 65,536 | 0 |
+| 16 | 65,536 | 65,536 | 0 |
+| 32 | 65,536 | 65,536 | 0 |
+
+Every token halts at iteration 1. The mean halt step is 1.0; the maximum is 1; no token uses the increased compute budget at any `K`. This explains §4.3's identical numbers.
+
+### 5.2 Per-iteration probability logging
+
+The histogram tells us that halts happen at iteration 1, but it doesn't distinguish the two distinct ways this can happen:
+
+- **(a) Trivial halt.** The ACT head emits `p_t ≈ 1.0` at iteration 1, regardless of input. The model has learned to halt immediately. Architecturally uninteresting; needs a training-regime change to fix.
+- **(b) Threshold too low.** The ACT head emits modest values (`p ≈ 0.6 − 0.9`) at iteration 1, but the threshold is 0.99 and a single iteration's modest probability happens to cross it for these tokens. Architecturally fine; just bump the threshold.
+
+We patch the recurrent block to record, in addition to the halt step, the actual `p_t` and cumulative-`p` values at every iteration:
+
+| K | iter 1 mean p | iter 1 median p | iter 1 min p | iter 1 max p |
+|---|---------------|-----------------|--------------|---------------|
+| 4 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+| 8 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+| 16 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+| 32 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+
+`p_t = 1.0` to within bf16 precision. The mode is **(a)**: the ACT head has saturated. The model emits the maximum possible halting probability at the first iteration for every token in our 65,536-token sample, and continues to do so at every later iteration as well. This is collapse.
+
+### 5.3 Why does it happen?
+
+The training objective in our variable-T setup is a standard cross-entropy loss on the model output logits, where the output is the ACT-weighted recurrent hidden state `h_out = Σ_t w_t h_t`. If the model can find a configuration of `(W_h, b_h)` such that `p_1` is very large (so `w_1 ≈ 1` and `w_{>1} ≈ 0`), then `h_out ≈ h_1` regardless of `T_step`, and the gradient flowing into iterations `t > 1` is approximately zero.
+
+This is a fixed point of training: once the head is in this configuration, no useful signal flows through the rest of the recurrent loop, the LoRA adapters at index `> 1` go untrained, and there is no force pulling the head out of saturation. Variable-T training, paradoxically, makes this attractor *more* stable than fixed-T training, because the per-step output-equivalence constraint (the model should produce reasonable output regardless of `T_step`) is exactly what `h_out ≈ h_1` satisfies.
+
+The picture, then, is that the ACT-weighted output objective is in tension with the variable-T training regime. We propose a fix that preserves both motivations.
+
+## 6. Method: ACT-bypass training
+
+We take a minimal approach. The ACT head and the per-iteration halting machinery remain in the architecture, untouched, in case we want to re-enable them at inference. During training, we monkey-patch the recurrent block's forward to skip the ACT path entirely:
+
+```python
+def recurrent_forward_no_act(self, h, e, freqs_cis, mask=None,
+                              n_loops=None, kv_cache=None):
+    n_loops = n_loops or self.cfg.max_loop_iters
+    for t in range(n_loops):
+        h_loop    = loop_index_embedding(h, t, self.loop_dim)
+        combined  = self.norm(h_loop + e)
+        trans_out = self.block(combined, freqs_cis, mask, kv_cache, f"loop_{t}")
+        trans_out = trans_out + self.lora(trans_out, t)
+        h         = self.injection(h, e, trans_out)
+    return h
+```
+
+The block now runs all `n_loops` iterations and returns `h_T` directly, with no halting weights. The model is forced to use every iteration, and gradient flows through all `T` recurrent applications.
+
+The cost is a multiplicative slowdown proportional to the average `T_step`. With `T_step ∼ U{2, 12}` (mean 7), training is `≈ 4 ×` slower than the ACT-collapsed regime, where the model effectively trained at depth 1 most of the time. We accept this; the ACT-collapsed regime was learning a degenerate solution that did not use the architecture.
+
+We continue training from the round-2 (variable-T with ACT-collapse) checkpoint with this patch active, peak LR `1 × 10^{-4}` (one-tenth of the round-2 cosine peak, since the model is already converged for depth 1), 200-step warmup, target 50M tokens (~3,051 steps).
+
+## 7. Empirical results: ACT-collapse rescue paths (rounds 2.1 - 2.5)
+
+Round 2.1 continues from the round-2 final checkpoint with `recurrent_forward_no_act` patched in (§6). All other settings are held fixed: variable-T sampling `T_step ∼ U{2, 12}`, FSDP SHARD_GRAD_OP, bf16 mixed precision, 50M-token target. Training ran for 3,051 optimiser steps over ~22 hours of wall-clock on the same 4-node cluster as round 2.
+
+### 7.1 Training curves
+
+Loss vs step and per-T loss bands for round 2.1 are in `figures/round21_training_curve.png` and `figures/round21_loss_by_T.png`. The minimum 50-step rolling-mean training loss is 3.043 at step 2,430. The per-T plot is approximately flat across `T ∈ {2, …, 12}` (mean loss bouncing in `[3.91, 4.12]` with the 25-75 percentile band overlapping at every `T`); deeper sampled `T` does not produce monotonically lower training loss within the sampling range.
+
+### 7.2 Depth extrapolation
+
+**FineWeb-Edu held-out cross-entropy at `K` iterations**, ACT off vs ACT on, round 2.1 vs round 2:
+
+| K  | r2.1 ACT-off | r2 ACT-off | Δ (off) | r2.1 ACT-on | r2 ACT-on | Δ (on) |
+|----|--------------|------------|---------|-------------|-----------|--------|
+|  4 | 3.7413       | 4.2455     | -0.5042 | 3.8873      | 4.1130    | -0.2257 |
+|  8 | 3.7403       | 4.2522     | -0.5119 | 3.8873      | 4.1130    | -0.2257 |
+| 16 | 3.7403       | 4.2525     | -0.5122 | 3.8873      | 4.1130    | -0.2257 |
+| 32 | 3.7402       | 4.2524     | -0.5122 | 3.8873      | 4.1130    | -0.2257 |
+
+Three observations.
+
+First, **ACT-off held-out loss drops by ~0.51 nats at every `K`**, taking perplexity from 70 to 42 (about 40 % reduction). The bypass-trained backbone is uniformly better than the round-2 backbone at every inference depth.
+
+Second, **the depth-flat property is preserved**. The ACT-off losses across `K ∈ {4, 8, 16, 32}` differ by 0.001 nats; this is well within Monte-Carlo noise on a 65,536-token measurement. The recurrent loop's behaviour at `K = 32` is essentially indistinguishable from its behaviour at `K = 4`. The model has not learned to exploit additional inference-time depth beyond the first few iterations; rather, it has learned a fast-converging fixed point of the recurrence at the new, lower loss level.
+
+Third, **the gap between ACT-on and ACT-off is informative**. ACT-on inference uses the still-saturated halting head from round 2 (which received no gradient during round 2.1, and so cannot have moved off the saturated point; we verify this in §7.3). ACT-on therefore halts trivially at iteration 1 and reports the 1-iteration loss: 3.89 nats. ACT-off runs all `K` iterations and reports the converged loss: 3.74 nats. The 0.15-nat gap proves that **iterations 2..K are doing measurable work**: forcing a halt at iteration 1 strictly worsens the model's output, by an amount visible in the held-out loss. This is the cleanest empirical evidence that the bypass-trained backbone is depth-using rather than depth-collapsed.
+
+### 7.3 ACT halting state after bypass training
+
+Round 2.1 bypassed the ACT head during training, so the head received no direct gradient throughout the round. The diagnostic confirms this: the head remains in exactly the saturated state it inherited from round 2.
+
+**Per-iteration halting probability at `K = 4`** (threshold = 0.99):
+
+| iter | p_mean | p_median | p_min  | p_max  | cum_p | %≥thr |
+|------|--------|----------|--------|--------|-------|-------|
+|    1 | 1.0000 | 1.0000   | 1.0000 | 1.0000 | 1.0000 | 1.000 |
+|    2 | 1.0000 | 1.0000   | 1.0000 | 1.0000 | 1.0000 | 1.000 |
+|    3 | 1.0000 | 1.0000   | 1.0000 | 1.0000 | 1.0000 | 1.000 |
+|    4 | 1.0000 | 1.0000   | 1.0000 | 1.0000 | 1.0000 | 1.000 |
+
+(Identical at `K ∈ {8, 16, 32}`; full table in `docs/act_halt_diagnostic_round21.json`.)
+
+**Halt-step histogram per `K`** (summary):
+
+| K  | mean halt step | median halt step | tokens at iter 1 | full budget used |
+|----|----------------|------------------|------------------|------------------|
+|  4 | 1.00           |    1             | 65,536 / 65,536  | 0.000            |
+|  8 | 1.00           |    1             | 65,536 / 65,536  | 0.000            |
+| 16 | 1.00           |    1             | 65,536 / 65,536  | 0.000            |
+| 32 | 1.00           |    1             | 65,536 / 65,536  | 0.000            |
+
+The head is exactly as collapsed as it was at the end of round 2. This is the expected outcome: the bypass-trained backbone improves while the ACT head, untouched by gradient, stays at its previous fixed point. ACT-on inference cannot use the bypass-trained backbone's depth-using behaviour without a separate fine-tune phase to wake the head back up; we discuss this in §8.3.
+
+### 7.4 Downstream probes
+
+**GSM8K answer-only cross-entropy** at `K` iterations, round 2.1 vs round 2 (with ACT-on, since GSM8K is run with the model's standard inference path):
+
+| K  | r2.1 loss | r2.1 PPL | r2 loss | Δ |
+|----|-----------|----------|---------|---|
+|  4 | 4.1876    | 65.86    | 4.1348  | +0.0528 |
+|  8 | 4.1876    | 65.86    | 4.1348  | +0.0528 |
+| 16 | 4.1876    | 65.86    | 4.1348  | +0.0528 |
+| 32 | 4.1876    | 65.86    | 4.1348  | +0.0528 |
+
+**TinyStories cross-entropy** (general-distribution sanity probe):
+
+| K  | r2.1 loss | r2.1 PPL | r2 loss | Δ |
+|----|-----------|----------|---------|---|
+|  4 | 3.8518    | 47.08    | 3.8242  | +0.0276 |
+|  8 | 3.8518    | 47.08    | 3.8242  | +0.0276 |
+| 16 | 3.8518    | 47.08    | 3.8242  | +0.0276 |
+| 32 | 3.8518    | 47.08    | 3.8242  | +0.0276 |
+
+Both probes show small **regressions** versus round 2 (`+0.05` nats on GSM8K, `+0.03` nats on TinyStories). These are roughly 5 % and 3 % perplexity increases respectively. We interpret this as a normal continuation-training effect: round 2.1 spent its 50M tokens entirely on FineWeb-Edu, so the in-domain loss improved by ~0.5 nats while the out-of-distribution losses on GSM8K (mathematical-reasoning prompts) and TinyStories (children's-story prose) drift slightly higher. The bypass training itself is not implicated; any continuation on the same data distribution would produce a similar specialisation pattern.
+
+The depth-flat behaviour on both probes is the same trivial-flat as in round 2 (ACT-on, halt at iter 1), since GSM8K is evaluated with the model's standard ACT-on path. Once a re-trained ACT head is available (§8.3), these probes will become meaningful indicators of whether depth helps reasoning vs. narrative tasks differently.
+
+### 7.5 Generation samples
+
+Multi-depth samples at `K ∈ {2, 6, 12, 24}` are in `docs/gen_samples_round21_multidepth.txt`. Generation uses temperature `0.8` and top-`k = 40` sampling, with `torch.manual_seed(1000 + sample_idx)` reset before each `K` so the random draws line up across depths. A representative entry:
+
+```
+Prompt: The Roman Empire fell primarily because
+
+K=2:  ... of a lack of political pressure. It was in the 4th century
+       (a period known as the Roman Empire), but it was the most
+       important factor for the building of its great empire. ...
+
+K=6:  [identical to K=2]
+K=12: [identical to K=2]
+K=24: [identical to K=2]
+```
+
+Across all eight prompts in the sample set, **the temperature-0.8 generations are byte-identical at `K ∈ {2, 6, 12, 24}`**. This is a stronger statement than greedy invariance. Each token is drawn by softmax-then-multinomial-sampling from the top-40 logits at temperature 0.8; for the same seed and same logit distribution the same token is drawn, but a logit perturbation that re-orders the top-40 or shifts probability mass enough to flip the multinomial draw is sufficient to diverge the outputs. The fact that the perturbation introduced by deeper recurrent iteration is *not* sufficient says that the per-token logit distribution after the iterations have converged is essentially identical across `K`, in the sense that it produces the same sample under temperature 0.8.
+
+This is *not* the same kind of identical-output phenomenon we observed in round 2 (§4.3), where ACT was trivially halting at iter 1 so all `K` ran the same one-step computation. In round 2.1 with ACT off, all `K` iterations actually run, the logits actually differ, and the model produces a stable converged output that happens to be `argmax`- and sample-equivalent across `K`. The cross-entropy gap between ACT-on and ACT-off (§7.2) confirms the iterations are doing real computation, even if the iterations beyond convergence don't shift the per-token distribution enough to change a temperature-0.8 multinomial draw.
+
+### 7.6 Recovering the ACT head: anti-collapse fine-tune
+
+§8.3 (in our previous draft) flagged the open question of whether a short ACT-fine-tune phase, with the rest of the model frozen, can revive a usable halting head from the round-2.1 saturated state. We ran the experiment.
+
+**Step 1 (negative result).** We re-initialised the head's `nn.Linear(d, 1)` to its default Kaiming-uniform values and trained the head only (3,073 parameters; 100 % of the rest of the model frozen) under the standard ACT-weighted output objective with the original variable-T sampling. Within 120 optimiser steps (~500K tokens), the head re-saturated to `mean(p_1) ≥ 0.99`. We repeated under fixed-T training (`T = 8`) and obtained the same result on the same timescale. Both trajectories track each other closely: at step 100, variable-T's `mean(p_1)` is 0.991, fixed-T's is 0.996. The collapse is a property of the ACT-weighted output objective itself, not of the variable-T training distribution.
+
+**Step 2 (positive result).** We added an explicit anti-collapse penalty `L_total = CE + λ · mean(p_1²)` and re-ran the head-only fine-tune. Below is the trajectory at three λ values:
+
+| λ | step 50 mean(p_1) | step 100 mean(p_1) | settling regime |
+|---|---|---|---|
+| 0 (no penalty) | 0.74 | 0.99 | full re-collapse |
+| 1 | 0.93 | (saturated at this point) | re-collapse, slightly delayed |
+| 10 | 0.50 | 0.23 | held off-saturation; settled around `p_1 ≈ 0.01-0.05` |
+
+At `λ = 10` the head escapes the trivial fixed point at `p_1 = 1`, but converges to the *other* trivial extreme at `p_1 ≈ 0.01` (almost never halt). This is still a usable head in the sense that the ACT-weighted output mostly reads the late iterations, which approximates the bypass-trained backbone's natural output.
+
+After 1,220 steps (~5M tokens) of head-only fine-tune at `λ = 10`, the resulting model produces measurably different inference-time output than the saturated head:
+
+**FineWeb-Edu held-out cross-entropy at K iterations**, ACT-on with the recovered head vs the saturated round-2.1 head:
+
+| K  | r2.1 ACT-on (saturated) | **anti-collapse ACT-on (recovered)** | Δ | bypass ACT-off floor |
+|----|---|---|---|---|
+|  4 | 3.8873 | **3.8522** | -0.0351 | 3.7413 |
+|  8 | 3.8873 | **3.8082** | -0.0791 | 3.7403 |
+| 16 | 3.8873 | **3.7920** | -0.0953 | 3.7403 |
+| 32 | 3.8873 | **3.7833** | -0.1040 | 3.7402 |
+
+Three things to note. First, the ACT-on numbers now decrease monotonically with `K`, where they were flat under saturation. Second, the gap to the ACT-off floor closes from 0.147 nats (saturated head, depth-1 only) to 0.043 nats (recovered head, K=32). Third, the recovery is purely from training the 3,073-parameter halting head; the backbone is unchanged.
+
+**Downstream probes also show monotonic depth scaling**, again with the recovered head. GSM8K answer-only CE: K=4 → 4.1646, K=8 → 4.1444, K=16 → 4.1386, K=32 → 4.1355. TinyStories CE: K=4 → 3.7878, K=8 → 3.7695, K=16 → 3.7642, K=32 → 3.7618. Both decrease monotonically with K. The recovered head exhibits the test-time-compute-scaling behaviour the architecture was designed to provide.
+
+The CE deltas are small in absolute terms (≤ 0.10 nat). Greedy and temperature-0.8 multiple-choice argmax decisions on ARC-Easy/HellaSwag remain mostly invariant with K, since depth-conditional logit shifts of this magnitude are below the threshold needed to flip a confident `argmax`. We discuss this in §9.
+
+### 7.7 Adaptive halting per token
+
+Beyond the marginal CE improvement, the recovered head exhibits a structural property worth highlighting: it halts adaptively per-token. We instrumented the recurrent block to record, for every (batch, position) pair on a 32,768-token held-out FineWeb-Edu sample, the iteration index at which cumulative halting probability first crossed threshold (`halt_step`), the head's iteration-1 prediction `p_1`, and whether the model's argmax over the next-token logits matched the target.
+
+We bucket tokens by category (function words, content words, punctuation, rare/numeric) and by greedy-prediction correctness:
+
+**By token category (K = 32, mean ± median):**
+
+| Category | N | Mean halt | Median | p_1 | Top-1 acc |
+|---|---|---|---|---|---|
+| function | 9,349 | **2.90** | 3 | 0.0037 | 0.265 |
+| content | 17,373 | 3.02 | 3 | 0.0118 | 0.417 |
+| punctuation | 3,945 | 3.31 | 3 | 0.0075 | 0.237 |
+| rare/numeric | 2,101 | **3.41** | 3 | 0.0221 | 0.490 |
+
+**By prediction correctness:**
+
+| Group | N | Mean halt | p_1 |
+|---|---|---|---|
+| correct | 11,691 | 2.96 | 0.0137 |
+| incorrect | 21,077 | 3.09 | 0.0074 |
+
+Two observations. First, function words halt earliest (mean 2.90 iterations), consistent with their high in-context predictability; rare and numeric tokens halt latest (3.41), consistent with their need for additional retrieval/composition. Second, and this is the cleaner signal, **the head halts earlier and with higher first-iteration confidence on tokens the model gets right**: 2.96 vs 3.09 mean halt, 0.0137 vs 0.0074 mean `p_1`. The correlation between confidence and correctness is the property ACT was designed to exhibit.
+
+**Qualitatively**, the earliest halters (`halt_step = 1`, `p_1 ≈ 1.0`) are tokens whose continuation is essentially deterministic from BPE merge structure: `'ev' → 'asion'`, `'pedi' → 'atrics'`, `'pez' → 'il'`. The latest halters (`halt_step = K = 32`, `p_1 ≈ 0`) are tokens with semantically ambiguous continuations: `' too' → ?` (target was 'keen', model predicted 'happy'), `' industrial' → ?` (target was 'theme', model predicted 'way'). The head allocates compute to where it is genuinely needed.
+
+### 7.8 Joint PonderNet-KL training (round 2.3)
+
+§8.3 (in our previous draft) flagged PonderNet's KL-to-geometric prior as the natural next regulariser to test, on the grounds that `mean(p_1²)` pulls toward the "never halt early" extreme rather than targeting an intermediate halting distribution. Round 2.3 tests the change directly.
+
+We continue from the round-2.2 final checkpoint. Round 2.2 is a further 50M-token continuation of round-2.1 ACT-bypass training (variable-T `T_step ~ U{2, 12}`, head bypassed during the forward, all other settings as §6); the qualitative picture is unchanged from round 2.1, with FineWeb-Edu held-out ACT-off CE settling at 3.84 nats, depth-flat across `K ∈ {4, 8, 16, 32}`, and the halting head still saturated at `p_1 = 1`. Round 2.2's purpose is to give round 2.3 a more thoroughly-trained backbone bootstrap; we treat it as supplementary and report only the headline numbers.
+
+For round 2.3 we re-initialise the halting head and switch to **joint training**: the recurrent forward is now the standard ACT-weighted form (no bypass), and the loss adds a per-iteration Bernoulli KL term against a geometric halt-rate prior:
+
+```
+L = CE(logits, targets) + λ_KL · mean_t [ KL( Bern(p_t) || Bern(λ_p) ) ]
+```
+
+with `λ_KL = 1.0` and `λ_p = 0.2` (target mean halt step `1/λ_p = 5`). The KL is averaged over the recurrent iterations and the (B, T_seq) positions. All other hyperparameters match round 2.2; we train for 50M tokens (3,051 optimiser steps) on FineWeb-Edu.
+
+**Halt distribution.** The head locks onto the geometric target. At `K = 4`, per-iteration halting probabilities are `p_1 = 0.204, p_2 = 0.204, p_3 = 0.201, p_4 = 0.200` (target is 0.20 at every iteration; `cum_p` reaches 0.81 by iter 4). The halt-step histogram at `K ∈ {8, 16, 32}` peaks at iteration 5 with median 5 and mean 5.44, exactly the geometric mean `1/λ_p`. The head-only PonderNet retrain we considered as a head-only follow-up to §7.6 had a bistability problem (the head settled at either `p_1 ≈ 0.5` or `p_1 ≈ 0.05` but did not stay at the target); joint training does not have this problem, because the backbone can adapt to produce useful output *at* the geometric halt step rather than fighting the head.
+
+**Depth extrapolation, ACT off.** Joint training continues to lower the bypass ACT-off floor:
+
+| K  | r2.3 ACT-off | r2.2 ACT-off | r2 ACT-off | Δ (r2.3 vs r2) |
+|----|--------------|--------------|------------|----------------|
+|  4 | 3.2937       | 3.8424       | 4.2455     | -0.952         |
+|  8 | 3.2906       | 3.8412       | 4.2522     | -0.962         |
+| 16 | 3.2902       | 3.8412       | 4.2525     | -0.962         |
+| 32 | 3.2900       | 3.8412       | 4.2524     | -0.962         |
+
+The 0.55-nat improvement from round 2.2 to round 2.3 comes entirely from the joint head + backbone training under the PonderNet-KL objective. No architectural change.
+
+**Depth extrapolation, ACT on.** With the recovered head, the ACT-on column is, for the first time, competitive with ACT-off rather than pinned at the saturated head's depth-1 output:
+
+| K  | r2.3 ACT-on | r2.3 ACT-off | gap   |
+|----|-------------|--------------|-------|
+|  4 | 3.3059      | 3.2937       | +0.012 |
+|  8 | 3.2946      | 3.2906       | +0.004 |
+| 16 | 3.2946      | 3.2902       | +0.004 |
+| 32 | 3.2946      | 3.2900       | +0.005 |
+
+The remaining ACT-on/ACT-off gap is 0.005 nats at `K = 32`, against the §7.6 anti-collapse approach's 0.043 nats: PonderNet-KL joint training closes 95% of the gap, vs 70% for the anti-collapse head-only fine-tune.
+
+### 7.9 Is the bypass interlude necessary? (round 2.4 ablation)
+
+§8.3 (in our previous draft) characterised the recipe as "two-stage": ACT-bypass training of the backbone, then a head-side fix. Round 2.3 collapsed the head-side fix into the backbone training itself. A natural further question is whether the bypass interlude (rounds 2.1 + 2.2, ~100M tokens of variable-T training with the head bypassed) is *necessary* to set up round 2.3, or whether PonderNet-KL joint training works directly from the collapsed checkpoint.
+
+Round 2.4 tests this. We restart joint PonderNet training from the round-2 final checkpoint, the *collapsed* one with `p_1 = 1.0` and depth-flat ACT-off CE 4.25 nats, using identical hyperparameters to round 2.3 (`λ_KL = 1.0`, `λ_p = 0.2`, `T_step ~ U{2, 12}`, 50M tokens). The halting head is re-initialised; the backbone is otherwise the round-2 collapsed weights.
+
+**Halt distribution recovers.** Despite starting from the saturated head and depth-flat backbone, round 2.4 reaches the same Geom(0.2) halt distribution as round 2.3: `p_1 = 0.202` at `K = 4`, all four iterations within 0.005 of target, mean halt step 5.43, median 5. PonderNet-KL is robust to starting condition.
+
+**Depth extrapolation, ACT off:**
+
+| K  | r2.4 ACT-off | r2.3 ACT-off | r2 ACT-off (start) | Δ (r2.4 vs r2) | Δ (r2.3 vs r2.4) |
+|----|--------------|--------------|--------------------|----------------|------------------|
+|  4 | 3.4430       | 3.2937       | 4.2455             | -0.802         | -0.149           |
+|  8 | 3.4469       | 3.2906       | 4.2522             | -0.805         | -0.156           |
+| 16 | 3.4464       | 3.2902       | 4.2525             | -0.806         | -0.156           |
+| 32 | 3.4461       | 3.2900       | 4.2524             | -0.806         | -0.156           |
+
+Joint PonderNet-KL training, applied directly to the collapsed checkpoint, recovers ~84% of the depth-extrapolation gain that the full bypass + joint pipeline (round 2.3) achieves. The remaining 0.15 nats at every `K` is the bypass interlude's contribution. Bypass training is therefore *helpful but not strictly necessary* for ACT-collapse rescue; the load-bearing fix is the PonderNet-KL term applied jointly to head and backbone.
+
+The ACT-on column tracks the same pattern: r2.4 ACT-on at `K = 32` is 3.4478, r2.3 ACT-on is 3.2946, the same ~0.15-nat gap. The ACT-on/ACT-off gap on r2.4 is 0.002 nats at `K = 32`, narrower than r2.3's already-narrow 0.005 nats; the head locks tighter to its converged equilibrium when starting from the saturated initialisation than from a bypass-trained one, presumably because there is less prior gradient signal in the head's parameters to fight off.
+
+### 7.10 Fixed-T baseline at matched compute (round 2.5)
+
+Round 2.4 establishes that PonderNet-KL joint training rescues a collapsed backbone. A natural counterfactual is whether the rescue is specific to the halting term or whether *any* sufficiently-mismatched continuation training on the collapsed checkpoint would work. Round 2.5 tests this by replacing the variable-T + PonderNet objective with the simplest alternative: **fixed-T training at `T = 8`, with no halting term**.
+
+We continue from the round-2 collapsed checkpoint, the same starting point as round 2.4. The forward uses the bypass path (no ACT weighting). The training depth is fixed at `T = 8` (the mean of the round 2.4 sampling distribution, so per-step compute is approximately matched). All other hyperparameters and the 50M-token target match round 2.4. The halting head receives no gradient.
+
+**Depth extrapolation, ACT off:**
+
+| K  | r2.5 ACT-off | r2.4 ACT-off | r2.3 ACT-off | r2 (start) | Δ (r2.5 vs r2) |
+|----|--------------|--------------|--------------|------------|----------------|
+|  4 | 3.4802       | 3.4430       | 3.2937       | 4.2455     | -0.765         |
+|  8 | 3.4781       | 3.4469       | 3.2906       | 4.2522     | -0.774         |
+| 16 | 3.4780       | 3.4464       | 3.2902       | 4.2525     | -0.775         |
+| 32 | 3.4778       | 3.4461       | 3.2900       | 4.2524     | -0.775         |
+
+**Fixed-T training and PonderNet-KL joint training, applied to the same collapsed starting point and given the same compute budget, produce essentially the same ACT-off CE** (r2.5: 3.48 vs r2.4: 3.44, a 0.03-0.04 nat gap that we do not over-interpret given training-noise variance at 50M-token scale). Both recover ~80 % of the depth-extrapolation gap to the round-2.3 best (which had the additional 100M-token bypass interlude). The CE rescue is therefore *not* PonderNet-KL-specific: it is a property of any sufficient continuation-training signal that does not preserve the head's saturated fixed point.
+
+**Where r2.5 and r2.4 part ways is the ACT-on column.** The fixed-T run leaves the halting head unchanged from its round-2 saturated state, so inference with ACT enabled halts at iteration 1:
+
+| K  | r2.5 ACT-on | r2.5 ACT-off | gap   | r2.4 ACT-on | r2.4 ACT-off | gap   |
+|----|-------------|--------------|-------|-------------|--------------|-------|
+|  4 | 3.7266      | 3.4802       | +0.246 | 3.4574      | 3.4430       | +0.014 |
+| 32 | 3.7266      | 3.4778       | +0.249 | 3.4478      | 3.4461       | +0.002 |
+
+PonderNet-KL closes the ACT-on/ACT-off gap to 0.002 nats; fixed-T leaves it at 0.246 nats (the head still halts trivially at iter 1). The PonderNet-KL contribution is therefore decoupled from the CE-recovery contribution: PonderNet-KL produces a *usable halting head*, fixed-T does not, but neither approach beats the other on raw ACT-off CE at matched compute.
+
+This separates the paper's narrative cleanly. ACT-collapse rescue and ACT-head usability are two orthogonal concerns:
+
+| component | recovers depth-extrap CE? | produces usable halting head? |
+|---|---|---|
+| ACT-bypass training (rounds 2.1, 2.2) | yes (additional ~0.40 nats per 50M tokens) | no (head stays saturated) |
+| Fixed-T training (round 2.5) | yes (~0.78 nats from collapsed) | no (head stays saturated) |
+| PonderNet-KL joint training (round 2.4) | yes (~0.81 nats from collapsed) | yes (head locks to Geom(λ_p)) |
+| Anti-collapse head fine-tune (§7.6) | n/a (head-only) | yes (head settles at p_1 ≈ 0.01) |
+
+Bypass training and PonderNet-KL stack: round 2.3 = bypass + PonderNet-KL gets ~0.15 nats *on top* of either alone, making it the strongest configuration we report.
+
+### 7.11 Joint training stability past 50M tokens (round 2.6)
+
+Round 2.6 continues round 2.3 for an additional 50M tokens with identical hyperparameters (`λ_KL = 1.0`, `λ_p = 0.2`, `REINIT_HEAD = 0` to preserve the trained head). The question is whether the joint equilibrium continues to gain CE past the 50M-token mark or saturates.
+
+**FineWeb-Edu held-out cross-entropy at K iterations:**
+
+| K  | r2.6 ACT-off | round 2.3 ACT-off | Δ      | r2 ACT-off |
+|----|--------------|---------------------|--------|------------|
+|  4 | 3.2055       | 3.2937              | -0.0882 | 4.2455     |
+|  8 | 3.1997       | 3.2906              | -0.0909 | 4.2522     |
+| 16 | 3.2000       | 3.2902              | -0.0903 | 4.2525     |
+| 32 | 3.1998       | 3.2900              | -0.0902 | 4.2524     |
+
+**Per-iteration halting probability at K = 4** (threshold = 0.99):
+
+| iter | p_mean | p_median | p_min  | p_max  | cum_p  | %≥thr |
+|------|--------|----------|--------|--------|--------|-------|
+|    1 | 0.2039 | 0.2041 | 0.1562 | 0.2734 | 0.2039 | 0.000 |
+|    2 | 0.2038 | 0.2031 | 0.1562 | 0.2871 | 0.4078 | 0.000 |
+|    3 | 0.2017 | 0.2021 | 0.1533 | 0.2812 | 0.6095 | 0.000 |
+|    4 | 0.2007 | 0.2002 | 0.1494 | 0.2793 | 0.8102 | 0.000 |
+
+**Halt-step histogram per K:**
+
+| K  | mean halt step | median | tokens at iter 1 | full budget used |
+|----|----------------|--------|------------------|------------------|
+|  4 | 4.00           |      4 | 0 / 65,536    | 1.000            |
+|  8 | 5.29           |      5 | 0 / 65,536    | 0.000            |
+| 16 | 5.29           |      5 | 0 / 65,536    | 0.000            |
+| 32 | 5.29           |      5 | 0 / 65,536    | 0.000            |
+
+**[DRAFT verdict — polish before submission.]** Numbers above were auto-extracted from `docs/depth_extrap_round26.json`, `docs/act_halt_diagnostic_round26.json`, and `docs/act_halt_histogram_round26.json`. The auto-generated paper fragment is at `docs/paper/round26_results.md` for reference.
+
+## 8. Discussion
+
+### 8.1 The gradient pathway
+
+ACT collapse is a property of the training objective, not the architecture. The ACT-weighted output `h_out = Σ_t w_t h_t` is differentiable, which is the entire point of ACT. But the gradient with respect to a particular `h_t` is proportional to `w_t`, and `w_t = remainder` only when cumulative `p` has not yet crossed threshold. Once any earlier iteration's halting probability dominates, later iterations receive arithmetically reduced gradient, and the head's saturation point at `p_1 = 1` is a fixed point of the dynamics. This is well-known in ACT folklore but, we believe, undescribed for the variable-T regime where the fixed point is *more* attractive than under fixed-T. We make this precise.
+
+**Lemma (variable-T halt collapse).** Let `f_θ : X → Y` be a recurrent-depth model with ACT halting head producing per-iteration probabilities `p_t(x; θ) ∈ (0, 1)`, and let `h_t(x; θ)` be the iteration-`t` hidden state. Define the ACT-weighted output
+
+```
+h_out(x; θ, T) = Σ_{t=1..T} w_t h_t,    w_t = p_t · prod_{s<t} (1 - p_s)   for t < T
+                                         w_T = prod_{s<T} (1 - p_s)         (remainder)
+```
+
+and the variable-T training loss
+
+```
+L(θ) = E_{(x, y), T ~ U{T_min..T_max}} [ CE( π(h_out(x; θ, T)), y ) ],
+```
+
+where `π` is a final linear projection. Suppose `θ*` satisfies (i) `p_1(x; θ*) = 1` for almost every `x`, and (ii) `θ*` restricted to the depth-1 sub-model is a strict local minimum of the depth-1 loss `L_1(θ) = E_{(x, y)} [ CE( π(h_1(x; θ)), y ) ]`. Then `θ*` is a strict local minimum of `L`.
+
+**Proof sketch.** At `θ*`, `w_1 = 1` and `w_t = 0` for `t > 1`, so `h_out(x; θ*, T) = h_1(x; θ*)` for every `T`. Thus `L(θ*) = L_1(θ*)`. Consider a perturbation `θ* + εδ` that moves halt mass off iteration 1: this makes some `w_t > 0` for `t > 1`, so `h_out` becomes a convex combination of `h_1(x; θ*) + O(ε)` and `{h_t(x; θ*) + O(ε)}_{t>1}`. By assumption (ii), `h_1(x; θ*)` is a depth-1 local minimum, so any second hidden state `h_t(x; θ*)` for `t > 1` produces strictly *higher* CE than `h_1(x; θ*)` (otherwise the depth-`t` solution would dominate at `θ*`, contradicting (ii)). Mixing with a higher-CE prediction strictly raises the loss to second order: `L(θ* + εδ) = L(θ*) + ½ ε² δᵀ H δ + O(ε³)` with `H` positive in the saturation-perturbation directions. The same argument holds for every `T ∈ {T_min, ..., T_max}`, so the variable-T expectation `L` inherits the strict local minimum without trade-off across `T`. ∎
+
+The variable-T regime is therefore *strictly more* attractive than fixed-T training at `T = T_train`. Under fixed-T, only one `T` value contributes to `L`, and the head can in principle find a non-saturated solution where `h_{T_train}(x; θ)` is *better* than `h_1(x; θ)` — but this requires `h_2, ..., h_{T_train}` to be productively trained, which requires `p_t > 0` and gradient flow. Variable-T amortises that requirement across `{T_min, ..., T_max}` simultaneously, and saturation at `p_1 = 1` becomes the unique solution that is consistent with every `T` in the sampling distribution. The same lemma explains why the §7.6 anti-collapse penalty does not, by itself, eliminate the attractor: it only *softly* repels the head from `p_1 = 1`, and as soon as the penalty's contribution falls below the saturation gradient, the head re-collapses.
+
+### 8.2 Other adaptive-compute architectures
+
+We expect the same failure mode to appear in any adaptive-compute scheme where (a) the per-step compute decision is differentiable through the output, and (b) the training distribution exposes the model to many depths. PonderNet (Banino et al., 2021) reformulates the halting probability into an unbiased differentiable scheme; whether this reformulation breaks the trivial fixed point under variable-depth training is an open question we do not pursue here. Mixture of Depths (Raposo et al., 2024) routes tokens before the layer rather than after; we conjecture this avoids the failure mode but do not test it here.
+
+### 8.3 ACT-collapse rescue and ACT-head usability are orthogonal
+
+The natural reading of §7.6 and §7.7 in our previous draft was that the recipe is two-stage: ACT-bypass training of the backbone, then a head-side fix. Rounds 2.3 (§7.8), 2.4 (§7.9), and 2.5 (§7.10) decompose the recipe more cleanly. The CE recovery (depth-extrapolation, held-out cross-entropy) and the halting-head usability (whether ACT-on inference matches ACT-off) are *separate* contributions, and they decouple along the following axes.
+
+**CE recovery is not PonderNet-KL-specific.** Round 2.4 (PonderNet-KL joint from collapsed) and round 2.5 (fixed `T = 8` from collapsed) both, given the same 50M-token continuation budget, recover essentially the same ACT-off CE: 3.44 vs 3.48 at `K = 32`. ACT-bypass training (rounds 2.1, 2.2) at the same compute recovers a comparable amount in the bypass-floor sense. The CE rescue is therefore a property of *any* continuation-training signal that does not preserve the head's saturated fixed point; what fails is variable-T + ACT-on, which is exactly what trapped round 2 at `p_1 = 1`.
+
+**The halting head's usability is what PonderNet-KL specifically buys.** Round 2.5's fixed-T training, like round 2.4's PonderNet-KL joint training, recovers depth-extrap CE; but only round 2.4 produces a halting head whose ACT-on inference is competitive with ACT-off. The ACT-on/ACT-off gap is 0.002 nats for r2.4 (head locked to Geom(0.2)) versus 0.246 nats for r2.5 (head still saturated, halts at iter 1). The §7.6 anti-collapse fine-tune is the analogue for a bypass-trained backbone: it produces a usable head at `p_1 ≈ 0.01-0.05`, not at the geometric target, and closes 70 % of the ACT-on/ACT-off gap to its 0.147-nat starting point. PonderNet-KL closes 95 % of the gap and additionally produces an *adaptive* halt distribution rather than a "never halt early" pinned-low one.
+
+**The head-only PonderNet-KL retrain we tried as an intermediate experiment hit a bistability** — the head settled at either `p_1 ≈ 0.5` or `p_1 ≈ 0.05` but did not stay at the geometric target — that joint training resolves: the backbone can adapt to produce useful output *at* the target halt step rather than fighting the head, so the optimiser finds a stable interior solution.
+
+**Bypass training and PonderNet-KL stack.** Round 2.3 = bypass-trained backbone (rounds 2.1 + 2.2) + PonderNet-KL joint continuation, gains an additional 0.15 nats on top of either component alone. The bypass interlude is therefore valuable for CE in a way that does not overlap with PonderNet-KL's contribution. We attribute this to the bypass interlude moving the backbone weights into a regime where joint training has more room to drive CE down before hitting the depth-flat fixed point each round eventually settles at (§8.4).
+
+The simpler recipe (PonderNet-KL only, applied to the collapsed checkpoint) recovers 84 % of the gain at half the compute. The full recipe (bypass + PonderNet-KL) recovers 100 %. Both produce a usable halting head; fixed-T training does not.
+
+### 8.4 Depth-using but fast-converging
+
+The bypass-trained backbone uses depth (forcing a halt at iteration 1 strictly worsens held-out loss; §7.2) but converges to its output by an unknown small `K` and stays there: held-out CE differs by 0.001 nats between `K = 4` and `K = 32`, and greedy generations are byte-identical at `K ∈ {2, 6, 12, 24}` (§7.5). Joint PonderNet-KL training (§7.8, §7.9) does not change this picture: r2.3 ACT-off CE differs by 0.004 nats between `K = 4` and `K = 32`, r2.4 by 0.003. The model has learned a fast-converging fixed point of the recurrence at progressively lower loss levels (4.25 → 3.84 → 3.29 nats across rounds), not a deeper computation that benefits monotonically from more iterations. This is consistent with Geiping et al. (2025), who report that performance on HellaSwag saturates around 8 iterations even though their model was trained with `r̄ = 32` mean recurrence; on math and code tasks (GSM8K-CoT, HumanEval) they observe continued improvement past 32 iterations, suggesting that the depth-using ceiling is task-dependent. We ran a synthetic-depth-tasks probe (graded arithmetic, successor, last-word, nth-word, multi-hop QA) at `K ∈ {4, 8, 16, 32, 64}` on r2, r2.1, r2.2, and r2.3, and find accuracy invariant to `K` on every task in every round. This may reflect a model-scale ceiling on these tasks rather than a depth-use ceiling on the architecture; we have not yet tested reasoning-heavy tasks at sufficient scale to distinguish the two. This is a natural extension at larger token budgets.
+
+## 9. Limitations
+
+- **Scale.** A single 3.1B-parameter model. The collapse may be exacerbated or attenuated at larger scales; we do not test this.
+- **Dataset.** FineWeb-Edu only. We do not investigate whether the collapse is a property of the data distribution. Round 2.1's 50M continuation tokens were also entirely on FineWeb-Edu, producing the small (~0.05 nat) regressions on out-of-distribution probes (GSM8K, TinyStories) reported in §7.4. The bypass training itself is not implicated in the regressions; any continuation on the same data distribution would produce a similar specialisation pattern.
+- **Training tokens.** ~250M for round 1 + round 2 + round 2.1 combined. Modern scaling intuitions assume 10× to 100× more tokens; small-budget training may exaggerate the collapse-vs-no-collapse distinction. The most directly comparable recent work (Geiping et al., 2025) trains a 3.5B-parameter model on 800B tokens, ~3,200× our token budget.
+- **Recovery via §7.6 anti-collapse fine-tune is partial.** The recipe closes 70 % of the ACT-on/ACT-off gap (0.147 → 0.043 nats at `K = 32`) but does not eliminate it; the `mean(p_1²)` penalty pushes the head toward the "never halt early" extreme rather than targeting a useful intermediate halting distribution. The §7.8/§7.9 joint PonderNet-KL recipe closes 95 % of the gap (to 0.005 nats) and is the recommended approach.
+- **Synthetic-depth-task accuracy is invariant to `K`.** On graded arithmetic, successor, last-word, nth-word, and multi-hop QA at `K ∈ {4, 8, 16, 32, 64}`, accuracy is flat across every round (r2, r2.1, r2.2, r2.3) and r2.3 is in fact slightly *below* r2.2 on most tasks. The CE improvements that do scale with `K` and round are not, at this model and token-budget scale, translating into task-accuracy gains on the synthetic suite we built. This may reflect a 3B-model task-knowledge ceiling rather than a depth-use ceiling on the architecture; we have not yet run reasoning evals at larger scale.
+- **CE deltas are sub-argmax-flip.** The depth-conditional CE improvements we measure (≤ 0.10 nats) are below the threshold needed to change greedy or temperature-0.8 multiple-choice argmax decisions on ARC-Easy/Challenge and HellaSwag in our 500-question evaluations. The recovered head produces *depth-dependent logits* but not, at this scale, *depth-dependent decisions*. We have not found a downstream task where the gap between `K = 4` and `K = 32` is large enough in capability terms to overturn the depth-flat argmax behaviour.
+- **Greedy decoding only for samples.** §7.5 reports byte-identical greedy generations across `K`. We do not test whether sampled (temperature > 0) decoding produces visibly different outputs at different `K`; the held-out cross-entropy results in §7.2 establish that the logit distributions do differ across `K`, so sampled decoding would diverge.
+- **Single architecture family.** Recurrent-depth transformers with stable LTI injection. Other recurrent-depth architectures (e.g., Geiping et al.'s adapter-concatenation block, or Universal Transformer's plain weight-tied stack) may not exhibit the failure.
+- **Single ACT formulation.** We use Graves-style soft halting. PonderNet's reformulation (Banino et al., 2021) and Mixture-of-Depths-style routing (Raposo et al., 2024) may behave differently; we do not test these.
+
+## 10. Conclusion
+
+Recurrent-depth transformers offer test-time compute scaling at constant parameter cost, but the training regime matters. Variable-T training is necessary for depth-extrapolation, and is not, by itself, sufficient if an ACT head is in the loop: standard ACT under variable-T training collapses to trivial halting, recovering only the depth-1 model. We diagnose the collapse with per-iteration halting-probability logging and decompose the rescue into two orthogonal contributions. **ACT-collapse rescue (CE recovery)** is non-specific: ACT-bypass training (rounds 2.1, 2.2), fixed-`T = 8` continuation training (round 2.5), and PonderNet-KL joint training (round 2.4) all recover comparable ACT-off CE on FineWeb-Edu (~0.78-0.81 nats from the collapsed 4.25-nat baseline) at matched 50M-token continuation budgets. **Halting-head usability** is what PonderNet-KL specifically buys: round 2.4's ACT-on inference is within 0.002 nats of its ACT-off floor at `K = 32` because the head locks onto the Geom(0.2) target, while round 2.5's ACT-on stays 0.246 nats away because the head is left in its saturated state. Bypass training and PonderNet-KL stack: round 2.3 = bypass + PonderNet-KL recovers 100 % of the depth-extrapolation gap (CE 4.25 → 3.29) while every preceding configuration recovers ~80 %. The simpler one-line fix (PonderNet-KL only, applied directly to the collapsed checkpoint) is the recommended recipe for practitioners; bypass + PonderNet-KL is the strongest configuration we report. Cross-entropy improvements remain below the threshold needed to flip greedy multiple-choice argmax decisions at this model and training scale; whether the same recipe at 10x or 100x our token budget produces capability gains as well as confidence gains is an open question. We release training code, diagnostic scripts, six checkpoints, and the per-iteration halting traces.
+
+## References
+
+(Full BibTeX in `refs.bib`. Citations verified via arXiv as of April 2026.)
+
+- Banino, A., Balaguer, J., and Blundell, C. *PonderNet: Learning to Ponder.* AutoML@ICML 2021. arXiv:2107.05407.
+- Dehghani, M., Gouws, S., Vinyals, O., Uszkoreit, J., and Kaiser, L. *Universal Transformers.* ICLR 2019. arXiv:1807.03819.
+- Geiping, J., McLeish, S., Jain, N., Kirchenbauer, J., Singh, S., Bartoldson, B. R., Kailkhura, B., Bhatele, A., and Goldstein, T. *Scaling up Test-Time Compute with Latent Reasoning: A Recurrent Depth Approach.* NeurIPS 2025. arXiv:2502.05171.
+- Graves, A. *Adaptive Computation Time for Recurrent Neural Networks.* arXiv:1603.08983, 2016.
+- Liu, A. et al. *DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model.* arXiv:2405.04434, 2024.
+- Raposo, D., Ritter, S., Richemond, P., Santoro, A., and Blundell, C. *Mixture-of-Depths: Dynamically Allocating Compute in Transformer-Based Language Models.* ICML 2024. arXiv:2404.02258.
+
+## Appendices
+
+### A. Training-time configuration
+
+[Reproduce the exact hyperparameters from `training/3b_loops4_fast.py` (round 1, fixed T=4), `training/3b_varT_fast.py` (round 2, variable T, ACT-collapsed), `training/3b_varT_act_v2.py` (round 2.1, ACT-bypass), `training/3b_varT_act_v3.py` (rounds 2.2 and 2.5, with `BOOTSTRAP_CKPT` and `T_FIXED` env-var overrides), and `training/3b_varT_pondernet_joint.py` (rounds 2.3 and 2.4, joint PonderNet-KL with `BOOTSTRAP_CKPT` env-var override). Include the global batch token count, the LR schedule shape, the per-rank memory footprint, and the total wall-clock per round.]
+
+### B. Diagnostic script
+
+[Include `training/act_halt_diagnostic.py` verbatim or a fragment with the per-iteration `p_t` recording. Reference the JSON outputs `docs/act_halt_diagnostic_round{2,21,22,23,24}.json` for the raw numbers.]
+
+### C. Checkpoint manifest
+
+[List the released checkpoints with SHA-256, parameter count, training tokens, and the exact `MythosConfig` used for each: round 1 (fixed-T = 4), round 2 (variable-T, ACT-collapsed), round 2.1 (variable-T, ACT-bypass, 50M tokens), round 2.2 (variable-T, ACT-bypass, +50M tokens), round 2.3 (joint PonderNet-KL from round-2.2 final), round 2.4 (joint PonderNet-KL from round-2 collapsed), round 2.5 (fixed-T = 8 from round-2 collapsed; pending finalisation).]

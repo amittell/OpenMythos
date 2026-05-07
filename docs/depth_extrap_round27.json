@@ -1,0 +1,157 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_pondernet_round27_lp01/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.518469363451004,
+      "ppl": 33.732756338565935,
+      "tokens_measured": 65536,
+      "elapsed_s": 21.01,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.480986014008522,
+      "ppl": 32.491743600785064,
+      "tokens_measured": 65536,
+      "elapsed_s": 44.45,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.4859856367111206,
+      "ppl": 32.65459682284546,
+      "tokens_measured": 65536,
+      "elapsed_s": 63.56,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.485978841781616,
+      "ppl": 32.654374937915904,
+      "tokens_measured": 65536,
+      "elapsed_s": 76.51,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.4803416281938553,
+      "ppl": 32.470813126489546,
+      "tokens_measured": 65536,
+      "elapsed_s": 22.28,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.480029731988907,
+      "ppl": 32.46068718230767,
+      "tokens_measured": 65536,
+      "elapsed_s": 34.2,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.4799806028604507,
+      "ppl": 32.459092456211394,
+      "tokens_measured": 65536,
+      "elapsed_s": 73.51,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.479697495698929,
+      "ppl": 32.44990435535048,
+      "tokens_measured": 65536,
+      "elapsed_s": 118.92,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.162705700985701,
+      "ppl": 64.24511572142701,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 16.6,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.118858561622756,
+      "ppl": 61.48901626978119,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 29.24,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.129155518191781,
+      "ppl": 62.125436974807926,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 52.93,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.1291516533399495,
+      "ppl": 62.12519686966304,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 46.23,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.78539377450943,
+      "ppl": 44.0530140978193,
+      "tokens_measured": 65536,
+      "elapsed_s": 19.04,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.7518123388290405,
+      "ppl": 42.59821448200805,
+      "tokens_measured": 65536,
+      "elapsed_s": 31.7,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.7565328031778336,
+      "ppl": 42.79977318585652,
+      "tokens_measured": 65536,
+      "elapsed_s": 61.89,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.7565527260303497,
+      "ppl": 42.80062588791953,
+      "tokens_measured": 65536,
+      "elapsed_s": 65.65,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture, and some of the basic principles of the 5- to 6- and 7-kg, and the 11-kg system. It is also important to note that the 4",
+    "8": "The recurrent-depth transformer architecture, and its associated structures are more complex than the structure of the architecture as a whole. The architecture of the complex interconnections of the architecture and construction of buildings and structures, and the architecture of the",
+    "16": "The recurrent-depth transformer architecture, and its associated structures are more complex than the structure of the architecture as a whole. The architecture of the complex interconnections of the architecture and construction of buildings and structures to the architecture of the region",
+    "32": "The recurrent-depth transformer architecture, and its associated structures are more complex than the structure of the architecture as a whole. The architecture of the complex interconnections of the architecture and construction of buildings and structures to the architecture of the region"
+  }
+}

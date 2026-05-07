@@ -1,0 +1,91 @@
+{
+  "ckpt_path": "/home/alex/OpenMythos/checkpoints_3b_varT_act_v3/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.946373373270035,
+      "ppl": 51.74735777065099,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.08,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.946373373270035,
+      "ppl": 51.74735777065099,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.05,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.946373373270035,
+      "ppl": 51.74735777065099,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.06,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.946373373270035,
+      "ppl": 51.74735777065099,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.05,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.842390313744545,
+      "ppl": 46.63681794075013,
+      "tokens_measured": 65536,
+      "elapsed_s": 4.97,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.8414148092269897,
+      "ppl": 46.591345696960126,
+      "tokens_measured": 65536,
+      "elapsed_s": 8.81,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.841401129961014,
+      "ppl": 46.59070836590928,
+      "tokens_measured": 65536,
+      "elapsed_s": 16.49,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.8412217795848846,
+      "ppl": 46.58235305412628,
+      "tokens_measured": 65536,
+      "elapsed_s": 32.1,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [],
+  "results_tinystories": [],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture, a new kind of architecture, which can be used for the architecture as a whole. The architecture of the complex is therefore a part of a larger and more complex structure which includes a wide variety of",
+    "8": "The recurrent-depth transformer architecture, a new kind of architecture, which can be used for the architecture as a whole. The architecture of the complex is therefore a part of a larger and more complex structure which includes a wide variety of",
+    "16": "The recurrent-depth transformer architecture, a new kind of architecture, which can be used for the architecture as a whole. The architecture of the complex is therefore a part of a larger and more complex structure which includes a wide variety of",
+    "32": "The recurrent-depth transformer architecture, a new kind of architecture, which can be used for the architecture as a whole. The architecture of the complex is therefore a part of a larger and more complex structure which includes a wide variety of"
+  }
+}

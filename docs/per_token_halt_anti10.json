@@ -1,0 +1,469 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_act_finetune_anti10/step_0001220_full.pt",
+  "step": 1220,
+  "K": 32,
+  "act_threshold": 0.99,
+  "n_tokens": 32768,
+  "halt_step_histogram": [
+    0,
+    13,
+    14330,
+    15449,
+    1478,
+    423,
+    219,
+    124,
+    75,
+    74,
+    45,
+    42,
+    31,
+    29,
+    21,
+    25,
+    18,
+    13,
+    12,
+    17,
+    12,
+    16,
+    11,
+    5,
+    7,
+    6,
+    7,
+    4,
+    9,
+    5,
+    7,
+    6,
+    235
+  ],
+  "halt_step_mean": 3.043426513671875,
+  "halt_step_median": 3.0,
+  "p_first_mean": 0.009643632918596268,
+  "frac_halt_at_1": 0.000396728515625,
+  "frac_halt_at_K": 0.007171630859375,
+  "by_category": {
+    "punct": {
+      "n_tokens": 3945,
+      "halt_step_mean": 3.3069708491761722,
+      "halt_step_median": 3.0,
+      "p_first_mean": 0.007479958701878786,
+      "frac_halt_at_1": 0.0005069708491761723,
+      "frac_halt_at_K": 0.00937896070975919,
+      "accuracy": 0.23726235741444868
+    },
+    "function": {
+      "n_tokens": 9349,
+      "halt_step_mean": 2.8998823403572573,
+      "halt_step_median": 3.0,
+      "p_first_mean": 0.0037379981949925423,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0027810461011872926,
+      "accuracy": 0.2647341961707134
+    },
+    "content": {
+      "n_tokens": 17373,
+      "halt_step_mean": 3.0167501295113106,
+      "halt_step_median": 3.0,
+      "p_first_mean": 0.011806492693722248,
+      "frac_halt_at_1": 0.0004604846601047603,
+      "frac_halt_at_K": 0.00788579980429402,
+      "accuracy": 0.417314223219939
+    },
+    "rare": {
+      "n_tokens": 2101,
+      "halt_step_mean": 3.407900999524036,
+      "halt_step_median": 3.0,
+      "p_first_mean": 0.02210061252117157,
+      "frac_halt_at_1": 0.0014278914802475012,
+      "frac_halt_at_K": 0.016658733936220846,
+      "accuracy": 0.4902427415516421
+    }
+  },
+  "by_correctness": {
+    "correct": {
+      "n_tokens": 11691,
+      "halt_step_mean": 2.9608245659053973,
+      "halt_step_median": 3.0,
+      "p_first_mean": 0.013733088038861752,
+      "frac_halt_at_1": 0.0005987511761183816,
+      "frac_halt_at_K": 0.004191258232828672
+    },
+    "incorrect": {
+      "n_tokens": 21077,
+      "halt_step_mean": 3.089244199838687,
+      "halt_step_median": 3.0,
+      "p_first_mean": 0.007375291548669338,
+      "frac_halt_at_1": 0.0002846704939033069,
+      "frac_halt_at_K": 0.008824785311002515
+    }
+  },
+  "examples": {
+    "early_halters": [
+      {
+        "token": "-d",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 0.99609375,
+        "target": "iameter",
+        "pred": "ense",
+        "correct": false
+      },
+      {
+        "token": " ev",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "asion",
+        "pred": "asion",
+        "correct": true
+      },
+      {
+        "token": "pez",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.99609375,
+        "target": "il",
+        "pred": "il",
+        "correct": true
+      },
+      {
+        "token": " Pho",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "en",
+        "pred": "en",
+        "correct": true
+      },
+      {
+        "token": " ev",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 0.99609375,
+        "target": "asion",
+        "pred": "asion",
+        "correct": true
+      },
+      {
+        "token": " escapes",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.99609375,
+        "target": " back",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": " fierce",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.99609375,
+        "target": " grasp",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": " \u2019",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": "80",
+        "pred": "70",
+        "correct": false
+      },
+      {
+        "token": "pez",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "il",
+        "pred": "il",
+        "correct": true
+      },
+      {
+        "token": " pedi",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.99609375,
+        "target": "atrics",
+        "pred": "atrics",
+        "correct": true
+      },
+      {
+        "token": "-",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 0.99609375,
+        "target": " to",
+        "pred": " and",
+        "correct": false
+      },
+      {
+        "token": " attribute",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.99609375,
+        "target": " objects",
+        "pred": ".",
+        "correct": false
+      },
+      {
+        "token": " seaw",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": "ater",
+        "pred": "ater",
+        "correct": true
+      },
+      {
+        "token": " can",
+        "category": "function",
+        "halt_step": 2,
+        "p_first": 0.000148773193359375,
+        "target": " be",
+        "pred": " be",
+        "correct": true
+      },
+      {
+        "token": " upon",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.0517578125,
+        "target": " super",
+        "pred": " a",
+        "correct": false
+      },
+      {
+        "token": " ago",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.1083984375,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      },
+      {
+        "token": " commercially",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.7734375,
+        "target": " available",
+        "pred": " available",
+        "correct": true
+      },
+      {
+        "token": " via",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 6.628036499023438e-05,
+        "target": " commercially",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " desal",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.002044677734375,
+        "target": "ination",
+        "pred": "ination",
+        "correct": true
+      },
+      {
+        "token": " for",
+        "category": "function",
+        "halt_step": 2,
+        "p_first": 0.00628662109375,
+        "target": " rule",
+        "pred": " a",
+        "correct": false
+      }
+    ],
+    "late_halters": [
+      {
+        "token": " on",
+        "category": "function",
+        "halt_step": 32,
+        "p_first": 5.617039278149605e-09,
+        "target": "shore",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": "e",
+        "category": "rare",
+        "halt_step": 32,
+        "p_first": 1.9806378759312793e-13,
+        "target": ".g",
+        "pred": " (",
+        "correct": false
+      },
+      {
+        "token": " industrial",
+        "category": "content",
+        "halt_step": 32,
+        "p_first": 1.6079866327345371e-09,
+        "target": " theme",
+        "pred": " way",
+        "correct": false
+      },
+      {
+        "token": "ipro",
+        "category": "content",
+        "halt_step": 32,
+        "p_first": 3.042011087472929e-14,
+        "target": "city",
+        "pred": " of",
+        "correct": false
+      },
+      {
+        "token": " too",
+        "category": "content",
+        "halt_step": 32,
+        "p_first": 2.066371962428093e-09,
+        "target": " keen",
+        "pred": " happy",
+        "correct": false
+      },
+      {
+        "token": " fod",
+        "category": "content",
+        "halt_step": 32,
+        "p_first": 1.1641532182693481e-10,
+        "target": "der",
+        "pred": " and",
+        "correct": false
+      },
+      {
+        "token": " Som",
+        "category": "content",
+        "halt_step": 32,
+        "p_first": 7.048583938740194e-11,
+        "target": " noticed",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": " motivated",
+        "category": "content",
+        "halt_step": 32,
+        "p_first": 1.318767317570746e-10,
+        "target": " them",
+        "pred": " racial",
+        "correct": false
+      },
+      {
+        "token": " be",
+        "category": "function",
+        "halt_step": 32,
+        "p_first": 3.841705620288849e-09,
+        "target": " exact",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": " Fair",
+        "category": "content",
+        "halt_step": 32,
+        "p_first": 2.8405338525772095e-08,
+        "target": " Tax",
+        "pred": " Tax",
+        "correct": true
+      },
+      {
+        "token": " so",
+        "category": "function",
+        "halt_step": 32,
+        "p_first": 2.648448571562767e-09,
+        "target": " ago",
+        "pred": " ago",
+        "correct": true
+      },
+      {
+        "token": " vegetarian",
+        "category": "content",
+        "halt_step": 32,
+        "p_first": 3.841705620288849e-09,
+        "target": " or",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": " up",
+        "category": "rare",
+        "halt_step": 32,
+        "p_first": 2.7008354663848877e-07,
+        "target": " the",
+        "pred": " the",
+        "correct": true
+      },
+      {
+        "token": " vegan",
+        "category": "content",
+        "halt_step": 32,
+        "p_first": 3.1650415621697903e-10,
+        "target": ".",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": " as",
+        "category": "function",
+        "halt_step": 32,
+        "p_first": 1.0477378964424133e-08,
+        "target": " follows",
+        "pred": " follows",
+        "correct": true
+      },
+      {
+        "token": ".",
+        "category": "punct",
+        "halt_step": 32,
+        "p_first": 2.066371962428093e-09,
+        "target": " ",
+        "pred": " The",
+        "correct": false
+      },
+      {
+        "token": "e",
+        "category": "rare",
+        "halt_step": 32,
+        "p_first": 7.566995918750763e-10,
+        "target": ".g",
+        "pred": " noss",
+        "correct": false
+      },
+      {
+        "token": " regions",
+        "category": "content",
+        "halt_step": 32,
+        "p_first": 9.74978320300579e-10,
+        "target": " facing",
+        "pred": " uncertainties",
+        "correct": false
+      },
+      {
+        "token": " the",
+        "category": "function",
+        "halt_step": 32,
+        "p_first": 5.20230969414115e-10,
+        "target": " rice",
+        "pred": " seeds",
+        "correct": false
+      },
+      {
+        "token": "0",
+        "category": "rare",
+        "halt_step": 32,
+        "p_first": 9.255018085241318e-09,
+        "target": "-",
+        "pred": "-",
+        "correct": true
+      }
+    ]
+  }
+}

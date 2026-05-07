@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 """
-OpenMythos pretraining on FineWeb-Edu with FSDP + AdamW.
+mythos_3b "fast" training variant — all three low-risk speedups applied:
 
-Single GPU:
-    python training/3b_fine_web_edu.py
+  1. max_loop_iters=4 (was 8): halves forward cost; depth-extrapolation at
+     inference can still go to 16+. Matches the Parcae "train shallow, infer
+     deep" thesis.
+  2. grad_accum=4 (was 8): halves per-opt-step wallclock; global batch
+     4*1*4*1024 = 16K tokens/step (still plenty for 3B).
+  3. FSDP SHARD_GRAD_OP (was FULL_SHARD): params replicated on each rank
+     (costs ~6 GB bf16 per rank — fine, we have ~70 GB free); only grads +
+     optimizer state are sharded. Skips the forward all-gather entirely,
+     saving 10-30% on step time.
 
-Multi-GPU:
-    torchrun --nproc_per_node=$(python -c "import torch; print(torch.cuda.device_count())") training/3b_fine_web_edu.py
+Combined expected speedup: ~3-5x vs 3b_loops8_fine_web_edu.py.
+Separate checkpoint dir (checkpoints_3b_loops4_fast) so we don't collide with
+the loops=8 run. Same cluster-launch recipe as the others.
 """
 
 import os
@@ -255,6 +263,76 @@ def save_checkpoint(
 
     logger.success(f"Checkpoint saved → {final_path}")
 
+    # Distribute the freshly-saved checkpoint to every other rank's local disk
+    # over the 200G RoCE fabric, so a subsequent resume (where every rank calls
+    # `torch.load(path)` independently) finds the file locally. Without this,
+    # only rank 0 has the file and resume hangs forever in FSDP's load
+    # collective. Fails soft — if rsync errors, we log and continue; worst case
+    # is a manual rsync before the next resume.
+    if ddp and dist.get_world_size() > 1:
+        _distribute_checkpoint(final_path, keep_last=keep_last)
+
+
+def _distribute_checkpoint(final_path: str, keep_last: int = 3) -> None:
+    """
+    rsync `final_path` from rank 0 to every worker's local disk over the 200G
+    fabric, then prune each worker's checkpoint dir to match rank 0's
+    keep_last retention policy. Cluster-specific: hardcodes the 4-node Spark
+    cluster's 200G IPs.
+
+    Runs rsyncs in parallel, blocks until they all complete. Typical transfer
+    time for a 42 GB checkpoint: ~1 min 20 sec per worker at ~540 MB/s on
+    200G RoCE (all three in parallel, so ~90 sec total per save). Remote
+    pruning uses `ls | sort | head -n -keep_last | xargs rm` (GNU head),
+    deleting all but the most recent `keep_last` checkpoints on the peer.
+    Without the prune, workers accumulated every rsynced checkpoint in round
+    1 and hit disk-full (~45 GB per .pt file, 900 GB NVMe filled in ~20 saves).
+
+    Fail-soft: any rsync or ssh error is logged but not raised.
+    """
+    import subprocess
+    worker_ips = ["192.168.100.11", "192.168.100.12", "192.168.100.13"]
+    ssh_key = os.path.expanduser("~/.ssh/id_ed25519_shared")
+    ssh_opts = ["-o", "StrictHostKeyChecking=no", "-i", ssh_key]
+    ckpt_dir = os.path.dirname(os.path.abspath(final_path))
+    procs = []
+    for ip in worker_ips:
+        cmd = [
+            "rsync", "-az",
+            "-e", f"ssh {' '.join(ssh_opts)}",
+            final_path, f"alexm@{ip}:{ckpt_dir}/",
+        ]
+        procs.append((ip, subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)))
+    for ip, p in procs:
+        try:
+            rc = p.wait(timeout=600)
+        except subprocess.TimeoutExpired:
+            p.kill()
+            logger.warning(f"Checkpoint rsync to {ip} timed out after 10 min")
+            continue
+        if rc != 0:
+            err = (p.stderr.read() or b"").decode("utf-8", errors="replace")[:200]
+            logger.warning(f"Checkpoint rsync to {ip} failed (rc={rc}): {err}")
+            continue
+
+        prune_shell = (
+            f"cd {ckpt_dir} && ls -1 step_*.pt 2>/dev/null | sort "
+            f"| head -n -{keep_last} | xargs -r rm -f"
+        )
+        prune_cmd = ["ssh", *ssh_opts, f"alexm@{ip}", prune_shell]
+        try:
+            pr = subprocess.run(
+                prune_cmd, timeout=60, check=False,
+                stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
+            )
+            if pr.returncode != 0:
+                err = (pr.stderr or b"").decode("utf-8", errors="replace")[:200]
+                logger.warning(f"Checkpoint prune on {ip} failed (rc={pr.returncode}): {err}")
+            else:
+                logger.info(f"Checkpoint distributed and pruned on {ip} (keep_last={keep_last})")
+        except subprocess.TimeoutExpired:
+            logger.warning(f"Checkpoint prune on {ip} timed out after 60s")
+
 
 def load_checkpoint(model, optimizer, path: str, ddp: bool) -> int:
     """
@@ -371,18 +449,30 @@ def main():
     # ------------------------------------------------------------------
     # Hyperparameters
     # ------------------------------------------------------------------
-    seq_len = 2048
-    micro_batch = 4
-    target_tokens = 30_000_000_000
-    grad_accum = max(1, 256 // (world_size * micro_batch))
+    seq_len = 1024
+    # micro_batch=1, grad_accum=4 — reverted from micro_batch=2/grad_accum=2
+    # which OOM-killed rank 0 at restart (2x activation mem + FSDP buffers +
+    # MoE expert unshards pushed past 128 GB unified). The micro_batch=1
+    # config is known stable from 1150 prior steps.
+    micro_batch = 1
+    # 100M-token target (was 30B) → total_steps=6103, realistic session-scale run.
+    # Resume from existing checkpoint_3b_loops4_fast/step_00*.pt is automatic.
+    # Keeping warmup_steps=2000 unchanged so the LR trajectory is continuous
+    # through the restart — no LR shock on resume.
+    target_tokens = 100_000_000
+    grad_accum = 4
     global_batch_tok = world_size * micro_batch * grad_accum * seq_len
     total_steps = target_tokens // global_batch_tok
     warmup_steps = 2000
     lr = 3e-4
     wd = 0.1
-    log_every = 10
-    ckpt_every = 1000
-    ckpt_dir = "checkpoints"
+    log_every = 5
+    # ckpt_every=100 (was 50): each save takes ~5 min on rank 0 and briefly
+    # swaps that node — cutting save frequency in half saves ~2.5 min per
+    # 100 steps (~10% of wallclock) and halves the rank-0 swap thrashing.
+    # Cost: up to 100 steps (~20 min) of re-work on crash. Fine at this scale.
+    ckpt_every = 100
+    ckpt_dir = "checkpoints_3b_loops4_fast"
     dataset_subset = "sample-10BT"  # → sample-100BT or "default" for full run
 
     if master:
@@ -397,6 +487,7 @@ def main():
     cfg = mythos_3b()
     cfg.vocab_size = vocab_size
     cfg.max_seq_len = seq_len
+    cfg.max_loop_iters = 4  # train at 4 loops; inference can extrapolate to 8/16/32+
 
     bf16_ok = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
     amp_dtype = torch.bfloat16 if bf16_ok else torch.float16
@@ -411,9 +502,13 @@ def main():
             cast_forward_inputs=True,
         )
         wrap_policy = ModuleWrapPolicy({TransformerBlock, RecurrentBlock})
+        # SHARD_GRAD_OP: params stay replicated per rank (6 GB bf16 each),
+        # but grads + optim state are sharded. Skips the forward all-gather.
+        # We have ~70 GB headroom/rank on 128 GB unified memory, so the full
+        # param replication fits easily.
         model = FSDP(
             model,
-            sharding_strategy=ShardingStrategy.FULL_SHARD,
+            sharding_strategy=ShardingStrategy.SHARD_GRAD_OP,
             mixed_precision=mp_policy,
             auto_wrap_policy=wrap_policy,
             device_id=local_rank,
@@ -460,7 +555,9 @@ def main():
     # Dataset + DataLoader
     # ------------------------------------------------------------------
     dataset = FineWebEduDataset(encoding, seq_len, dataset_subset, rank, world_size)
-    loader = DataLoader(dataset, batch_size=micro_batch, num_workers=4, pin_memory=True)
+    # num_workers=1 (was 4): each worker holds a copy of the 200k-vocab tokenizer
+    # and buffered text; at 3B FSDP + 8 loops we hit OOM with 4 workers/rank.
+    loader = DataLoader(dataset, batch_size=micro_batch, num_workers=1, pin_memory=True)
 
     # ------------------------------------------------------------------
     # Training loop

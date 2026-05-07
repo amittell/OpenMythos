@@ -1,0 +1,91 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_act_v2/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    32,
+    64,
+    128,
+    256
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 32,
+      "loss": 3.8872963190078735,
+      "ppl": 48.77882569515148,
+      "tokens_measured": 65536,
+      "elapsed_s": 11.1,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.8872963190078735,
+      "ppl": 48.77882569515148,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.79,
+      "act": "on"
+    },
+    {
+      "n_loops": 128,
+      "loss": 3.8872963190078735,
+      "ppl": 48.77882569515148,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.8,
+      "act": "on"
+    },
+    {
+      "n_loops": 256,
+      "loss": 3.8872963190078735,
+      "ppl": 48.77882569515148,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.84,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.740236982703209,
+      "ppl": 42.10796784272769,
+      "tokens_measured": 65536,
+      "elapsed_s": 151.96,
+      "act": "off"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.7401296496391296,
+      "ppl": 42.103448508058335,
+      "tokens_measured": 65536,
+      "elapsed_s": 283.09,
+      "act": "off"
+    },
+    {
+      "n_loops": 128,
+      "loss": 3.740218684077263,
+      "ppl": 42.10719733182445,
+      "tokens_measured": 65536,
+      "elapsed_s": 485.33,
+      "act": "off"
+    },
+    {
+      "n_loops": 256,
+      "loss": 3.7401476055383682,
+      "ppl": 42.10420452012476,
+      "tokens_measured": 65536,
+      "elapsed_s": 1080.56,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [],
+  "results_tinystories": [],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "32": "The recurrent-depth transformer architecture, and its associated structures are more complex than the complex, and are both visually powerful and versatile. The architecture and the architecture are also very different. It is also very important to know the architecture.",
+    "64": "The recurrent-depth transformer architecture, and its associated structures are more complex than the complex, and are both visually powerful and versatile. The architecture and the architecture are also very different. It is also very important to know the architecture.",
+    "128": "The recurrent-depth transformer architecture, and its associated structures are more complex than the complex, and are both visually powerful and versatile. The architecture and the architecture are also very different. It is also very important to know the architecture.",
+    "256": "The recurrent-depth transformer architecture, and its associated structures are more complex than the complex, and are both visually powerful and versatile. The architecture and the architecture are also very different. It is also very important to know the architecture."
+  }
+}

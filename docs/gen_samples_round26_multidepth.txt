@@ -1,0 +1,255 @@
+# Multi-depth generation samples (step 3051, depths=[2, 6, 12, 24])
+
+
+## Sample 1
+
+Prompt: `Once upon a time in a small village nestled between two mountains,`
+
+
+**K=2:** Once upon a time in a small village nestled between two mountains, is the oldest surviving church built by Thomas A. F. Moore. It is thought that it was at the time of the founding in 1754, when the people of the island had an area called Waddell. It was named by James G. Searles who arrived in the city in the 1730s. There is the record of the church is discovered on the site of the ancient church in the village of Fent St. Ebert's Church.
+The church was built
+
+
+**K=6:** Once upon a time in a small village nestled between two mountains, is the oldest surviving church built by the A.D. 70s. It is regarded as the earliest church in northern Italy and in the early 21st century it was built by Father B.A. Doolittle. It was rebuilt by the A.D. 70s.
+Around the same time the church was restored and rebuilt by the new church. The church is a place of worship for the poor and the needy living in them. The church is a Catholic church with a 15 meter
+
+
+**K=12:** Once upon a time in a small village nestled between two mountains, is the oldest surviving church built by the A.D. 70s. It is regarded as the earliest church in northern Italy and in the early 21st century it was built by Father B.A. Doolittle. It was rebuilt by the A.D. 70s.
+Around the same time the church was restored and rebuilt by the new church. The church is a place of worship for the poor and the needy living in them. The church is a Catholic church with a 15 meter
+
+
+**K=24:** Once upon a time in a small village nestled between two mountains, is the oldest surviving church built by the A.D. 70s. It is regarded as the earliest church in northern Italy and in the early 21st century it was built by Father B.A. Doolittle. It was rebuilt by the A.D. 70s.
+Around the same time the church was restored and rebuilt by the new church. The church is a place of worship for the poor and the needy living in them. The church is a Catholic church with a 15 meter
+
+
+## Sample 2
+
+Prompt: `The key difference between mitosis and meiosis is that`
+
+
+**K=2:** The key difference between mitosis and meiosis is that the cells that make up the chromosomes in the ovaries have a different shape.
+The primary difference is that many cells in the ovaries are derived from the ovaries. When the ovaries are replaced, they are replaced with the original structure of the ovaries by a process called follicular cell division. The cells that form the cells and are used to make eggs will be replaced by the eggs that are replaced by the ovaries.
+The pituitary gland is a tiny gland in the ovaries that
+
+
+**K=6:** The key difference between mitosis and meiosis is that the mitral root is a very ancient one, and the two different tissues are associated with a threefold difference. The two main divisions of the mitral root are the anterior and posterior ends of the mitral root, and the posterior ends of the mitral root are the posterior ends of the mitral root, and the anterior ends of the mitral root. The anterior ends of the mitral root are anterior (in a threefold difference) and posterior (in a fivefold difference) respectively
+
+
+**K=12:** The key difference between mitosis and meiosis is that the mitral root is a very ancient one, and the two different tissues are associated with a threefold difference. The two main divisions of the mitral root are the anterior and posterior ends of the mitral root, and the posterior ends of the mitral root are the posterior ends of the mitral root, and the anterior ends of the mitral root. The anterior ends of the mitral root are anterior (in a threefold difference) and posterior (in a fivefold difference) respectively
+
+
+**K=24:** The key difference between mitosis and meiosis is that the mitral root is a very ancient one, and the two different tissues are associated with a threefold difference. The two main divisions of the mitral root are the anterior and posterior ends of the mitral root, and the posterior ends of the mitral root are the posterior ends of the mitral root, and the anterior ends of the mitral root. The anterior ends of the mitral root are anterior (in a threefold difference) and posterior (in a fivefold difference) respectively
+
+
+## Sample 3
+
+Prompt: `To compute the area of a triangle, you`
+
+
+**K=2:** To compute the area of a triangle, you can calculate the area of the circle using the equation
+The equation of the perimeter of the circle must be as
+The height (in degrees) of a circle is determined by dividing the distance from the center of the circle with the length of
+the circle and the radius of the circle.
+The radius of the circle is the radius of the circle.
+is the radius of the circle, the radius of the circle,
+the radius, the radius of the circle, or the distance from the center of the
+
+
+**K=6:** To compute the area of a triangle, you can calculate the area of the circle using the equation
+The equation of the square of the area of a triangle is the sum of the lengths of the circle or any other triangle of any size. The equation of the square of the circle is
+Which is the area of a square of the circles?
+The area of a square is given by
+The area of the square is given by the square of the squares of
+the triangle. The area of a square is given by
+the area of the
+
+
+**K=12:** To compute the area of a triangle, you can calculate the area of the circle using the equation
+The equation of the square of the area of a triangle is the sum of the lengths of the circle or any other triangle of any size. The equation of the square of the circle is
+Which is the area of a square of the circles?
+The area of a square is given by
+The area of the square is given by the square of the squares of
+the triangle. The area of a square is given by
+the area of the
+
+
+**K=24:** To compute the area of a triangle, you can calculate the area of the circle using the equation
+The equation of the square of the area of a triangle is the sum of the lengths of the circle or any other triangle of any size. The equation of the square of the circle is
+Which is the area of a square of the circles?
+The area of a square is given by
+The area of the square is given by the square of the squares of
+the triangle. The area of a square is given by
+the area of the
+
+
+## Sample 4
+
+Prompt: `Q: What is the capital of France?
+A:`
+
+
+**K=2:** Q: What is the capital of France?
+A: First of all, the country is a country in which the people of France and France are free in the country of the same. This fact is also the country of the other countries. This has been done in France, Italy, Spain, Belgium, Italy and Spain. The people of France and France are in the same country of their country. The government of France, in the north, has been an important centre of their national culture. In France, the people have their own culture, which is
+
+
+**K=6:** Q: What is the capital of France?
+A: First of all, the city was built on the River Plate.
+A: It is a single block of land in the middle of the river. It is surrounded by a large part of forest.
+B: The area around it is about half of the area occupied by the River Plate. It has a total surface area of about 600 sq km.
+C: It is a one of the most densely populated cities in France.
+D: It was built on a high plateau as well as a series of
+
+
+**K=12:** Q: What is the capital of France?
+A: First of all, the city was built on the River Plate.
+A: It is a single block of land in the middle of the river. It is surrounded by a large part of forest.
+B: The area around it is about half of the area occupied by the River Plate. It has a total surface area of about 600 sq km.
+C: It is a one of the most densely populated cities in France.
+D: It was built on a high plateau as well as a series of
+
+
+**K=24:** Q: What is the capital of France?
+A: First of all, the city was built on the River Plate.
+A: It is a single block of land in the middle of the river. It is surrounded by a large part of forest.
+B: The area around it is about half of the area occupied by the River Plate. It has a total surface area of about 600 sq km.
+C: It is a one of the most densely populated cities in France.
+D: It was built on a high plateau as well as a series of
+
+
+## Sample 5
+
+Prompt: `In Python, a list comprehension is written as`
+
+
+**K=2:** In Python, a list comprehension is written as
+- (i) the function defined by the
+- b) the expression
+- b) a
+- b) an expression
+The above expression has no effect on any
+of the functions discussed in the
+- d) b) c) a
+d) a
+The above example also gives a more general use of
+x) the expression
+c) the expression
+d) the expression
+d) the expression
+d) the expression
+d) the expression
+d)
+
+
+**K=6:** In Python, a list comprehension is written as a non-technical definition
+- A term used to describe the quality of a
+comprehending a term or expression and an expression used to describe
+the behavior or action that is being taken to make a decision
+- The act of making a decision
+- The act of committing a crime
+- The act of committing an offence
+- The act of committing a crime
+- The act of committing an offence
+- The act of committing a crime
+- The act of committing a crime
+
+
+
+**K=12:** In Python, a list comprehension is written as a non-technical definition
+- A term used to describe the quality of a
+comprehending a term or expression and an expression used to describe
+the behavior or action that is being taken to make a decision
+- The act of making a decision
+- The act of committing a crime
+- The act of committing an offence
+- The act of committing a crime
+- The act of committing an offence
+- The act of committing a crime
+- The act of committing a crime
+
+
+
+**K=24:** In Python, a list comprehension is written as a non-technical definition
+- A term used to describe the quality of a
+comprehending a term or expression and an expression used to describe
+the behavior or action that is being taken to make a decision
+- The act of making a decision
+- The act of committing a crime
+- The act of committing an offence
+- The act of committing a crime
+- The act of committing an offence
+- The act of committing a crime
+- The act of committing a crime
+
+
+
+## Sample 6
+
+Prompt: `The Roman Empire fell primarily because`
+
+
+**K=2:** The Roman Empire fell primarily because of a lack of communication between the inhabitants of the Mediterranean. The Romans took the opportunity to visit the Roman settlements in what is now France, but the Romans were not able to conquer the Romans. They are still trying to get rid of the Roman invaders and to bring about a change in the government. The Romans have been fighting wars all over the world, in the form of campaigns from the Romans, in the form of campaigns which had allowed the Romans to invade Rome and the Romans. A number
+
+
+**K=6:** The Roman Empire fell primarily because of a lack of political power.
+By the 4th century AD, the Romans were struggling for national independence and wanted to rule the country according to the 4th century. As a result, there was a big difference between the Roman Empire and the Roman Empire. From that time, the Romans and the Romans have been involved in the politics of the Roman Empire, but they were not involved in politics in the first place.
+By the 1st century AD, the Roman Empire had already begun
+
+
+**K=12:** The Roman Empire fell primarily because of a lack of political power.
+By the 4th century AD, the Romans were struggling for national independence and wanted to rule the country according to the 4th century. As a result, there was a big difference between the Roman Empire and the Roman Empire. From that time, the Romans and the Romans have been involved in the politics of the Roman Empire, but they were not involved in politics in the first place.
+By the 1st century AD, the Roman Empire had already begun
+
+
+**K=24:** The Roman Empire fell primarily because of a lack of political power.
+By the 4th century AD, the Romans were struggling for national independence and wanted to rule the country according to the 4th century. As a result, there was a big difference between the Roman Empire and the Roman Empire. From that time, the Romans and the Romans have been involved in the politics of the Roman Empire, but they were not involved in politics in the first place.
+By the 1st century AD, the Roman Empire had already begun
+
+
+## Sample 7
+
+Prompt: `Dear Claude,
+
+I wanted to write to you because`
+
+
+**K=2:** Dear Claude,
+
+I wanted to write to you because of the fact I am not a fan of books. I would argue that all books are just plain text and not all literature and magazines. All the books should have a few books that are not written by the author. There are many books that are written in English and I find some that are very difficult. I think that the books are too long. They are not very difficult.
+One of the most important examples of the way that books are written is the introduction. From here to there, the
+
+
+**K=6:** Dear Claude,
+
+I wanted to write to you because of the fact that if you want to find a really good solution for your business, you are not going to get a lot of benefits from you. I have no choice but to know how to do it and how to find out what you need to do to make it work for you. I want to talk to someone who is very interested in helping out. I want to be able to do this for you. I know the best way to find the help that you get. I want one of
+
+
+**K=12:** Dear Claude,
+
+I wanted to write to you because of the fact that if you want to find a really good solution for your business, you are not going to get a lot of benefits from you. I have no choice but to know how to do it and how to find out what you need to do to make it work for you. I want to talk to someone who is very interested in helping out. I want to be able to do this for you. I know the best way to find the help that you get. I want one of
+
+
+**K=24:** Dear Claude,
+
+I wanted to write to you because of the fact that if you want to find a really good solution for your business, you are not going to get a lot of benefits from you. I have no choice but to know how to do it and how to find out what you need to do to make it work for you. I want to talk to someone who is very interested in helping out. I want to be able to do this for you. I know the best way to find the help that you get. I want one of
+
+
+## Sample 8
+
+Prompt: `Photosynthesis is the process by which plants`
+
+
+**K=2:** Photosynthesis is the process by which plants use the light and energy to produce energy.
+Our plant needs the right amount of sunlight and oxygen to function at its optimal time.
+This is because plants do not rely on oxygen to make their food and oxygen to make themselves at the right temperature. These light and water are necessary for photosynthesis, oxygen supply, and the generation and processing of oxygen. This process helps in converting oxygen into energy but also allows the oxygen to run.
+This process is related to the process known as photosynthesis.
+It is
+
+
+**K=6:** Photosynthesis is the process by which plants grow. In this process, seed plants are used to create the seeds of a new plant’s flower cycle. Each seed plant is a small plant, and in the process, a portion is used to grow the seeds of the new plant. This section of the cycle is a little more complicated, and I would say that I have already seen that this plant does not flower as a new plant but instead produces flower seeds of the same variety that I am using to produce the new plant. The seed plant
+
+
+**K=12:** Photosynthesis is the process by which plants grow. In this process, seed plants are used to create the seeds of a new plant’s flower cycle. Each seed plant is a small plant, and in the process, a portion is used to grow the seeds of the new plant. This section of the cycle is a little more complicated, and I would say that I have already seen that this plant does not flower as a new plant but instead produces flower seeds of the same variety that I am using to produce the new plant. The seed plant
+
+
+**K=24:** Photosynthesis is the process by which plants grow. In this process, seed plants are used to create the seeds of a new plant’s flower cycle. Each seed plant is a small plant, and in the process, a portion is used to grow the seeds of the new plant. This section of the cycle is a little more complicated, and I would say that I have already seen that this plant does not flower as a new plant but instead produces flower seeds of the same variety that I am using to produce the new plant. The seed plant
+

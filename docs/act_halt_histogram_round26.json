@@ -1,0 +1,118 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_pondernet_round26/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "trained_max_loop_iters": 12,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results": {
+    "4": {
+      "histogram": [
+        0,
+        0,
+        0,
+        0,
+        65536
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 4.0,
+      "median_halt_step": 4,
+      "elapsed_s": 21.5,
+      "max_budget": 4,
+      "frac_using_full_budget": 1.0
+    },
+    "8": {
+      "histogram": [
+        0,
+        0,
+        0,
+        0,
+        15,
+        46618,
+        18893,
+        10,
+        0
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 5.288360595703125,
+      "median_halt_step": 5,
+      "elapsed_s": 43.79,
+      "max_budget": 8,
+      "frac_using_full_budget": 0.0
+    },
+    "16": {
+      "histogram": [
+        0,
+        0,
+        0,
+        0,
+        15,
+        46618,
+        18893,
+        10,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 5.288360595703125,
+      "median_halt_step": 5,
+      "elapsed_s": 85.58,
+      "max_budget": 16,
+      "frac_using_full_budget": 0.0
+    },
+    "32": {
+      "histogram": [
+        0,
+        0,
+        0,
+        0,
+        15,
+        46618,
+        18893,
+        10,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 5.288360595703125,
+      "median_halt_step": 5,
+      "elapsed_s": 150.81,
+      "max_budget": 32,
+      "frac_using_full_budget": 0.0
+    }
+  }
+}
