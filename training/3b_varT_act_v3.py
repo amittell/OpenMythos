@@ -77,6 +77,14 @@ from open_mythos.main import TransformerBlock, RecurrentBlock, loop_index_embedd
 from open_mythos.variants import mythos_3b
 from open_mythos.tokenizer import MythosTokenizer
 
+# Federated training hook (no-op unless FED_SYNC_DIR is set)
+import sys as _sys
+_sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "federation"))
+try:
+    from federation import sync_hook as _fed_sync_hook  # type: ignore
+except ImportError:
+    import sync_hook as _fed_sync_hook  # type: ignore
+
 
 def recurrent_forward_no_act(
     self: RecurrentBlock,
@@ -654,6 +662,11 @@ def main():
     else:
         rank = local_rank = 0
         world_size = 1
+
+    # Configure federated sync if FED_SYNC_DIR is set in env. No-op otherwise.
+    if _fed_sync_hook.configure():
+        logger.info(f"[fed] federated training enabled (role={os.environ.get('FED_ROLE')}, "
+                    f"interval={os.environ.get('FED_SYNC_INTERVAL_SEC', '1800')}s)")
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
     master = rank == 0
@@ -955,6 +968,11 @@ def main():
             save_checkpoint(
                 model, optimizer, step, cfg, vocab_size, ckpt_dir, ddp, master
             )
+
+        # Federated sync hook (no-op unless FED_SYNC_DIR is set)
+        _fed_sync_hook.add_tokens(global_batch_tok)
+        _fed_sync_hook.update_loss_ema(loss_accum)
+        _fed_sync_hook.maybe_sync(model, step)
 
     # Final checkpoint — total_steps may not be divisible by ckpt_every, so
     # without this the tail of the run is lost if the schedule doesn't align.
