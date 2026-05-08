@@ -56,9 +56,35 @@ require FED_BOOTSTRAP_CKPT_RTX
 require FED_TARGET_TOKENS_TOTAL
 
 FRESH=0
+SKIP_VALIDATE=0
 for arg in "$@"; do
     [ "$arg" = "--fresh" ] && FRESH=1
+    [ "$arg" = "--skip-validate" ] && SKIP_VALIDATE=1
 done
+
+# ----------------------------------------------------------------------------
+# Mandatory: run validate.sh before doing anything else.
+# Anyone bypassing this should pass --skip-validate AND understand what they
+# are skipping (they will not be saved by this script if validate would have
+# caught a problem).
+# ----------------------------------------------------------------------------
+
+if [ "$SKIP_VALIDATE" -eq 0 ]; then
+    log "running validate.sh as precondition (use --skip-validate to bypass; not recommended)"
+    if ! FED_DIR="$FED_DIR" \
+         FED_RTX_HOST="$FED_RTX_HOST" \
+         FED_RTX_DIR="$FED_RTX_DIR" \
+         FED_BOOTSTRAP_CKPT_CLUSTER="$FED_BOOTSTRAP_CKPT_CLUSTER" \
+         FED_BOOTSTRAP_CKPT_RTX="$FED_BOOTSTRAP_CKPT_RTX" \
+         bash "$REPO/training/federation/validate.sh" 2>&1 | tee -a "$LOG_DIR/launch.log"; then
+        log "ERROR: validate.sh failed; refusing to launch federation"
+        log "       fix the failures above, or pass --skip-validate to override (NOT recommended)"
+        exit 1
+    fi
+    log "validate.sh PASSED"
+else
+    log "WARN: --skip-validate passed; bypassing precondition checks"
+fi
 
 log "=== federated training launch ==="
 log "fed_dir (cluster)    = $FED_DIR"
