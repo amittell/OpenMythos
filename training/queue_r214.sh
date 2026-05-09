@@ -49,11 +49,14 @@ nohup bash "$REPO/training/auto_eval_round214.sh" \
 disown $!
 log "auto_eval_round214 watcher PID=$!"
 
-log "firing 4-node round-2.14 training (T_FIXED=16 from r2 collapsed)"
+log "firing r2.14 training under retry_cluster_training supervisor"
+log "(supervisor handles NCCL hangs by killing+relaunching on >7min stall)"
 cd "$REPO"
-SCRIPT=training/3b_varT_act_v3.py PORT=29514 \
-    EXTRA_ENV="CKPT_DIR=checkpoints_3b_varT_act_v3_round214_T16 BOOTSTRAP_CKPT=checkpoints_3b_varT_fast/step_0012207_full.pt T_FIXED=16" \
-    bash training/launch_3b.sh
-log "launch_3b.sh returned"
+ROUND_NAME=r214 \
+SCRIPT=training/3b_varT_act_v3.py \
+PORT=29514 \
+EXTRA_ENV="CKPT_DIR=checkpoints_3b_varT_act_v3_round214_T16 BOOTSTRAP_CKPT=checkpoints_3b_varT_fast/step_0012207_full.pt T_FIXED=16" \
+    bash training/retry_cluster_training.sh
+log "retry_cluster_training (r214) returned"
 
 log "queue_r214 done"

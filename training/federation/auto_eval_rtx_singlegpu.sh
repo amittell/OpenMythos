@@ -59,15 +59,21 @@ if [ -z "$LATEST" ]; then
 fi
 log "latest ckpt: $LATEST"
 
-# For single-GPU FSDP, the rank0 shard is the full state when world_size=1.
-# But the training script uses FSDP with NO_SHARD strategy, so we still
-# need to convert to a "_full.pt" naming convention that eval scripts expect.
-# Easy: just symlink.
+# Single-GPU FSDP saves ShardedTensor objects in the rank0 shard, which
+# downstream eval scripts cannot load via torch.load() without an active
+# process group. Run the single-rank consolidator to materialize the
+# tensors and emit a plain dict at step_${STEP}_full.pt.
 STEP=$(basename "$LATEST" | sed -e 's/^step_//' -e 's/_rank0\.pt$//')
 FULL_PATH=$REPO/$CKPT_DIR/step_${STEP}_full.pt
-if [ ! -f "$FULL_PATH" ]; then
-    ln -sf "step_${STEP}_rank0.pt" "$FULL_PATH"
-    log "symlinked $FULL_PATH -> step_${STEP}_rank0.pt"
+if [ ! -f "$FULL_PATH" ] || [ -L "$FULL_PATH" ]; then
+    rm -f "$FULL_PATH"  # remove any stale symlink from earlier broken version
+    log "consolidating sharded -> full ckpt for ${ROUND}"
+    "$PY" "$REPO/training/consolidate_single_rank.py" "$LATEST" "$FULL_PATH" 2>&1 | tee -a "$LOG"
+    if [ ! -s "$FULL_PATH" ]; then
+        log "ERROR: consolidator failed to produce $FULL_PATH"
+        exit 1
+    fi
+    log "consolidated: $FULL_PATH ($(stat -c %s "$FULL_PATH" | numfmt --to=iec))"
 fi
 
 cd "$REPO"
