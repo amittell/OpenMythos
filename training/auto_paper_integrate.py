@@ -32,16 +32,24 @@ INSERT_BEFORE_HEADER = "## 8. Discussion"
 REMOTE_HOSTS = {
     26: "alexm@kebab-spark.lan",
     27: "alexm@kebab-spark.lan",
-    28: "alex@mini-beast.lan",
+    28: "alexm@kebab-rtx6000.lan",
     29: "alexm@kebab-spark.lan",
     210: "alexm@kebab-spark.lan",
+    211: "alexm@kebab-spark.lan",
+    212: "alexm@kebab-spark.lan",
+    213: "alexm@kebab-spark.lan",
+    214: "alexm@kebab-spark.lan",
 }
 REMOTE_DOCS = {
     26: "/home/alexm/OpenMythos/docs",
     27: "/home/alexm/OpenMythos/docs",
-    28: "/home/alex/OpenMythos/docs",
+    28: "/home/alexm/OpenMythos/docs",
     29: "/home/alexm/OpenMythos/docs",
     210: "/home/alexm/OpenMythos/docs",
+    211: "/home/alexm/OpenMythos/docs",
+    212: "/home/alexm/OpenMythos/docs",
+    213: "/home/alexm/OpenMythos/docs",
+    214: "/home/alexm/OpenMythos/docs",
 }
 
 ROUND_META = {
@@ -105,8 +113,53 @@ ROUND_META = {
             "PonderNet-KL training (`λ_KL = 1.0`, `λ_p = 0.2`, `REINIT_HEAD = 0` to preserve "
             "the trained halting head). Total joint training tokens reach 150M. The question is "
             "whether CE loss and halt-head quality continue to improve past 100M joint tokens, "
-            "or whether the joint equilibrium has saturated. This is the last point on the "
-            "joint-token scaling curve for the paper's §7.16 analysis."
+            "or whether the joint equilibrium has saturated."
+        ),
+    },
+    211: {
+        "section": "### 7.17 Compute-scaling: T_FIXED = 2 (round 2.11)",
+        "compare_round": 29,
+        "compare_label": "round 2.9 (T = 1)",
+        "blurb": (
+            "Round 2.11 trains with `T_FIXED = 2` (one extra recurrent iteration) from the "
+            "round-2 collapsed checkpoint, on a 50M-token budget identical to round 2.9 "
+            "(`T = 1`). Together with rounds 2.5 (T = 8), 2.9 (T = 1), 2.12 (T = 4), and 2.14 "
+            "(T = 16), this fills the compute scaling curve to test whether deeper recurrence "
+            "during training continues to help or saturates."
+        ),
+    },
+    212: {
+        "section": "### 7.18 Compute-scaling: T_FIXED = 4 (round 2.12)",
+        "compare_round": 211,
+        "compare_label": "round 2.11 (T = 2)",
+        "blurb": (
+            "Round 2.12 trains with `T_FIXED = 4` from the round-2 collapsed checkpoint, "
+            "on a 50M-token budget. The third point on the compute-scaling curve "
+            "(T = 1, 2, 4, 8, 16). Tests whether the marginal benefit of additional recurrent "
+            "iterations during training continues past T = 2 or shows diminishing returns."
+        ),
+    },
+    213: {
+        "section": "### 7.19 Joint training to 200M tokens (round 2.13)",
+        "compare_round": 210,
+        "compare_label": "round 2.10 (150M joint tokens)",
+        "blurb": (
+            "Round 2.13 continues round 2.10 for an additional 50M tokens of joint "
+            "PonderNet-KL training, bringing total joint-training tokens to 200M. This is "
+            "the fourth and final point on the joint-token scaling curve "
+            "(50M r2.3, 100M r2.6, 150M r2.10, 200M r2.13). Tests whether joint training "
+            "continues to improve past 150M tokens or fully saturates."
+        ),
+    },
+    214: {
+        "section": "### 7.20 Compute-scaling: T_FIXED = 16 (round 2.14)",
+        "compare_round": 25,
+        "compare_label": "round 2.5 (T = 8)",
+        "blurb": (
+            "Round 2.14 extends the compute-scaling curve to `T_FIXED = 16`, twice the depth "
+            "of round 2.5's `T = 8`. Tests whether deeper recurrence during training "
+            "continues to help past T = 8 or shows diminishing returns at the high end of "
+            "the curve."
         ),
     },
 }
@@ -330,14 +383,16 @@ def integrate_round(round_n: int) -> bool:
 
 
 def main() -> None:
+    all_rounds = sorted(ROUND_META.keys())
     parser = argparse.ArgumentParser()
-    parser.add_argument("--round", type=int, choices=[26, 27, 28, 29])
+    parser.add_argument("--round", type=int, choices=all_rounds)
     parser.add_argument("--scan", action="store_true",
-                        help="try all of 26/27/28/29; insert any that are ready")
+                        help=f"try all known rounds ({', '.join(map(str, all_rounds))}); insert any that are ready")
     args = parser.parse_args()
 
     if args.scan or args.round is None:
-        for r in (26, 27, 28, 29):
+        for r in all_rounds:
+            print(f"--- round {r} ---")
             integrate_round(r)
     else:
         integrate_round(args.round)
