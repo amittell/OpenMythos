@@ -522,6 +522,80 @@ Round 2.7 retrains PonderNet-KL joint training from the round-2 collapsed checkp
 
 **[DRAFT verdict — polish before submission.]** Numbers above were auto-extracted from `docs/depth_extrap_round27.json`, `docs/act_halt_diagnostic_round27.json`, and `docs/act_halt_histogram_round27.json`. The auto-generated paper fragment is at `docs/paper/round27_results.md` for reference.
 
+### 7.15 Depth-graded capability probes (ListOps and GSM8K full generation)
+
+Every accuracy probe we have run on this model so far has been depth-flat: synthetic_depth's five-task suite (§8.4 footnote), and the multiple-choice log-likelihood evals on ARC-Easy, ARC-Challenge, and HellaSwag, all yield K-invariant accuracy at every round. Two of these probes are arguably ill-suited to recurrent-depth scaling: synthetic_depth's tasks are mostly single-step, and multiple-choice log-likelihood scoring is dominated by argmax stability rather than per-token logit shifts. We add two further probes designed to be more directly responsive to additional iteration: ListOps (Nangia & Bowman 2018) where the tree-nesting depth maps onto the number of reduction steps required, and GSM8K with full chain-of-thought generation, where extra K could in principle let the model construct more accurate intermediate steps.
+
+**ListOps accuracy by K and tree depth (synthetic, 100 problems per (K, tree-depth)):**
+
+*Round 2.5:*
+| K  | d3 | d5 | d7 | d10 | overall |
+|----|------|------|------|------|---------|
+|  4 | 0.070 | 0.110 | 0.170 | 0.124 | 0.118   |
+|  8 | 0.080 | 0.120 | 0.170 | 0.113 | 0.121   |
+| 16 | 0.080 | 0.110 | 0.170 | 0.113 | 0.118   |
+| 32 | 0.070 | 0.120 | 0.170 | 0.144 | 0.126   |
+
+*Round 2.6:*
+| K  | d3 | d5 | d7 | d10 | overall |
+|----|------|------|------|------|---------|
+|  4 | 0.090 | 0.080 | 0.070 | 0.082 | 0.081   |
+|  8 | 0.100 | 0.100 | 0.100 | 0.072 | 0.093   |
+| 16 | 0.090 | 0.120 | 0.090 | 0.072 | 0.093   |
+| 32 | 0.100 | 0.110 | 0.090 | 0.052 | 0.088   |
+
+*Round 2.7:*
+| K  | d3 | d5 | d7 | d10 | overall |
+|----|------|------|------|------|---------|
+|  4 | 0.110 | 0.130 | 0.080 | 0.124 | 0.111   |
+|  8 | 0.090 | 0.120 | 0.080 | 0.113 | 0.101   |
+| 16 | 0.100 | 0.120 | 0.080 | 0.124 | 0.106   |
+| 32 | 0.100 | 0.110 | 0.100 | 0.134 | 0.111   |
+
+
+**GSM8K full-CoT generation accuracy by K (4-shot prompting, exact-match on extracted final answer):**
+
+| K  | r2.3 | r2.4 | r2.5 |
+|----|------|------|------|
+|  4 | 0.020 | 0.020 | 0.040 |
+|  8 | 0.030 | 0.030 | 0.040 |
+| 16 | 0.030 | 0.030 | 0.040 |
+| 32 | 0.030 | 0.030 | 0.040 |
+
+**[DRAFT verdict — polish before submission.]** Numbers above were auto-extracted from `docs/eval_listops_round{23,24,25}.json` and `docs/eval_gsm8k_generation_round{23,24,25}.json`. Whether either probe shows monotone K-improvement or remains depth-flat determines the §8.4 framing.
+### 7.14 No-recurrence baseline at matched compute (round 2.9)
+
+Round 2.9 isolates the contribution of the recurrent loop itself. We restart training from the round-2 collapsed checkpoint with `T_FIXED = 1`: the recurrent block is applied exactly once per token, no iteration. All other settings match rounds 2.4 and 2.5 (50M-token continuation, same data, same optimiser). Effective depth is `prelude (2) + recurrent (1) + coda (2) = 5` transformer blocks. Note: this is not a pure vanilla transformer baseline because the architecture retains the LTI injection and prelude/coda split; the comparison is specifically against test-time-compute scaling at matched parameter count and matched training tokens.
+
+**FineWeb-Edu held-out cross-entropy at K iterations:**
+
+| K  | r2.9 ACT-off | round 2.5 (fixed T = 8) ACT-off | Δ      | r2 ACT-off |
+|----|--------------|---------------------|--------|------------|
+|  4 | 3.5896       | 3.4802              | +0.1094 | 4.2455     |
+|  8 | 3.5953       | 3.4781              | +0.1172 | 4.2522     |
+| 16 | 3.5959       | 3.4780              | +0.1180 | 4.2525     |
+| 32 | 3.5957       | 3.4778              | +0.1180 | 4.2524     |
+
+**Per-iteration halting probability at K = 4** (threshold = 0.99):
+
+| iter | p_mean | p_median | p_min  | p_max  | cum_p  | %≥thr |
+|------|--------|----------|--------|--------|--------|-------|
+|    1 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.000 |
+|    2 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.000 |
+|    3 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.000 |
+|    4 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.000 |
+
+**Halt-step histogram per K:**
+
+| K  | mean halt step | median | tokens at iter 1 | full budget used |
+|----|----------------|--------|------------------|------------------|
+|  4 | 1.00           |      1 | 65,536 / 65,536    | 0.000            |
+|  8 | 1.00           |      1 | 65,536 / 65,536    | 0.000            |
+| 16 | 1.00           |      1 | 65,536 / 65,536    | 0.000            |
+| 32 | 1.00           |      1 | 65,536 / 65,536    | 0.000            |
+
+**[DRAFT verdict — polish before submission.]** Numbers above were auto-extracted from `docs/depth_extrap_round29.json`, `docs/act_halt_diagnostic_round29.json`, and `docs/act_halt_histogram_round29.json`. The auto-generated paper fragment is at `docs/paper/round29_results.md` for reference.
+
 ## 8. Discussion
 
 ### 8.1 The gradient pathway
