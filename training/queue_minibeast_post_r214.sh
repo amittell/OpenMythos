@@ -41,13 +41,67 @@ if ! ssh -o ConnectTimeout=10 "$MINIBEAST" "echo ok" 2>/dev/null | grep -q ok; t
     exit 1
 fi
 
-# Free the GPU if a stale process is hogging it
-log "checking mini-beast GPU 0 for stale processes"
-STALE_PIDS=$(ssh -q "$MINIBEAST" "nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits 2>/dev/null | tr -d ' ' | grep -v '^\$'" || true)
-if [ -n "$STALE_PIDS" ]; then
-    log "found stale GPU procs on mini-beast: $STALE_PIDS"
-    log "killing them (assumed safe -- queue requires sole 5090 access)"
-    ssh -q "$MINIBEAST" "echo '$STALE_PIDS' | xargs -r kill -9 2>/dev/null; sleep 5"
+# Free the GPU if anything is using it. Distinguish systemd-managed services
+# (stop via systemctl) from interactive/orphan processes (kill directly).
+log "checking mini-beast GPU 0 for processes to clear"
+ssh -q "$MINIBEAST" 'bash -s' <<'REMOTE_EOF' 2>&1 | tee -a /tmp/queue_minibeast_post_r214.log
+set -uo pipefail
+PIDS=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits 2>/dev/null \
+    | tr -d ' ' | grep -v '^$' || true)
+if [ -z "$PIDS" ]; then
+    echo "[mb] GPU 0 clear (no compute apps)"
+    exit 0
+fi
+echo "[mb] GPU 0 has compute apps: $PIDS"
+SERVICES_TO_STOP=""
+PIDS_TO_KILL=""
+for pid in $PIDS; do
+    [ -d /proc/$pid ] || continue
+    cgroup=$(cat /proc/$pid/cgroup 2>/dev/null | head -1)
+    cmd=$(ps -p $pid -o cmd= 2>/dev/null | head -c 120)
+    echo "[mb] PID $pid: $cmd"
+    echo "[mb]   cgroup: $cgroup"
+    # Match systemd .service cgroup paths (system OR user services). Exclude session.scope.
+    svc=$(echo "$cgroup" | grep -oE '[a-zA-Z0-9_.@-]+\.service' | tail -1 || true)
+    if [ -n "$svc" ] && ! echo "$cgroup" | grep -q 'session.*\.scope'; then
+        echo "[mb]   -> systemd service detected: $svc; will stop via systemctl"
+        SERVICES_TO_STOP="$SERVICES_TO_STOP $svc"
+    else
+        echo "[mb]   -> not a service (session/scope/orphan); will kill directly"
+        PIDS_TO_KILL="$PIDS_TO_KILL $pid"
+    fi
+done
+# De-dup services
+SERVICES_TO_STOP=$(echo "$SERVICES_TO_STOP" | tr ' ' '\n' | sort -u | tr '\n' ' ')
+for svc in $SERVICES_TO_STOP; do
+    echo "[mb] sudo systemctl stop $svc"
+    sudo systemctl stop "$svc" 2>&1 | head -3 || true
+done
+if [ -n "$PIDS_TO_KILL" ]; then
+    echo "[mb] killing orphan PIDs:$PIDS_TO_KILL"
+    echo "$PIDS_TO_KILL" | xargs -r kill -TERM 2>/dev/null
+    sleep 5
+    # Force any survivors
+    for pid in $PIDS_TO_KILL; do
+        if [ -d /proc/$pid ]; then
+            echo "[mb] PID $pid survived SIGTERM; SIGKILL"
+            kill -9 $pid 2>/dev/null
+        fi
+    done
+fi
+# Final verification with timeout
+for i in $(seq 1 12); do
+    REMAIN=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits 2>/dev/null \
+        | tr -d ' ' | grep -v '^$' || true)
+    [ -z "$REMAIN" ] && { echo "[mb] GPU 0 fully clear"; exit 0; }
+    sleep 5
+done
+echo "[mb] WARN: GPU 0 still has procs after clearing: $REMAIN"
+exit 1
+REMOTE_EOF
+if [ ${PIPESTATUS[0]} -ne 0 ]; then
+    log "ERROR: failed to clear mini-beast GPU 0; aborting"
+    exit 1
 fi
 
 # Sync the latest training/ scripts to mini-beast
@@ -94,11 +148,61 @@ run_inference_bench r210 "$CKPT_R210"
 run_inference_bench r213 "$CKPT_R213"
 run_inference_bench r214 "$CKPT_R214"
 
+# ----------------------------------------------------------------------------
+# Phase 2: LoRA SFT on r2.13 ckpt with UltraChat
+# ----------------------------------------------------------------------------
+
+log ""
+log "=== LoRA SFT on r2.13 with UltraChat 200K ==="
+
+if [ ! -f "$CKPT_R213" ]; then
+    log "WARN: r2.13 ckpt missing; skipping SFT"
+else
+    SFT_OUT_DIR_LOCAL=/home/alex/OpenMythos/checkpoints_3b_sft_lora_r213
+    log "rsync r2.13 ckpt to mini-beast for SFT"
+    MB_SFT_CKPT=/home/alex/OpenMythos/checkpoints/ckpt_r213_sft_base.pt
+    rsync -az --partial "$CKPT_R213" "$MINIBEAST:$MB_SFT_CKPT" 2>&1 | tail -2 | tee -a /tmp/queue_minibeast_post_r214.log
+
+    log "running SFT on mini-beast (~3-4h expected)"
+    ssh -q "$MINIBEAST" "cd $MB_REPO && \
+        CKPT='$MB_SFT_CKPT' \
+        OUT_DIR='$SFT_OUT_DIR_LOCAL' \
+        DATASET='HuggingFaceH4/ultrachat_200k' \
+        SPLIT='train_sft' \
+        MAX_SAMPLES=50000 \
+        SEQ_LEN=2048 \
+        LORA_RANK=32 \
+        LORA_ALPHA=64 \
+        LR=2e-4 \
+        EPOCHS=1 \
+        MICRO_BATCH=1 \
+        GRAD_ACCUM=8 \
+        SAVE_EVERY=500 \
+        SAVE_MERGED=1 \
+        python3 training/sft_lora_minibeast.py 2>&1" \
+        | tee -a /tmp/queue_minibeast_post_r214.log
+
+    # Pull adapter + curve back to spark for archival
+    log "pulling SFT outputs back to spark"
+    rsync -az "$MINIBEAST:$SFT_OUT_DIR_LOCAL/lora_adapter_final.pt" \
+        "$REPO/checkpoints_3b_sft_lora_r213/lora_adapter_final.pt" 2>&1 \
+        | tail -2 | tee -a /tmp/queue_minibeast_post_r214.log
+    rsync -az "$MINIBEAST:$SFT_OUT_DIR_LOCAL/training_curve.json" \
+        "$REPO/docs/sft_lora_r213_training_curve.json" 2>&1 \
+        | tail -2 | tee -a /tmp/queue_minibeast_post_r214.log
+    log "SFT outputs synced back to spark"
+
+    # Clean up the sft base ckpt on mini-beast (keep adapter and merged)
+    ssh -q "$MINIBEAST" "rm -f $MB_SFT_CKPT"
+fi
+
 log ""
 log "=== queue_minibeast_post_r214 done ==="
-log "Outputs: $REPO/docs/inference_benchmark_r{210,213,214}.json"
+log "Inference benchmarks: $REPO/docs/inference_benchmark_r{210,213,214}.json"
+log "SFT artifacts:        $REPO/checkpoints_3b_sft_lora_r213/lora_adapter_final.pt"
+log "                      $REPO/docs/sft_lora_r213_training_curve.json"
 log ""
-log "Future work for the 5090 (manual launch):"
-log "  - LoRA SFT on r2.13 ckpt with UltraChat or similar"
-log "  - Long-context throughput at varying T"
+log "Future expansion (manual):"
+log "  - DPO on the SFT'd model with UltraFeedback"
+log "  - Long-context throughput benchmark at varying T"
 log "  - User-controlled-T inference demo (paper figure)"
