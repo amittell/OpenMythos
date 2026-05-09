@@ -92,21 +92,80 @@ sleep 10
 
 cd /home/alexm/OpenMythos
 
+# ---------------------------------------------------------------------------
+# Parallel evals across 4 cluster nodes (no reasoning_eval for compute scaling
+# round; head is bypass-trained):
+#   spark (rank 0): depth_extrap + gen_samples
+#   gx10-200g:      act_halt_diagnostic
+#   gx10-2-200g:    act_halt_histogram
+#   gx10-3-200g:    idle for this round (could add per_token_halt later)
+# ---------------------------------------------------------------------------
+
 DEPTH_JSON=$DOCS_DIR/depth_extrap_round214.json
-log "depth_extrap.py -> ${DEPTH_JSON}"
-CKPT="$DST_PATH" OUT="$DEPTH_JSON" python3 training/depth_extrap.py 2>&1 | tee -a "$LOG"
-
 DIAG_JSON=$DOCS_DIR/act_halt_diagnostic_round214.json
-log "act_halt_diagnostic.py -> ${DIAG_JSON}"
-CKPT="$DST_PATH" OUT="$DIAG_JSON" python3 training/act_halt_diagnostic.py 2>&1 | tee -a "$LOG"
-
 HIST_JSON=$DOCS_DIR/act_halt_histogram_round214.json
-log "act_halt_histogram.py -> ${HIST_JSON}"
-CKPT="$DST_PATH" OUT="$HIST_JSON" python3 training/act_halt_histogram.py 2>&1 | tee -a "$LOG"
-
 SAMPLES_TXT=$DOCS_DIR/gen_samples_round214_multidepth.txt
-log "gen_samples_multidepth.py -> ${SAMPLES_TXT}"
-CKPT="$DST_PATH" OUT="$SAMPLES_TXT" python3 training/gen_samples_multidepth.py 2>&1 | tee -a "$LOG"
+
+log "rsyncing consolidated ckpt to workers (parallel, over 200G storage net)"
+for h in kebab-gx10-200g kebab-gx10-2-200g; do
+    ssh -q "alexm@$h" "mkdir -p $(dirname $DST_PATH)" &
+done
+wait
+for h in kebab-gx10-200g kebab-gx10-2-200g; do
+    rsync -a "$DST_PATH" "alexm@$h:$DST_PATH" 2>&1 | tee -a "$LOG" &
+done
+wait
+log "ckpt distributed to workers"
+
+log "launching parallel evals across 3 nodes"
+PIDS=()
+
+# rank 0 / spark: depth_extrap + gen_samples
+(
+    log "[rank0] depth_extrap.py -> $DEPTH_JSON"
+    CKPT="$DST_PATH" OUT="$DEPTH_JSON" python3 training/depth_extrap.py 2>&1 \
+        > "$DOCS_DIR/.eval_depth_round214.log" 2>&1
+    log "[rank0] gen_samples_multidepth.py -> $SAMPLES_TXT"
+    CKPT="$DST_PATH" OUT="$SAMPLES_TXT" python3 training/gen_samples_multidepth.py 2>&1 \
+        > "$DOCS_DIR/.eval_samples_round214.log" 2>&1
+    log "[rank0] depth+samples done"
+) &
+PIDS+=($!)
+
+# rank 1 / gx10-200g: act_halt_diagnostic
+(
+    log "[gx10-200g] act_halt_diagnostic.py -> $DIAG_JSON"
+    ssh -q "alexm@kebab-gx10-200g" "cd /home/alexm/OpenMythos && \
+        CKPT='$DST_PATH' OUT='$DIAG_JSON' python3 training/act_halt_diagnostic.py 2>&1" \
+        > "$DOCS_DIR/.eval_diag_round214.log" 2>&1
+    rsync -a "alexm@kebab-gx10-200g:$DIAG_JSON" "$DOCS_DIR/" 2>&1 | tee -a "$LOG"
+    log "[gx10-200g] act_halt_diagnostic done"
+) &
+PIDS+=($!)
+
+# rank 2 / gx10-2-200g: act_halt_histogram
+(
+    log "[gx10-2-200g] act_halt_histogram.py -> $HIST_JSON"
+    ssh -q "alexm@kebab-gx10-2-200g" "cd /home/alexm/OpenMythos && \
+        CKPT='$DST_PATH' OUT='$HIST_JSON' python3 training/act_halt_histogram.py 2>&1" \
+        > "$DOCS_DIR/.eval_hist_round214.log" 2>&1
+    rsync -a "alexm@kebab-gx10-2-200g:$HIST_JSON" "$DOCS_DIR/" 2>&1 | tee -a "$LOG"
+    log "[gx10-2-200g] act_halt_histogram done"
+) &
+PIDS+=($!)
+
+log "waiting on ${#PIDS[@]} parallel eval jobs"
+for pid in "${PIDS[@]}"; do
+    wait "$pid"
+done
+log "all parallel evals complete"
+
+# Clean up worker ckpt copies
+log "cleaning up worker ckpt copies"
+for h in kebab-gx10-200g kebab-gx10-2-200g; do
+    ssh -q "alexm@$h" "rm -f $DST_PATH" &
+done
+wait
 
 cat <<EOF | tee -a "$LOG"
 
