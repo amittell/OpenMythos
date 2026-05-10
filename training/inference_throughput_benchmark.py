@@ -125,7 +125,7 @@ def benchmark_at_T(model, tokenizer, T, prompt_len, gen_len, batch, device):
 
     # Sample text generation from a meaningful prompt
     sample_prompt = "The recurrent depth transformer iterates the same block multiple times to"
-    prompt_ids = tokenizer.encode(sample_prompt, add_special_tokens=False)
+    prompt_ids = tokenizer.encode(sample_prompt)
     prompt_ids = torch.tensor([prompt_ids], device=device, dtype=torch.long)
     cur = prompt_ids
     for _ in range(64):

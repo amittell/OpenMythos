@@ -164,7 +164,7 @@ class ChatSFTDataset(IterableDataset):
                 if role == "assistant":
                     assistant_spans.append((start, cursor))
             text = "".join(text_parts)
-            ids = self.tok.encode(text, add_special_tokens=False)
+            ids = self.tok.encode(text)
             if len(ids) < 16:
                 continue
             ids = ids[: self.seq_len]
