@@ -52,9 +52,24 @@ while true; do
     # Run paper integration (fetches from remotes, integrates whatever it can)
     python3 "$SCRIPT" --scan 2>&1 | tail -30 | tee -a "$LOG"
 
-    # Run capability section integration if the script exists
+    # Run capability section integration (auto-updates when new rounds appear)
     if [ -f "$CAPABILITY_SCRIPT" ]; then
         python3 "$CAPABILITY_SCRIPT" 2>&1 | tail -10 | tee -a "$LOG"
+    fi
+
+    # Run reasoning_eval cross-round table (auto-updates)
+    if [ -f "$REPO/training/auto_paper_reasoning.py" ]; then
+        python3 "$REPO/training/auto_paper_reasoning.py" 2>&1 | tail -10 | tee -a "$LOG"
+    fi
+
+    # Run K=64 extended depth_extrap section (auto-updates)
+    if [ -f "$REPO/training/auto_paper_depth_k64.py" ]; then
+        python3 "$REPO/training/auto_paper_depth_k64.py" 2>&1 | tail -10 | tee -a "$LOG"
+    fi
+
+    # Run per_token_halt cross-round section (auto-updates)
+    if [ -f "$REPO/training/auto_paper_per_token_halt.py" ]; then
+        python3 "$REPO/training/auto_paper_per_token_halt.py" 2>&1 | tail -10 | tee -a "$LOG"
     fi
 
     # Count integrated sections
