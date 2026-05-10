@@ -728,6 +728,98 @@ Every accuracy probe we have run on this model so far has been depth-flat: synth
 | 32 | 0.030 | 0.030 | 0.040 | 0.010 | 0.030 |
 
 **[DRAFT verdict — polish before submission.]** Numbers above were auto-extracted from `docs/eval_listops_round{23,24,25}.json` and `docs/eval_gsm8k_generation_round{23,24,25}.json`. Whether either probe shows monotone K-improvement or remains depth-flat determines the §8.4 framing.
+### 7.23 Per-token halt distribution across rounds
+
+Where the round-level §7.13--§7.20 sections show the *aggregate* halt-step histogram (one number per K), this section breaks halt step out across individual tokens and rounds. The question is whether the trained head learns an interesting per-token allocation policy (different halt steps for content vs. function tokens, for instance) or whether it collapses onto one global mean.
+
+**Cross-round summary (global statistics):**
+
+| Round | mean halt step | median halt | p(iter=1) | frac using full budget |
+|-------|---------------|-------------|-----------|------------------------|
+|  r2.1 |            -- |           0 |        -- |                     -- |
+|  r2.2 |            -- |           0 |        -- |                     -- |
+|  r2.3 |            -- |           0 |        -- |                     -- |
+|  r2.4 |            -- |           0 |        -- |                     -- |
+|  r2.5 |            -- |           0 |        -- |                     -- |
+|  r2.6 |            -- |           0 |        -- |                     -- |
+|  r2.7 |            -- |           0 |        -- |                     -- |
+| anti10 |            -- |           0 |        -- |                     -- |
+
+**Halt step by token category:**
+
+*Round r2.1:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
+*Round r2.2:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
+*Round r2.3:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
+*Round r2.4:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
+*Round r2.5:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
+*Round r2.6:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
+*Round r2.7:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
+*Round anti10:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
+
+**[DRAFT verdict — polish before submission.]** Auto-extracted from `docs/per_token_halt_round*.json` and special-variant JSONs. The mean halt step and `p(iter=1)` columns are the most diagnostic: stable mean across rounds + non-trivial spread by token category = head is doing something useful; saturated `p(iter=1) ≈ 1` = collapsed.
+### 7.22 Extended depth extrapolation up to K=64
+
+Standard `depth_extrap.py` runs evaluate at K ∈ {4, 8, 16, 32}. We extend the range to K = 64 (~5x the training `T_max = 12`) on selected rounds to test whether models continue to benefit from inference depth far beyond the training regime. The expectation: a saturating curve, with the marginal CE improvement per extra K shrinking at high K. A non-monotone curve (CE re-increasing past some K) would indicate the recurrent block has learned a diverging fixed-point.
+
+_no K=64 data available_
+
+**[DRAFT verdict — polish before submission.]** Auto-extracted from `docs/depth_extrap_round*_k64.json`. Numbers tell us whether the iteration fixed-point converges or diverges past T_max.
 ### 7.21 Multiple-choice probes (ARC-Easy, ARC-Challenge, HellaSwag)
 
 Multiple-choice log-likelihood evals on ARC-Easy, ARC-Challenge, and HellaSwag. These probes score the model on each candidate completion's log-likelihood and pick the highest. Each task is evaluated at multiple K values to test whether additional inference compute changes accuracy. The pattern across all rounds and all three tasks is K-invariance: accuracy is essentially flat across the K = 4..32 range. This is consistent with §8.4's argument that argmax-based scoring metrics are insensitive to the per-token logit shifts that recurrent depth provides; the §7.15 generation probes are a more direct test.

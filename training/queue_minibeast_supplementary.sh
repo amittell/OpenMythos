@@ -38,29 +38,55 @@ log "verifying mini-beast reachability"
 ssh -o ConnectTimeout=10 "$MINIBEAST" "echo ok" 2>/dev/null | grep -q ok \
     || { log "ERROR: cannot SSH to mini-beast"; exit 1; }
 
-# Free GPU on mini-beast (graceful systemd stop where applicable, fallback to kill)
-log "clearing mini-beast GPU"
+# Stop the user-level vllm-20b service (gpt-oss-20b with Eagle3 spec decoding on
+# RTX 5090) before our work, plus kill any other GPU-resident processes.
+# We restart vllm-20b at the end so the model auto-reloads when we're done.
+log "stopping vllm-20b.service (gpt-oss-20b + Eagle3) and clearing GPU"
 ssh -q "$MINIBEAST" 'bash -s' <<'REMOTE_EOF' 2>&1 | tee -a /tmp/queue_minibeast_supplementary.log
+# Capture which 5090-bound user services are currently active so we can restart
+# them at the end. Save list to /tmp for the post-work reload step.
+ACTIVE_GPU_SERVICES=""
+for svc in vllm-20b vllm-20b-128k vllm-20b-104k vllm-20b-120k vllm-20b-150k vllm-20b-fast vllm-20b-vanilla trtllm-20b sdxl florence2 whisper-cpp outetts; do
+    if systemctl --user is-active "$svc" >/dev/null 2>&1; then
+        ACTIVE_GPU_SERVICES="$ACTIVE_GPU_SERVICES $svc"
+    fi
+done
+echo "[mb] active GPU services to stop+restart:$ACTIVE_GPU_SERVICES" > /tmp/mb_paused_services.txt
+echo "$ACTIVE_GPU_SERVICES" > /tmp/mb_paused_services.list
+
+for svc in $ACTIVE_GPU_SERVICES; do
+    echo "[mb] systemctl --user stop $svc"
+    systemctl --user stop "$svc" 2>&1 | head -3 || true
+done
+
+# Always issue a stop for vllm-20b even if it wasn't active (handles failed
+# states cleanly so the start at the end picks up fresh)
+systemctl --user stop vllm-20b 2>/dev/null || true
+
+sleep 5
+
+# Kill any remaining GPU-resident PIDs (interactive sessions, hung evals, etc.)
 PIDS=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits 2>/dev/null \
     | tr -d " " | grep -v "^$" || true)
 if [ -n "$PIDS" ]; then
-    echo "[mb] killing GPU procs: $PIDS"
-    for pid in $PIDS; do
-        cgroup=$(cat /proc/$pid/cgroup 2>/dev/null | head -1 || echo "")
-        svc=$(echo "$cgroup" | grep -oE '[a-zA-Z0-9_.@-]+\.service' | tail -1 || true)
-        if [ -n "$svc" ] && ! echo "$cgroup" | grep -q 'session.*\.scope'; then
-            sudo systemctl stop "$svc" 2>&1 | head -2
-        else
-            kill -TERM "$pid" 2>/dev/null
-        fi
-    done
+    echo "[mb] killing leftover GPU procs: $PIDS"
+    echo "$PIDS" | xargs -r kill -TERM 2>/dev/null
     sleep 5
-    # Force kill any survivors
     PIDS2=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits 2>/dev/null | tr -d " " | grep -v "^$" || true)
     [ -n "$PIDS2" ] && echo "$PIDS2" | xargs -r kill -9 2>/dev/null
 fi
-echo "[mb] gpu state:"
-nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits
+
+# Wait for GPU memory to actually clear (CUDA driver needs time)
+for i in $(seq 1 24); do
+    used=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | tr -d " ")
+    echo "[mb] check $i/24: ${used} MiB used"
+    if [ "$used" -lt 2000 ]; then
+        echo "[mb] GPU clear"
+        exit 0
+    fi
+    sleep 5
+done
+echo "[mb] WARN: GPU still has ${used} MiB used; proceeding anyway"
 REMOTE_EOF
 
 # Sync scripts
@@ -125,6 +151,31 @@ run_supplementary r210 "$CKPT_R210"
 run_supplementary r213 "$CKPT_R213"
 run_supplementary r214 "$CKPT_R214"
 
+# ----------------------------------------------------------------------------
+# Restart all 5090 services we paused (gpt-oss-20b + Eagle3, etc.)
+# ----------------------------------------------------------------------------
+
+log "restarting paused user services on mini-beast"
+ssh -q "$MINIBEAST" 'bash -s' <<'REMOTE_EOF' 2>&1 | tee -a /tmp/queue_minibeast_supplementary.log
+PAUSED=$(cat /tmp/mb_paused_services.list 2>/dev/null || echo "")
+# vllm-20b is the gpt-oss-20b + Eagle3 service; always make sure it's restarted
+# even if it was in failed state at start (user wants it restored)
+if ! echo "$PAUSED" | grep -qw vllm-20b; then
+    PAUSED="$PAUSED vllm-20b"
+fi
+echo "[mb] starting:$PAUSED"
+for svc in $PAUSED; do
+    echo "[mb] systemctl --user start $svc"
+    systemctl --user start "$svc" 2>&1 | head -3 || true
+done
+sleep 5
+echo "[mb] post-start status of vllm-20b (gpt-oss-20b + Eagle3):"
+systemctl --user status vllm-20b --no-pager 2>&1 | head -8
+echo "[mb] GPU state:"
+nvidia-smi --query-gpu=memory.used,utilization.gpu --format=csv,noheader,nounits
+rm -f /tmp/mb_paused_services.list /tmp/mb_paused_services.txt
+REMOTE_EOF
+
 log ""
 log "=== queue_minibeast_supplementary done ==="
 log "Cross-round data added for r2.10/r2.13/r2.14:"
@@ -132,5 +183,6 @@ log "  reasoning_eval_round{210,213,214}.json    -> §7.21"
 log "  per_token_halt_round{210,213,214}.json    -> §7.23"
 log "  depth_extrap_round{210,213,214}_k64.json  -> §7.22"
 log ""
+log "All paused services on mini-beast restarted (incl. vllm-20b for gpt-oss-20b + Eagle3)"
 log "Mac watcher (auto_paper_integrate_watcher.sh) will detect new JSONs and"
 log "auto-update the paper sections within 10 min."
