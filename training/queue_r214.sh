@@ -9,7 +9,7 @@ ts() { date '+%F %T'; }
 log() { echo "[$(ts)] $*" | tee -a /tmp/queue_r214.log; }
 
 NODES_200G="kebab-spark-200g kebab-gx10-200g kebab-gx10-2-200g kebab-gx10-3-200g"
-PROC_PATTERN="python3 training/(3b_varT|reasoning_eval|depth_extrap|per_token_halt|consolidate_ckpt|eval_listops|eval_gsm8k|act_halt|gen_samples|synthetic_depth)"
+PROC_PATTERN="[p]ython3 training/(3b_varT|reasoning_eval|depth_extrap|per_token_halt|consolidate_ckpt|eval_listops|eval_gsm8k|act_halt|gen_samples|synthetic_depth)"
 R213_LOG=/home/alexm/OpenMythos/training/auto_eval_round213.log
 REPO=/home/alexm/OpenMythos
 R2_BOOTSTRAP=$REPO/checkpoints_3b_varT_fast/step_0012207_full.pt
