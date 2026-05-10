@@ -14,11 +14,9 @@ R213_LOG=/home/alexm/OpenMythos/training/auto_eval_round213.log
 REPO=/home/alexm/OpenMythos
 R2_BOOTSTRAP=$REPO/checkpoints_3b_varT_fast/step_0012207_full.pt
 
-log "queue_r214 started; waiting for auto_eval_round213 pipeline complete"
-DEADLINE=$(($(date +%s) + 24 * 3600))
+log "queue_r214 started; waiting for auto_eval_round213 pipeline complete (no deadline)"
 while true; do
     grep -q "auto_eval_round213 pipeline complete" "$R213_LOG" 2>/dev/null && { log "r213 done"; break; }
-    [ "$(date +%s)" -gt "$DEADLINE" ] && { log "ERROR: 24h deadline"; exit 1; }
     sleep 60
 done
 
