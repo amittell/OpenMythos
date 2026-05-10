@@ -54,15 +54,24 @@ def parse_t_values(s: str) -> list[int]:
 
 def load_model(ckpt_path: str, device: str):
     logger.info(f"loading checkpoint: {ckpt_path}")
-    state = torch.load(ckpt_path, map_location="cpu", weights_only=False)
-    if "model" in state:
-        state = state["model"]
+    ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
     cfg = mythos_3b()
-    saved_t_max = state.get("__saved_t_max__")
+    ckpt_vocab = ckpt.get("vocab_size") if isinstance(ckpt, dict) else None
+    if ckpt_vocab is not None:
+        cfg.vocab_size = int(ckpt_vocab)
+    state = ckpt["model"] if isinstance(ckpt, dict) and "model" in ckpt else ckpt
+    if ckpt_vocab is None and isinstance(state, dict) and "head.weight" in state:
+        cfg.vocab_size = int(state["head.weight"].shape[0])
+    saved_cfg = ckpt.get("cfg") if isinstance(ckpt, dict) else None
+    saved_t_max = getattr(saved_cfg, "max_loop_iters", None) if saved_cfg is not None else None
+    if saved_t_max is None and isinstance(ckpt, dict):
+        saved_t_max = ckpt.get("__saved_t_max__")
+    if saved_t_max is None and isinstance(state, dict):
+        saved_t_max = state.get("__saved_t_max__")
     if saved_t_max is None:
         saved_t_max = getattr(cfg, "max_loop_iters", 12)
-    cfg.max_loop_iters = max(int(saved_t_max), 32)
-    logger.info(f"using max_loop_iters={cfg.max_loop_iters}")
+    cfg.max_loop_iters = int(saved_t_max)
+    logger.info(f"using vocab_size={cfg.vocab_size} max_loop_iters={cfg.max_loop_iters} (T values >max are clamped via LoRAAdapter)")
     model = OpenMythos(cfg)
     sd = {k: v for k, v in state.items() if not k.startswith("__")}
     missing, unexpected = model.load_state_dict(sd, strict=False)

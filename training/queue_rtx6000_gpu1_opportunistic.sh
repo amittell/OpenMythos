@@ -53,7 +53,19 @@ run_benchmark() {
         rtx_ckpt="$RTX_CKPTS/ckpt_${label}_full.pt"
         log "=== $label inference benchmark ==="
         log "rsync ckpt to RTX6000"
-        rsync -az --partial "$local_or_rtx_ckpt" "$RTX:$rtx_ckpt" 2>&1 | tail -2 | tee -a /tmp/queue_rtx6000_gpu1_op.log
+        local expected_size
+        expected_size=$(stat -c%s "$local_or_rtx_ckpt")
+        for attempt in 1 2 3; do
+            rsync -az --partial "$local_or_rtx_ckpt" "$RTX:$rtx_ckpt" 2>&1 | tail -2 | tee -a /tmp/queue_rtx6000_gpu1_op.log
+            actual=$(ssh -q "$RTX" "stat -c%s $rtx_ckpt 2>/dev/null || echo 0")
+            if [ "$actual" = "$expected_size" ]; then
+                log "rsync ok ($actual bytes)"
+                break
+            fi
+            log "rsync attempt $attempt incomplete (got=$actual want=$expected_size); retrying"
+            sleep 10
+        done
+        [ "$actual" != "$expected_size" ] && { log "ERROR rsync failed after 3 attempts; skip $label"; return; }
     fi
 
     log "running benchmark T=1,2,4,8,16 (~10-15 min)"

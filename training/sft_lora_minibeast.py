@@ -232,11 +232,20 @@ def main():
     logger.info(f"  optimizer: lr={lr} epochs={epochs} micro={micro_batch} grad_accum={grad_accum}")
 
     logger.info("loading base model")
-    state = torch.load(ckpt_path, map_location="cpu")
-    if "model" in state:
-        state = state["model"]
+    ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
     cfg = mythos_3b()
-    saved_t_max = state.get("__saved_t_max__", getattr(cfg, "max_loop_iters", 12))
+    ckpt_vocab = ckpt.get("vocab_size") if isinstance(ckpt, dict) else None
+    if ckpt_vocab is not None:
+        cfg.vocab_size = int(ckpt_vocab)
+    state = ckpt["model"] if isinstance(ckpt, dict) and "model" in ckpt else ckpt
+    if ckpt_vocab is None and isinstance(state, dict) and "head.weight" in state:
+        cfg.vocab_size = int(state["head.weight"].shape[0])
+    saved_cfg = ckpt.get("cfg") if isinstance(ckpt, dict) else None
+    saved_t_max = getattr(saved_cfg, "max_loop_iters", None) if saved_cfg is not None else None
+    if saved_t_max is None and isinstance(ckpt, dict):
+        saved_t_max = ckpt.get("__saved_t_max__")
+    if saved_t_max is None and isinstance(state, dict):
+        saved_t_max = state.get("__saved_t_max__", getattr(cfg, "max_loop_iters", 12))
     cfg.max_loop_iters = int(saved_t_max)
     model = OpenMythos(cfg)
     sd = {k: v for k, v in state.items() if not k.startswith("__")}

@@ -43,7 +43,19 @@ run_sft() {
     local rtx_ckpt="$RTX_CKPTS/ckpt_${label}_full.pt"
     log "=== $label SFT ==="
     log "rsync ckpt to RTX6000"
-    rsync -az --partial "$local_ckpt" "$RTX:$rtx_ckpt" 2>&1 | tail -2 | tee -a /tmp/queue_rtx6000_gpu0_op.log
+    local expected_size
+    expected_size=$(stat -c%s "$local_ckpt")
+    for attempt in 1 2 3; do
+        rsync -az --partial "$local_ckpt" "$RTX:$rtx_ckpt" 2>&1 | tail -2 | tee -a /tmp/queue_rtx6000_gpu0_op.log
+        actual=$(ssh -q "$RTX" "stat -c%s $rtx_ckpt 2>/dev/null || echo 0")
+        if [ "$actual" = "$expected_size" ]; then
+            log "rsync ok ($actual bytes)"
+            break
+        fi
+        log "rsync attempt $attempt incomplete (got=$actual want=$expected_size); retrying"
+        sleep 10
+    done
+    [ "$actual" != "$expected_size" ] && { log "ERROR rsync failed after 3 attempts; skip $label"; return; }
 
     log "launching SFT on GPU 0 (~1.5-2h)"
     ssh -q "$RTX" "cd $RTX_REPO && CUDA_VISIBLE_DEVICES=0 \
