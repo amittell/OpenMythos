@@ -41,6 +41,17 @@ for h in kebab-gx10-200g kebab-gx10-2-200g kebab-gx10-3-200g; do
     }
 done
 
+log "clearing rank logs so retry_cluster_training does not see r213's 'Training complete.'"
+> /tmp/train_r0.log
+for r_idx in 1 2 3; do
+    case $r_idx in
+        1) h=kebab-gx10-200g ;;
+        2) h=kebab-gx10-2-200g ;;
+        3) h=kebab-gx10-3-200g ;;
+    esac
+    ssh -q "alexm@$h" "rm -f /tmp/train_r${r_idx}.log; touch /tmp/train_r${r_idx}.log" || true
+done
+
 log "starting auto_eval_round214 watcher"
 nohup bash "$REPO/training/auto_eval_round214.sh" \
     >"$REPO/training/auto_eval_round214.log" 2>&1 </dev/null &

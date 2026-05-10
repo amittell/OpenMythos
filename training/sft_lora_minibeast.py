@@ -247,8 +247,9 @@ def main():
     if saved_t_max is None and isinstance(state, dict):
         saved_t_max = state.get("__saved_t_max__", getattr(cfg, "max_loop_iters", 12))
     cfg.max_loop_iters = int(saved_t_max)
+    cfg.max_seq_len = int(seq_len)
     model = OpenMythos(cfg)
-    sd = {k: v for k, v in state.items() if not k.startswith("__")}
+    sd = {k: v for k, v in state.items() if not k.startswith("__") and k not in ("freqs_cis", "freqs_cis_mla")}
     missing, unexpected = model.load_state_dict(sd, strict=False)
     if missing:
         logger.warning(f"missing keys: {missing[:3]}")

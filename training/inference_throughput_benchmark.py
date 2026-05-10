@@ -71,9 +71,14 @@ def load_model(ckpt_path: str, device: str):
     if saved_t_max is None:
         saved_t_max = getattr(cfg, "max_loop_iters", 12)
     cfg.max_loop_iters = int(saved_t_max)
-    logger.info(f"using vocab_size={cfg.vocab_size} max_loop_iters={cfg.max_loop_iters} (T values >max are clamped via LoRAAdapter)")
+    saved_seq_len = getattr(saved_cfg, "max_seq_len", None) if saved_cfg is not None else None
+    if saved_seq_len is None and isinstance(state, dict) and "freqs_cis" in state:
+        saved_seq_len = int(state["freqs_cis"].shape[0])
+    if saved_seq_len is not None:
+        cfg.max_seq_len = int(saved_seq_len)
+    logger.info(f"using vocab_size={cfg.vocab_size} max_loop_iters={cfg.max_loop_iters} max_seq_len={cfg.max_seq_len} (T values >max are clamped via LoRAAdapter)")
     model = OpenMythos(cfg)
-    sd = {k: v for k, v in state.items() if not k.startswith("__")}
+    sd = {k: v for k, v in state.items() if not k.startswith("__") and k not in ("freqs_cis", "freqs_cis_mla")}
     missing, unexpected = model.load_state_dict(sd, strict=False)
     if missing:
         logger.warning(f"missing keys: {missing[:5]}")
