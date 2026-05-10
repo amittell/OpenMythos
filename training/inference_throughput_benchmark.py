@@ -54,7 +54,7 @@ def parse_t_values(s: str) -> list[int]:
 
 def load_model(ckpt_path: str, device: str):
     logger.info(f"loading checkpoint: {ckpt_path}")
-    state = torch.load(ckpt_path, map_location="cpu")
+    state = torch.load(ckpt_path, map_location="cpu", weights_only=False)
     if "model" in state:
         state = state["model"]
     cfg = mythos_3b()
