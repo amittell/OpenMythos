@@ -47,11 +47,11 @@ echo "Launching $SCRIPT on $NNODES nodes: ${ACTIVE[@]} (port $PORT, master $MAST
 # name in their argv on the master node, which would self-kill the launcher).
 for r in "${ACTIVE[@]}"; do
   ssh -q alexm@${NODE_HOST[$r]} '
-    pkill -9 -f "python3 .*training/3b_fine_web_edu" 2>/dev/null
-    pkill -9 -f "python3 .*training/3b_varT" 2>/dev/null
-    pkill -9 -f "python3 .*training/3b_loops" 2>/dev/null
-    pkill -9 -f "python3 .*training/shakeout_1b" 2>/dev/null
-    pkill -9 -f "python3 .*torch.distributed.run" 2>/dev/null
+    pkill -9 -f "[p]ython3 .*training/3b_fine_web_edu" 2>/dev/null
+    pkill -9 -f "[p]ython3 .*training/3b_varT" 2>/dev/null
+    pkill -9 -f "[p]ython3 .*training/3b_loops" 2>/dev/null
+    pkill -9 -f "[p]ython3 .*training/shakeout_1b" 2>/dev/null
+    pkill -9 -f "[p]ython3 .*torch.distributed.run" 2>/dev/null
     true
   ' &
 done
