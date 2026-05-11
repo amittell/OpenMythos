@@ -121,12 +121,10 @@ while [ ! -f "$CKPT_R213" ]; do
 done
 run_supplementary_evals r213 213 "$CKPT_R213"
 
-# Phase 3: wait for r2.14
-log "waiting for r2.14 final ckpt..."
-while [ ! -f "$CKPT_R214" ]; do
-    sleep 300
-done
-run_supplementary_evals r214 214 "$CKPT_R214"
+# Phase 3 (r2.14) intentionally skipped: moved to RTX6000 GPU 1 queue because
+# the 5090 proved unreliable on K=64 depth_extrap (hung 15h, OOMed K=32 once,
+# required host reboot after the kill -9 left the GPU in error state).
+log "skipping mini-beast r2.14 phase (moved to RTX6000 GPU 1)"
 
 # Restart user services on mini-beast
 log "restarting paused user services on mini-beast"

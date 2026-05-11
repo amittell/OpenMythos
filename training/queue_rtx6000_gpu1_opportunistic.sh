@@ -99,12 +99,56 @@ while [ ! -f "$CKPT_R213" ]; do
 done
 run_benchmark r213 "$CKPT_R213" 0
 
-# Phase 3: wait for r2.14
+# Phase 3: r2.14. ABSORBS the mini-beast queue's r2.14 cross-round evals --
+# 5090 proved unreliable on K=64 (hung 15h, OOMed at K=32, required host reboot)
+# so per_token_halt + K=64 depth_extrap now run here on GPU 1 after benchmark.
 log "waiting for r2.14 ckpt..."
 while [ ! -f "$CKPT_R214" ]; do
     sleep 300
 done
-run_benchmark r214 "$CKPT_R214" 0
+
+R214_RTX_CKPT="$RTX_CKPTS/ckpt_r214_full.pt"
+log "=== r214 phase 3 (benchmark + per_token_halt + K=64 depth_extrap) ==="
+log "rsync r214 ckpt to RTX6000"
+R214_SIZE=$(stat -c%s "$CKPT_R214")
+for attempt in 1 2 3; do
+    rsync -az --partial "$CKPT_R214" "$RTX:$R214_RTX_CKPT" 2>&1 | tail -2 | tee -a /tmp/queue_rtx6000_gpu1_op.log
+    ACTUAL=$(ssh -q "$RTX" "stat -c%s $R214_RTX_CKPT 2>/dev/null || echo 0")
+    [ "$ACTUAL" = "$R214_SIZE" ] && { log "rsync ok ($ACTUAL bytes)"; break; }
+    log "rsync attempt $attempt incomplete (got=$ACTUAL want=$R214_SIZE); retrying"
+    sleep 10
+done
+[ "$ACTUAL" != "$R214_SIZE" ] && { log "ERROR r214 rsync failed; skipping phase 3"; touch /tmp/rtx6000_gpu1_done; exit 1; }
+
+# 3a. inference benchmark (~10-15 min)
+log "r214: inference benchmark T=1,2,4,8,16"
+ssh -q "$RTX" "cd $RTX_REPO && CUDA_VISIBLE_DEVICES=1 \
+    CKPT='$R214_RTX_CKPT' OUT='$RTX_DOCS/inference_benchmark_r214.json' \
+    T_VALUES=1,2,4,8,16 PROMPT_LEN=512 GEN_LEN=128 DEVICE=cuda:0 \
+    $PY training/inference_throughput_benchmark.py 2>&1" \
+    | tee -a /tmp/queue_rtx6000_gpu1_op.log
+rsync -az "$RTX:$RTX_DOCS/inference_benchmark_r214.json" "$REPO/docs/" 2>&1 | tail -1
+
+# 3b. per_token_halt (~5-10 min on Blackwell)
+log "r214: per_token_halt_analysis"
+ssh -q "$RTX" "cd $RTX_REPO && CUDA_VISIBLE_DEVICES=1 \
+    CKPT='$R214_RTX_CKPT' OUT='$RTX_DOCS/per_token_halt_round214.json' \
+    $PY training/per_token_halt_analysis.py 2>&1" \
+    | tee -a /tmp/queue_rtx6000_gpu1_op.log
+rsync -az "$RTX:$RTX_DOCS/per_token_halt_round214.json" "$REPO/docs/" 2>&1 | tail -1
+
+# 3c. K=64 depth_extrap (~6 min on Blackwell, matched r210/r213 timing)
+log "r214: K=64 depth_extrap"
+ssh -q "$RTX" "cd $RTX_REPO && CUDA_VISIBLE_DEVICES=1 \
+    CKPT='$R214_RTX_CKPT' OUT='$RTX_DOCS/depth_extrap_round214_k64.json' \
+    DEPTHS=4,8,16,32,64 \
+    $PY training/depth_extrap.py 2>&1" \
+    | tee -a /tmp/queue_rtx6000_gpu1_op.log
+rsync -az "$RTX:$RTX_DOCS/depth_extrap_round214_k64.json" "$REPO/docs/" 2>&1 | tail -1
+
+# Cleanup r214 ckpt
+ssh -q "$RTX" "rm -f $R214_RTX_CKPT"
+log "r214 phase 3 done (benchmark + per_token_halt + K=64 depth_extrap)"
 
 log "marking GPU 1 phase done"
 touch /tmp/rtx6000_gpu1_done
