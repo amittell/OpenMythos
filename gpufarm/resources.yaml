@@ -7,14 +7,20 @@ resources:
   # network. These ranks are addressed together (4-rank torchrun) for any
   # cluster_4node job; never individually.
   - id: cluster-4node
+    ssh_user: alexm
     members:
       - {rank: 0, host: kebab-spark-200g, jump_host: kebab-spark.lan, gid: 3}
       - {rank: 1, host: kebab-gx10-200g, jump_host: kebab-spark.lan, gid: 3}
       - {rank: 2, host: kebab-gx10-2-200g, jump_host: kebab-spark.lan, gid: 3}
       - {rank: 3, host: kebab-gx10-3-200g, jump_host: kebab-spark.lan, gid: 3}
     class: gb10
-    vram_gb: 128  # GB10 unified memory per node
+    vram_gb: 128                    # GB10 unified memory per node
+    priority_tier: 0                # most precious (training only)
     can_run: [train_round, consolidate, eval_4node]
+    recovery_hook: |
+      # Cluster doesn't have automatic recovery; on NCCL hang the retry_cluster
+      # supervisor handles SIGKILL + relaunch (see retry_cluster_training.sh).
+      ssh -q alexm@{master} "bash /home/alexm/OpenMythos/training/retry_cluster_training.sh"
     master_addr: 192.168.100.10
     nccl_env:
       NCCL_DEBUG: WARN
@@ -31,10 +37,11 @@ resources:
 
   - id: blackwell-gpu0
     host: kebab-rtx6000.lan
-    user: alexm
+    ssh_user: alexm
     cuda_device: 0
     class: blackwell
     vram_gb: 96
+    priority_tier: 1                # high-value, SFT + heavy evals
     can_run:
       - sft_lora
       - inference_benchmark
@@ -55,10 +62,11 @@ resources:
 
   - id: blackwell-gpu1
     host: kebab-rtx6000.lan
-    user: alexm
+    ssh_user: alexm
     cuda_device: 1
     class: blackwell
     vram_gb: 96
+    priority_tier: 1                # high-value, SFT + heavy evals
     can_run:
       - sft_lora
       - inference_benchmark
@@ -77,10 +85,16 @@ resources:
 
   - id: rtx5090
     host: mini-beast.lan
-    user: alex  # different uid from the rtx6000 alexm
+    ssh_user: alex                  # different uid from the rtx6000 alexm
     cuda_device: 0
     class: rtx5090
     vram_gb: 32
+    priority_tier: 2                # best-effort, flaky on heavy CUDA work
+    recovery_hook: |
+      # Consumer card; gpu-reset is "Not Supported". Last resort: host reboot.
+      # Only execute on explicit operator confirmation -- this kicks all
+      # mini-beast user services (vllm-20b, florence2, whisper-cpp, etc.)
+      ssh -q alex@mini-beast.lan "sudo reboot"
     can_run:
       - per_token_halt
       - depth_extrap     # K<=32 only
