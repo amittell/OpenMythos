@@ -521,17 +521,35 @@ def bootstrap_model_weights(model, path: str, ddp: bool) -> None:
 
     Mirrors load_checkpoint's FSDP FULL_STATE_DICT path but skips the
     `optim_state_dict_to_load` call that would crash on missing optimizer key.
+
+    If the model has a larger lora.scale.weight than the ckpt (e.g., extending
+    T_MAX from 12 to 16), pad the saved scale by replicating the final trained
+    row -- matches LoRAAdapter's runtime clamp semantics for depth extrapolation.
     """
     ckpt = torch.load(path, map_location="cpu", weights_only=False)
+    state = ckpt["model"]
+    # Pad lora.scale.weight rows for T_MAX extension. Match keys by suffix
+    # since FSDP wraps may prepend "module." or similar.
+    target_sd = model.state_dict()
+    for key, saved in list(state.items()):
+        if not key.endswith("lora.scale.weight"):
+            continue
+        target = target_sd.get(key)
+        if target is None or target.shape == saved.shape:
+            continue
+        if target.shape[0] > saved.shape[0] and target.shape[1:] == saved.shape[1:]:
+            pad_rows = target.shape[0] - saved.shape[0]
+            last_row = saved[-1:].expand(pad_rows, *saved.shape[1:])
+            state[key] = torch.cat([saved, last_row], dim=0).contiguous()
     if not ddp:
-        model.load_state_dict(ckpt["model"])
+        model.load_state_dict(state)
         return
     with FSDP.state_dict_type(
         model,
         StateDictType.FULL_STATE_DICT,
         FullStateDictConfig(offload_to_cpu=True, rank0_only=False),
     ):
-        model.load_state_dict(ckpt["model"])
+        model.load_state_dict(state)
 
 
 def load_checkpoint(model, optimizer, path: str, ddp: bool) -> int:
@@ -733,7 +751,10 @@ def main():
     # cfg.max_loop_iters drives the LoRAAdapter embedding table size, so it
     # must be at least T_MAX for every sampled depth to index a learned slot.
     T_MIN = 2
-    T_MAX = 12
+    # T_MAX defaults to 12 (matches rounds 2.0-2.13). Env-overridable so r2.14
+    # can fine-tune at T_FIXED=16 -- on bootstrap we pad lora.scale.weight from
+    # [12, rank] to [T_MAX, rank] by replicating the last trained row.
+    T_MAX = int(os.environ.get("T_MAX", "12"))
     # Optional: fix T to a single value (e.g., T_FIXED=8) for fixed-depth
     # training as a baseline against variable-T. Must satisfy T_MIN <= T <= T_MAX.
     T_FIXED_ENV = os.environ.get("T_FIXED", "").strip()
