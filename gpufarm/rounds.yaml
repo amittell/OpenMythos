@@ -1,0 +1,134 @@
+# Per-round manifest. Each round has a checkpoint and a set of evals we want
+# to run against it. gpufarm/gaps.py compares each round's eval_bundle to the
+# JSONs currently on spark / local docs/ and prints the gaps.
+#
+# eval_bundle entries are job IDs from gpufarm/jobs.yaml. The defaults set
+# below covers the "standard" eval pack; rounds with extra ablations can add
+# overrides.
+
+eval_defaults: &eval_defaults
+  - inference_benchmark
+  - per_token_halt
+  - depth_extrap_k64
+  - reasoning_eval
+  - act_halt_diagnostic
+  - act_halt_histogram
+  - gen_samples_multidepth
+  - sft_lora
+
+rounds:
+  r23:
+    description: "Round 2.3 (extended joint, see #50)"
+    ckpt_dir: checkpoints_3b_varT_pondernet_round23
+    ckpt_step: 3051
+    bootstrap: r22
+    eval_bundle: *eval_defaults
+
+  r24:
+    description: "Round 2.4: PonderNet joint from r2 collapsed (#44)"
+    ckpt_dir: checkpoints_3b_varT_pondernet_round24
+    ckpt_step: 3051
+    bootstrap: r2_collapsed
+    eval_bundle: *eval_defaults
+
+  r25:
+    description: "Round 2.5: fixed T=8 from r2 collapsed (#47)"
+    ckpt_dir: checkpoints_3b_varT_act_v3_round25_fixedT8
+    ckpt_step: 3051
+    bootstrap: r2_collapsed
+    T_FIXED: 8
+    eval_bundle: *eval_defaults
+
+  r26:
+    description: "Round 2.6: continue r2.3 joint +50M (#50)"
+    ckpt_dir: checkpoints_3b_varT_pondernet_round26
+    ckpt_step: 3051
+    bootstrap: r23
+    eval_bundle: *eval_defaults
+
+  r27:
+    description: "Round 2.7: PonderNet-KL lambda_p=0.1 from r2 collapsed (#51)"
+    ckpt_dir: checkpoints_3b_varT_pondernet_round27_lp01
+    ckpt_step: 3051
+    bootstrap: r2_collapsed
+    eval_bundle: *eval_defaults
+
+  r28:
+    description: "Round 2.8: anti-collapse head fine-tune from r2.4 backbone (#52)"
+    ckpt_dir: checkpoints_3b_anticollapse_round28
+    ckpt_step: 3051
+    bootstrap: r24
+    eval_bundle: *eval_defaults
+    # NOTE: ckpt has been cleaned up; gaps will show but cannot fill without
+    # retraining. Mark "ckpt_gone" in the manifest once that's confirmed.
+    ckpt_status: cleaned_up
+
+  r29:
+    description: "Round 2.9: no-recurrence baseline T_FIXED=1 from r2 collapsed (#54)"
+    ckpt_dir: checkpoints_3b_varT_act_v3_round29_T1
+    ckpt_step: 3051
+    bootstrap: r2_collapsed
+    T_FIXED: 1
+    eval_bundle: *eval_defaults
+
+  r210:
+    description: "Round 2.10: continue r2.6 joint PonderNet-KL +50M (#56)"
+    ckpt_dir: checkpoints_3b_varT_pondernet_round210
+    ckpt_step: 3051
+    bootstrap: r26
+    eval_bundle: *eval_defaults
+
+  r211:
+    description: "Round 2.11: fixed-T=2 from r2 collapsed -- compute-scaling baseline (#57)"
+    ckpt_dir: checkpoints_3b_varT_act_v3_round211_T2
+    ckpt_step: 12207
+    bootstrap: r2_collapsed
+    T_FIXED: 2
+    eval_bundle:
+      # Compute-scaling baselines skip SFT (not a candidate for paper SFT table)
+      - inference_benchmark
+      - per_token_halt
+      - depth_extrap_k64
+      - reasoning_eval
+      - act_halt_diagnostic
+      - act_halt_histogram
+      - gen_samples_multidepth
+
+  r212:
+    description: "Round 2.12: fixed-T=4 from r2 collapsed -- compute-scaling baseline (#58)"
+    ckpt_dir: checkpoints_3b_varT_act_v3_round212_T4
+    ckpt_step: 12207
+    bootstrap: r2_collapsed
+    T_FIXED: 4
+    eval_bundle:
+      - inference_benchmark
+      - per_token_halt
+      - depth_extrap_k64
+      - reasoning_eval
+      - act_halt_diagnostic
+      - act_halt_histogram
+      - gen_samples_multidepth
+
+  r213:
+    description: "Round 2.13: extend r2.10 joint to 200M tokens (#61)"
+    ckpt_dir: checkpoints_3b_varT_pondernet_round213
+    ckpt_step: 3051
+    bootstrap: r210
+    eval_bundle: *eval_defaults
+
+  r214:
+    description: "Round 2.14: T_FIXED=16 compute-scaling extension (#62)"
+    ckpt_dir: checkpoints_3b_varT_act_v3_round214_T16
+    ckpt_step: 3051
+    bootstrap: r2_collapsed
+    T_FIXED: 16
+    T_MAX: 16  # extends LoRA scale via padding in bootstrap_model_weights
+    eval_bundle:
+      # Same as r211/r212 (compute-scaling row); no SFT
+      - inference_benchmark
+      - per_token_halt
+      - depth_extrap_k64
+      - reasoning_eval
+      - act_halt_diagnostic
+      - act_halt_histogram
+      - gen_samples_multidepth

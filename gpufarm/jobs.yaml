@@ -1,0 +1,133 @@
+# Job-type manifest. Each entry is a template for one kind of work the farm
+# can run. The dispatcher (Layer 2) renders {label}/{round_num}/etc per
+# invocation. The gap detector (Layer 1) uses output_pattern to test whether
+# a (round, job) pair has landed.
+
+jobs:
+  # -------- Cluster training (FSDP, 4-rank) --------
+  - id: train_round
+    script: training/3b_varT_act_v3.py  # or 3b_varT_pondernet_joint.py per round
+    parallel: 4_rank_fsdp
+    resource_class: [gb10]
+    requires_resource: cluster-4node
+    env_required: [CKPT_DIR, BOOTSTRAP_CKPT]
+    env_optional: [T_FIXED, T_MAX, T_MIN]
+    output_pattern: checkpoints_{ckpt_dir_suffix}/step_{step_final}_full.pt
+    estimated_minutes: 1500   # ~25h at T=16, less at smaller T
+    notes: "Set ROUND_NAME / SCRIPT / PORT / EXTRA_ENV via retry_cluster_training.sh"
+
+  # -------- Cluster consolidation (FSDP shards -> full state dict) --------
+  - id: consolidate
+    script: training/consolidate_ckpt.py
+    parallel: 4_rank_fsdp
+    resource_class: [gb10]
+    requires_resource: cluster-4node
+    env_required: [SRC_PATTERN, DST_PATH]
+    output_pattern: "{DST_PATH}"
+    estimated_minutes: 20
+    notes: |
+      Launch all 4 ranks IN PARALLEL via & + wait; sequential launches
+      cause rendezvous timeouts (proven 2026-05-10).
+
+  # -------- Per-ckpt evals (single-GPU on Blackwell or 5090) --------
+  - id: inference_benchmark
+    script: training/inference_throughput_benchmark.py
+    resource_class: [blackwell]
+    env_required: [CKPT, OUT]
+    env_defaults:
+      T_VALUES: "1,2,4,8,16"
+      PROMPT_LEN: "512"
+      GEN_LEN: "128"
+      DEVICE: "cuda:0"
+    output_pattern: docs/inference_benchmark_r{round_num}.json
+    estimated_minutes: 5
+    python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
+
+  - id: per_token_halt
+    script: training/per_token_halt_analysis.py
+    resource_class: [blackwell, rtx5090]
+    env_required: [CKPT, OUT]
+    output_pattern: docs/per_token_halt_round{round_num}.json
+    estimated_minutes: 8
+
+  - id: depth_extrap
+    script: training/depth_extrap.py
+    resource_class: [blackwell, rtx5090]
+    env_required: [CKPT, OUT]
+    env_defaults:
+      DEPTHS: "4,8,16,32"
+    output_pattern: docs/depth_extrap_round{round_num}.json
+    estimated_minutes: 15
+
+  - id: depth_extrap_k64
+    script: training/depth_extrap.py
+    resource_class: [blackwell]   # rtx5090 fails K=64
+    env_required: [CKPT, OUT]
+    env_defaults:
+      DEPTHS: "4,8,16,32,64"
+    output_pattern: docs/depth_extrap_round{round_num}_k64.json
+    estimated_minutes: 8
+
+  - id: reasoning_eval
+    script: training/reasoning_eval.py
+    resource_class: [blackwell]
+    env_required: [CKPT, OUT]
+    output_pattern: docs/reasoning_eval_round{round_num}.json
+    estimated_minutes: 30
+
+  - id: act_halt_diagnostic
+    script: training/act_halt_diagnostic.py
+    resource_class: [gb10, blackwell]
+    env_required: [CKPT, OUT]
+    output_pattern: docs/act_halt_diagnostic_round{round_num}.json
+    estimated_minutes: 10
+
+  - id: act_halt_histogram
+    script: training/act_halt_histogram.py
+    resource_class: [gb10, blackwell]
+    env_required: [CKPT, OUT]
+    output_pattern: docs/act_halt_histogram_round{round_num}.json
+    estimated_minutes: 5
+
+  - id: sft_lora
+    script: training/sft_lora_minibeast.py
+    resource_class: [blackwell]
+    env_required: [CKPT, OUT_DIR]
+    env_defaults:
+      DATASET: HuggingFaceH4/ultrachat_200k
+      SPLIT: train_sft
+      MAX_SAMPLES: "50000"
+      SEQ_LEN: "2048"
+      LORA_RANK: "32"
+      LORA_ALPHA: "64"
+      LR: "2e-4"
+      EPOCHS: "1"
+      MICRO_BATCH: "2"
+      GRAD_ACCUM: "4"
+      SAVE_EVERY: "500"
+      SAVE_MERGED: "1"
+      PYTORCH_CUDA_ALLOC_CONF: "expandable_segments:True"
+    output_pattern: docs/sft_lora_r{round_num}_training_curve.json
+    estimated_minutes: 120
+    python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
+
+  - id: gen_samples_multidepth
+    script: training/gen_samples_multidepth.py
+    resource_class: [blackwell, gb10, rtx5090]
+    env_required: [CKPT, OUT]
+    output_pattern: docs/gen_samples_round{round_num}_multidepth.txt
+    estimated_minutes: 5
+
+  - id: eval_listops
+    script: training/eval_listops.py
+    resource_class: [blackwell]
+    env_required: [CKPT, OUT]
+    output_pattern: docs/eval_listops_round{round_num}.json
+    estimated_minutes: 20
+
+  - id: eval_gsm8k
+    script: training/eval_gsm8k_generation.py
+    resource_class: [blackwell]
+    env_required: [CKPT, OUT]
+    output_pattern: docs/eval_gsm8k_generation_round{round_num}.json
+    estimated_minutes: 30

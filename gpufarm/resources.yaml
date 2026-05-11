@@ -1,0 +1,105 @@
+# GPU farm resource manifest. Source of truth for what hardware we have and
+# what each unit is suitable for. Consumed by gpufarm/gaps.py (Layer 1) and
+# the eventual dispatcher (Layer 2).
+
+resources:
+  # 4-node Spark cluster -- FSDP training over RoCE v2 on the 200 Gbps storage
+  # network. These ranks are addressed together (4-rank torchrun) for any
+  # cluster_4node job; never individually.
+  - id: cluster-4node
+    members:
+      - {rank: 0, host: kebab-spark-200g, jump_host: kebab-spark.lan, gid: 3}
+      - {rank: 1, host: kebab-gx10-200g, jump_host: kebab-spark.lan, gid: 3}
+      - {rank: 2, host: kebab-gx10-2-200g, jump_host: kebab-spark.lan, gid: 3}
+      - {rank: 3, host: kebab-gx10-3-200g, jump_host: kebab-spark.lan, gid: 3}
+    class: gb10
+    vram_gb: 128  # GB10 unified memory per node
+    can_run: [train_round, consolidate, eval_4node]
+    master_addr: 192.168.100.10
+    nccl_env:
+      NCCL_DEBUG: WARN
+      NCCL_IB_HCA: rocep1s0f1
+      NCCL_SOCKET_IFNAME: bond0
+      GLOO_SOCKET_IFNAME: bond0
+      TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC: "420"
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+    notes: |
+      CUDA capability 12.1 (warning: above pytorch's supported max 12.0,
+      works in practice). Use [p]ython3 regex trick for any pgrep/pkill
+      to avoid matching own shell command line.
+
+  - id: blackwell-gpu0
+    host: kebab-rtx6000.lan
+    user: alexm
+    cuda_device: 0
+    class: blackwell
+    vram_gb: 96
+    can_run:
+      - sft_lora
+      - inference_benchmark
+      - per_token_halt
+      - depth_extrap
+      - depth_extrap_k64
+      - reasoning_eval
+      - act_halt_diagnostic
+      - act_halt_histogram
+      - gen_samples_multidepth
+      - eval_listops
+      - eval_gsm8k
+    python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
+    conflicts_with:
+      - {service: kebab-rtx-vllm.service, scope: system}
+      - {service: kebab-rtx-embedding.service, scope: system}
+    notes: "Has Vault access + GitHub creds -- DO NOT expose to vast.ai/external"
+
+  - id: blackwell-gpu1
+    host: kebab-rtx6000.lan
+    user: alexm
+    cuda_device: 1
+    class: blackwell
+    vram_gb: 96
+    can_run:
+      - sft_lora
+      - inference_benchmark
+      - per_token_halt
+      - depth_extrap
+      - depth_extrap_k64
+      - reasoning_eval
+      - act_halt_diagnostic
+      - act_halt_histogram
+      - gen_samples_multidepth
+      - eval_listops
+      - eval_gsm8k
+    python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
+    # GPU 1 has no service conflicts (vllm/embedding pin to GPU 0)
+    notes: "Has Vault access + GitHub creds -- DO NOT expose to vast.ai/external"
+
+  - id: rtx5090
+    host: mini-beast.lan
+    user: alex  # different uid from the rtx6000 alexm
+    cuda_device: 0
+    class: rtx5090
+    vram_gb: 32
+    can_run:
+      - per_token_halt
+      - depth_extrap     # K<=32 only
+      - inference_benchmark
+      - gen_samples_multidepth
+    avoid:
+      - depth_extrap_k64  # proven flaky: r2.13 hung 15h at n_loops=32, required reboot
+      - sft_lora          # 32 GB tight for 3B + lora + ultrachat seq_len 2048
+      - reasoning_eval    # bench long; let Blackwell handle
+    conflicts_with:
+      - {service: vllm-20b.service,    scope: user}
+      - {service: vllm-20b-128k.service, scope: user}
+      - {service: vllm-20b-fast.service, scope: user}
+      - {service: vllm-20b-vanilla.service, scope: user}
+      - {service: florence2.service,   scope: user}
+      - {service: whisper-cpp.service, scope: user}
+      - {service: sdxl.service,        scope: user}
+      - {service: outetts.service,     scope: user}
+    notes: |
+      Consumer card -- nvidia-smi --gpu-reset is "Not Supported". Avoid
+      SIGKILL on hung CUDA processes (left GPU in error state 2026-05-11,
+      required host reboot to clear).
