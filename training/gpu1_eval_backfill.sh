@@ -15,7 +15,7 @@
 
 set -uo pipefail
 ts() { date '+%F %T'; }
-log() { echo "[$(ts)] $*" | tee -a /tmp/gpu1_eval_backfill.log; }
+log() { echo "[$(ts)] $*" | tee -a /tmp/gpu1_eval_backfill.log >&2; }
 
 REPO=/home/alexm/OpenMythos
 RTX=alexm@kebab-rtx6000.lan
