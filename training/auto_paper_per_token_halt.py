@@ -76,12 +76,37 @@ def fmt_summary_table(available_keys: list[tuple[str, str]]) -> str:
         d = load_per_token_halt(key)
         if d is None:
             continue
-        # Schema-tolerant: try common keys
+        # Schema-tolerant: per_token_halt_analysis.py emits keys at top level
+        # (halt_step_mean, halt_step_median, p_first_mean, frac_halt_at_1,
+        # frac_halt_at_K). Older / experimental runs may nest under "global"
+        # or "overall" and use different names. Accept all known variants.
         global_stats = d.get("global", d.get("overall", d))
-        mean = global_stats.get("mean_halt_step", global_stats.get("mean", float("nan")))
-        median = global_stats.get("median_halt_step", global_stats.get("median", 0))
-        p1 = global_stats.get("p_iter1", global_stats.get("p_1", float("nan")))
-        full = global_stats.get("frac_using_full_budget", float("nan"))
+        mean = (
+            global_stats.get("halt_step_mean")
+            or global_stats.get("mean_halt_step")
+            or global_stats.get("mean")
+            or float("nan")
+        )
+        median = (
+            global_stats.get("halt_step_median")
+            if global_stats.get("halt_step_median") is not None
+            else global_stats.get("median_halt_step", global_stats.get("median", 0))
+        )
+        # "p(iter=1)" is the probability the head halts on the first iteration;
+        # the script emits this as ``frac_halt_at_1`` (fraction of tokens whose
+        # halt step was 1). Accept the older ``p_iter1`` / ``p_1`` names too.
+        p1 = (
+            global_stats.get("frac_halt_at_1")
+            if global_stats.get("frac_halt_at_1") is not None
+            else global_stats.get("p_iter1", global_stats.get("p_1", float("nan")))
+        )
+        # "frac using full budget" = fraction of tokens that exhausted all K
+        # iterations. per_token_halt_analysis.py emits ``frac_halt_at_K``.
+        full = (
+            global_stats.get("frac_halt_at_K")
+            if global_stats.get("frac_halt_at_K") is not None
+            else global_stats.get("frac_using_full_budget", float("nan"))
+        )
         rows.append((label, mean, median, p1, full))
 
     if not rows:
@@ -123,9 +148,20 @@ def fmt_by_token_type(available_keys: list[tuple[str, str]]) -> str:
         for cat_name, cat_data in cats.items():
             if not isinstance(cat_data, dict):
                 continue
-            n = cat_data.get("n", "")
-            mean = cat_data.get("mean_halt_step", cat_data.get("mean", float("nan")))
-            p1 = cat_data.get("p_iter1", cat_data.get("p_1", float("nan")))
+            # per_token_halt_analysis.py emits n_tokens / halt_step_mean /
+            # frac_halt_at_1. Older variants use n / mean_halt_step / p_iter1.
+            n = cat_data.get("n_tokens", cat_data.get("n", ""))
+            mean = (
+                cat_data.get("halt_step_mean")
+                or cat_data.get("mean_halt_step")
+                or cat_data.get("mean")
+                or float("nan")
+            )
+            p1 = (
+                cat_data.get("frac_halt_at_1")
+                if cat_data.get("frac_halt_at_1") is not None
+                else cat_data.get("p_iter1", cat_data.get("p_1", float("nan")))
+            )
             mean_s = f"{mean:.2f}" if isinstance(mean, (int, float)) and mean == mean else "--"
             p1_s = f"{p1:.4f}" if isinstance(p1, (int, float)) and p1 == p1 else "--"
             n_s = f"{int(n):,}" if isinstance(n, (int, float)) else str(n)

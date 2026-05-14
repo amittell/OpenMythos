@@ -65,9 +65,16 @@ def load_depth_k64(r: int) -> list[dict] | None:
     if not p.exists() or p.stat().st_size == 0:
         return None
     data = json.loads(p.read_text())
-    # Schema: {"results": [{"K": int, "fineweb_ce_off": ..., "fineweb_ce_on": ..., ...}, ...]}
-    # OR {"K": [...], "fineweb_ce_off": [...], ...}  -- depends on script
-    return data.get("results", data.get("by_K"))
+    # Actual schema produced by training/depth_extrap.py:
+    #   {"results_fineweb": [{"n_loops": int, "loss": float, "act": "on"|"off"}, ...],
+    #    "results_gsm8k": [...], "results_tinystories": [...], ...}
+    # Older / variant runs may still emit {"results": [...]} or {"by_K": ...},
+    # so we fall through for back-compat.
+    return (
+        data.get("results_fineweb")
+        or data.get("results")
+        or data.get("by_K")
+    )
 
 
 def fmt_k64_table(available_rounds: list[int]) -> str:
@@ -83,10 +90,21 @@ def fmt_k64_table(available_rounds: list[int]) -> str:
         for entry in results:
             if not isinstance(entry, dict):
                 continue
-            K = entry.get("K") or entry.get("k") or entry.get("depth")
+            # Real schema uses n_loops + loss + act flag; older variants
+            # use K/k/depth + fineweb_ce_off/ce_off/fineweb_ce. Accept all.
+            K = entry.get("n_loops") or entry.get("K") or entry.get("k") or entry.get("depth")
             if K is None:
                 continue
-            ce = entry.get("fineweb_ce_off") or entry.get("ce_off") or entry.get("fineweb_ce")
+            # Prefer ACT-off (full-budget) measurement; fall back to other names
+            # if the entry doesn't carry an act flag.
+            if entry.get("act") == "on":
+                continue
+            ce = (
+                entry.get("loss")
+                or entry.get("fineweb_ce_off")
+                or entry.get("ce_off")
+                or entry.get("fineweb_ce")
+            )
             if ce is None:
                 continue
             rows[r][int(K)] = ce

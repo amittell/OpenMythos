@@ -76,27 +76,39 @@ def fmt_table_for_task(task: str, available_rounds: list[int]) -> str:
         d = load_reasoning(r)
         if d is None:
             continue
-        # JSON layout: results[task][K{N}] = {acc: float, n: int}
-        # Or flat: results[K{N}][task] -- detect which.
+        # JSON layouts seen in the wild:
+        #   results[task][K_str]  where K_str is "4" or "K4" -> {acc, n, ...}
+        #   results[K_str][task]  same K_str variants
+        # The actual schema produced by reasoning_eval.py is
+        # results[task][int_as_str] with bare-int keys (no "K" prefix).
+        # Accept both forms.
+        def _as_K(s: str) -> int | None:
+            if isinstance(s, str) and s.startswith("K") and s[1:].isdigit():
+                return int(s[1:])
+            if isinstance(s, str) and s.isdigit():
+                return int(s)
+            return None
+
         results = d.get("results", {})
-        # Detect schema by sniffing: values are dicts of K{...} or task names?
         rows[r] = {}
-        first_val = next(iter(results.values()), None)
-        if isinstance(first_val, dict) and any(k.startswith("K") for k in first_val):
-            # results[task][K{N}]
+        # Sniff: is the outer key a task name (arc-easy / hellaswag / ...) or a K?
+        outer_keys = list(results.keys())
+        outer_looks_like_K = any(_as_K(k) is not None for k in outer_keys)
+        if not outer_looks_like_K:
+            # results[task][K_str]
             task_data = results.get(task, {})
             for k_key, v in task_data.items():
-                if not k_key.startswith("K"):
+                K = _as_K(k_key)
+                if K is None:
                     continue
-                K = int(k_key[1:])
                 Ks.add(K)
                 rows[r][K] = v.get("acc", float("nan")) if isinstance(v, dict) else v
-        elif isinstance(first_val, dict):
-            # results[K{N}][task]
+        else:
+            # results[K_str][task]
             for k_key, by_task in results.items():
-                if not k_key.startswith("K"):
+                K = _as_K(k_key)
+                if K is None:
                     continue
-                K = int(k_key[1:])
                 Ks.add(K)
                 td = by_task.get(task, {}) if isinstance(by_task, dict) else {}
                 rows[r][K] = td.get("acc", float("nan")) if isinstance(td, dict) else td

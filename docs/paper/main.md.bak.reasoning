@@ -687,6 +687,72 @@ Round 2.8 takes the round-2.4 backbone (rescued via PonderNet-KL joint training)
 
 **[DRAFT verdict — polish before submission.]** Numbers above were auto-extracted from `docs/depth_extrap_round28.json`, `docs/act_halt_diagnostic_round28.json`, and `docs/act_halt_histogram_round28.json`. The auto-generated paper fragment is at `docs/paper/round28_results.md` for reference.
 
+### 7.19 Joint training to 200M tokens (round 2.13)
+
+Round 2.13 continues round 2.10 for an additional 50M tokens of joint PonderNet-KL training, bringing total joint-training tokens to 200M. This is the fourth and final point on the joint-token scaling curve (50M r2.3, 100M r2.6, 150M r2.10, 200M r2.13). Tests whether joint training continues to improve past 150M tokens or fully saturates.
+
+**FineWeb-Edu held-out cross-entropy at K iterations:**
+
+| K  | r2.193 ACT-off | round 2.10 (150M joint tokens) ACT-off | Δ      | r2 ACT-off |
+|----|--------------|---------------------|--------|------------|
+|  4 | 3.1450       | 3.1013              | +0.0437 | 4.2455     |
+|  8 | 3.1420       | 3.0969              | +0.0451 | 4.2522     |
+| 16 | 3.1427       | 3.0976              | +0.0451 | 4.2525     |
+| 32 | 3.1427       | 3.0974              | +0.0452 | 4.2524     |
+
+**Per-iteration halting probability at K = 4** (threshold = 0.99):
+
+| iter | p_mean | p_median | p_min  | p_max  | cum_p  | %≥thr |
+|------|--------|----------|--------|--------|--------|-------|
+|    1 | 0.2028 | 0.2031 | 0.1533 | 0.2578 | 0.2028 | 0.000 |
+|    2 | 0.2035 | 0.2031 | 0.1592 | 0.2598 | 0.4063 | 0.000 |
+|    3 | 0.2034 | 0.2031 | 0.1680 | 0.2500 | 0.6097 | 0.000 |
+|    4 | 0.2017 | 0.2021 | 0.1670 | 0.2461 | 0.8114 | 0.000 |
+
+**Halt-step histogram per K:**
+
+| K  | mean halt step | median | tokens at iter 1 | full budget used |
+|----|----------------|--------|------------------|------------------|
+|  4 | 4.00           |      4 | 0 / 65,536    | 1.000            |
+|  8 | 5.29           |      5 | 0 / 65,536    | 0.000            |
+| 16 | 5.29           |      5 | 0 / 65,536    | 0.000            |
+| 32 | 5.29           |      5 | 0 / 65,536    | 0.000            |
+
+**[DRAFT verdict — polish before submission.]** Numbers above were auto-extracted from `docs/depth_extrap_round213.json`, `docs/act_halt_diagnostic_round213.json`, and `docs/act_halt_histogram_round213.json`. The auto-generated paper fragment is at `docs/paper/round213_results.md` for reference.
+
+### 7.20 Compute-scaling: T_FIXED = 16 (round 2.14)
+
+Round 2.14 extends the compute-scaling curve to `T_FIXED = 16`, twice the depth of round 2.5's `T = 8`. Tests whether deeper recurrence during training continues to help past T = 8 or shows diminishing returns at the high end of the curve.
+
+**FineWeb-Edu held-out cross-entropy at K iterations:**
+
+| K  | r2.194 ACT-off | round 2.5 (T = 8) ACT-off | Δ      | r2 ACT-off |
+|----|--------------|---------------------|--------|------------|
+|  4 | 3.7448       | 3.4802              | +0.2646 | 4.2455     |
+|  8 | 3.7428       | 3.4781              | +0.2647 | 4.2522     |
+| 16 | 3.7411       | 3.4780              | +0.2632 | 4.2525     |
+| 32 | 3.7432       | 3.4778              | +0.2655 | 4.2524     |
+
+**Per-iteration halting probability at K = 4** (threshold = 0.99):
+
+| iter | p_mean | p_median | p_min  | p_max  | cum_p  | %≥thr |
+|------|--------|----------|--------|--------|--------|-------|
+|    1 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.000 |
+|    2 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.000 |
+|    3 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.000 |
+|    4 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.000 |
+
+**Halt-step histogram per K:**
+
+| K  | mean halt step | median | tokens at iter 1 | full budget used |
+|----|----------------|--------|------------------|------------------|
+|  4 | 1.00           |      1 | 65,535 / 65,536    | 0.000            |
+|  8 | 1.00           |      1 | 65,535 / 65,536    | 0.000            |
+| 16 | 1.00           |      1 | 65,535 / 65,536    | 0.000            |
+| 32 | 1.00           |      1 | 65,535 / 65,536    | 0.000            |
+
+**[DRAFT verdict — polish before submission.]** Numbers above were auto-extracted from `docs/depth_extrap_round214.json`, `docs/act_halt_diagnostic_round214.json`, and `docs/act_halt_histogram_round214.json`. The auto-generated paper fragment is at `docs/paper/round214_results.md` for reference.
+
 ### 7.15 Depth-graded capability probes (ListOps and GSM8K full generation)
 
 Every accuracy probe we have run on this model so far has been depth-flat: synthetic_depth's five-task suite (§8.4 footnote), and the multiple-choice log-likelihood evals on ARC-Easy, ARC-Challenge, and HellaSwag, all yield K-invariant accuracy at every round. Two of these probes are arguably ill-suited to recurrent-depth scaling: synthetic_depth's tasks are mostly single-step, and multiple-choice log-likelihood scoring is dominated by argmax stability rather than per-token logit shifts. We add two further probes designed to be more directly responsive to additional iteration: ListOps (Nangia & Bowman 2018) where the tree-nesting depth maps onto the number of reduction steps required, and GSM8K with full chain-of-thought generation, where extra K could in principle let the model construct more accurate intermediate steps.
@@ -728,6 +794,24 @@ Every accuracy probe we have run on this model so far has been depth-flat: synth
 | 32 | 0.030 | 0.030 | 0.040 | 0.010 | 0.030 |
 
 **[DRAFT verdict — polish before submission.]** Numbers above were auto-extracted from `docs/eval_listops_round{23,24,25}.json` and `docs/eval_gsm8k_generation_round{23,24,25}.json`. Whether either probe shows monotone K-improvement or remains depth-flat determines the §8.4 framing.
+### 7.21 Multiple-choice probes (ARC-Easy, ARC-Challenge, HellaSwag)
+
+Multiple-choice log-likelihood evals on ARC-Easy, ARC-Challenge, and HellaSwag. These probes score the model on each candidate completion's log-likelihood and pick the highest. Each task is evaluated at multiple K values to test whether additional inference compute changes accuracy. The pattern across all rounds and all three tasks is K-invariance: accuracy is essentially flat across the K = 4..32 range. This is consistent with §8.4's argument that argmax-based scoring metrics are insensitive to the per-token logit shifts that recurrent depth provides; the §7.15 generation probes are a more direct test.
+
+_no data for arc-easy_
+
+_no data for arc-challenge_
+
+_no data for hellaswag_
+
+**[DRAFT verdict — polish before submission.]** Numbers above are auto-extracted from `docs/reasoning_eval_round*.json`. Confirms K-invariance across all available rounds; serves as control for the §7.15 generation probes.
+### 7.22 Extended depth extrapolation up to K=64
+
+Standard `depth_extrap.py` runs evaluate at K ∈ {4, 8, 16, 32}. We extend the range to K = 64 (~5x the training `T_max = 12`) on selected rounds to test whether models continue to benefit from inference depth far beyond the training regime. The expectation: a saturating curve, with the marginal CE improvement per extra K shrinking at high K. A non-monotone curve (CE re-increasing past some K) would indicate the recurrent block has learned a diverging fixed-point.
+
+_no K=64 data available_
+
+**[DRAFT verdict — polish before submission.]** Auto-extracted from `docs/depth_extrap_round*_k64.json`. Numbers tell us whether the iteration fixed-point converges or diverges past T_max.
 ### 7.23 Per-token halt distribution across rounds
 
 Where the round-level §7.13--§7.20 sections show the *aggregate* halt-step histogram (one number per K), this section breaks halt step out across individual tokens and rounds. The question is whether the trained head learns an interesting per-token allocation policy (different halt steps for content vs. function tokens, for instance) or whether it collapses onto one global mean.
@@ -743,6 +827,11 @@ Where the round-level §7.13--§7.20 sections show the *aggregate* halt-step his
 |  r2.5 |            -- |           0 |        -- |                     -- |
 |  r2.6 |            -- |           0 |        -- |                     -- |
 |  r2.7 |            -- |           0 |        -- |                     -- |
+| r2.10 |            -- |           0 |        -- |                     -- |
+| r2.11 |            -- |           0 |        -- |                     -- |
+| r2.12 |            -- |           0 |        -- |                     -- |
+| r2.13 |            -- |           0 |        -- |                     -- |
+| r2.14 |            -- |           0 |        -- |                     -- |
 | anti10 |            -- |           0 |        -- |                     -- |
 
 **Halt step by token category:**
@@ -803,6 +892,46 @@ Where the round-level §7.13--§7.20 sections show the *aggregate* halt-step his
 | content |  | -- | -- |
 | rare |  | -- | -- |
 
+*Round r2.10:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
+*Round r2.11:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
+*Round r2.12:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
+*Round r2.13:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
+*Round r2.14:*
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct |  | -- | -- |
+| function |  | -- | -- |
+| content |  | -- | -- |
+| rare |  | -- | -- |
+
 *Round anti10:*
 | category | n | mean halt | p(iter=1) |
 |----------|---|-----------|-----------|
@@ -813,24 +942,6 @@ Where the round-level §7.13--§7.20 sections show the *aggregate* halt-step his
 
 
 **[DRAFT verdict — polish before submission.]** Auto-extracted from `docs/per_token_halt_round*.json` and special-variant JSONs. The mean halt step and `p(iter=1)` columns are the most diagnostic: stable mean across rounds + non-trivial spread by token category = head is doing something useful; saturated `p(iter=1) ≈ 1` = collapsed.
-### 7.21 Multiple-choice probes (ARC-Easy, ARC-Challenge, HellaSwag)
-
-Multiple-choice log-likelihood evals on ARC-Easy, ARC-Challenge, and HellaSwag. These probes score the model on each candidate completion's log-likelihood and pick the highest. Each task is evaluated at multiple K values to test whether additional inference compute changes accuracy. The pattern across all rounds and all three tasks is K-invariance: accuracy is essentially flat across the K = 4..32 range. This is consistent with §8.4's argument that argmax-based scoring metrics are insensitive to the per-token logit shifts that recurrent depth provides; the §7.15 generation probes are a more direct test.
-
-_no data for arc-easy_
-
-_no data for arc-challenge_
-
-_no data for hellaswag_
-
-**[DRAFT verdict — polish before submission.]** Numbers above are auto-extracted from `docs/reasoning_eval_round*.json`. Confirms K-invariance across all available rounds; serves as control for the §7.15 generation probes.
-### 7.22 Extended depth extrapolation up to K=64
-
-Standard `depth_extrap.py` runs evaluate at K ∈ {4, 8, 16, 32}. We extend the range to K = 64 (~5x the training `T_max = 12`) on selected rounds to test whether models continue to benefit from inference depth far beyond the training regime. The expectation: a saturating curve, with the marginal CE improvement per extra K shrinking at high K. A non-monotone curve (CE re-increasing past some K) would indicate the recurrent block has learned a diverging fixed-point.
-
-_no K=64 data available_
-
-**[DRAFT verdict — polish before submission.]** Auto-extracted from `docs/depth_extrap_round*_k64.json`. Numbers tell us whether the iteration fixed-point converges or diverges past T_max.
 ## 8. Discussion
 
 ### 8.1 The gradient pathway
