@@ -1,0 +1,469 @@
+{
+  "ckpt_path": "/home/alex/OpenMythos/checkpoints/ckpt_r212_full.pt",
+  "step": 12207,
+  "K": 32,
+  "act_threshold": 0.99,
+  "n_tokens": 32768,
+  "halt_step_histogram": [
+    0,
+    32461,
+    307,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "halt_step_mean": 1.009368896484375,
+  "halt_step_median": 1.0,
+  "p_first_mean": 0.9923559427261353,
+  "frac_halt_at_1": 0.990631103515625,
+  "frac_halt_at_K": 0.0,
+  "by_category": {
+    "punct": {
+      "n_tokens": 4124,
+      "halt_step_mean": 1.0004849660523762,
+      "halt_step_median": 1.0,
+      "p_first_mean": 0.9998337626457214,
+      "frac_halt_at_1": 0.9995150339476236,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.23108632395732298
+    },
+    "function": {
+      "n_tokens": 9564,
+      "halt_step_mean": 1.0009410288582183,
+      "halt_step_median": 1.0,
+      "p_first_mean": 0.999224066734314,
+      "frac_halt_at_1": 0.9990589711417817,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.22135089920535342
+    },
+    "content": {
+      "n_tokens": 17102,
+      "halt_step_mean": 1.0154367910185944,
+      "halt_step_median": 1.0,
+      "p_first_mean": 0.9875349402427673,
+      "frac_halt_at_1": 0.9845632089814057,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.3605426265933809
+    },
+    "rare": {
+      "n_tokens": 1978,
+      "halt_step_mean": 1.0161779575328616,
+      "halt_step_median": 1.0,
+      "p_first_mean": 0.985239565372467,
+      "frac_halt_at_1": 0.9838220424671386,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.41809908998988876
+    }
+  },
+  "by_correctness": {
+    "correct": {
+      "n_tokens": 10063,
+      "halt_step_mean": 1.009539898638577,
+      "halt_step_median": 1.0,
+      "p_first_mean": 0.9919357895851135,
+      "frac_halt_at_1": 0.990460101361423,
+      "frac_halt_at_K": 0.0
+    },
+    "incorrect": {
+      "n_tokens": 22705,
+      "halt_step_mean": 1.0092931072451001,
+      "halt_step_median": 1.0,
+      "p_first_mean": 0.9925420880317688,
+      "frac_halt_at_1": 0.9907068927548998,
+      "frac_halt_at_K": 0.0
+    }
+  },
+  "examples": {
+    "early_halters": [
+      {
+        "token": " rh",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "iz",
+        "pred": "iz",
+        "correct": true
+      },
+      {
+        "token": " following",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " Hurricane",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " logging",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " following",
+        "pred": " is",
+        "correct": false
+      },
+      {
+        "token": "age",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " logging",
+        "pred": " is",
+        "correct": false
+      },
+      {
+        "token": " Salv",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "age",
+        "pred": "age",
+        "correct": true
+      },
+      {
+        "token": ".",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " Salv",
+        "pred": " The",
+        "correct": false
+      },
+      {
+        "token": " spreads",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": ".",
+        "pred": " out",
+        "correct": false
+      },
+      {
+        "token": " patch",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " spreads",
+        "pred": "y",
+        "correct": false
+      },
+      {
+        "token": " the",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " patch",
+        "pred": " soil",
+        "correct": false
+      },
+      {
+        "token": " and",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " the",
+        "pred": " other",
+        "correct": false
+      },
+      {
+        "token": "ers",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " and",
+        "pred": " and",
+        "correct": true
+      },
+      {
+        "token": " till",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "ers",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " up",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " till",
+        "pred": " to",
+        "correct": false
+      },
+      {
+        "token": " shoot",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " up",
+        "pred": " up",
+        "correct": true
+      },
+      {
+        "token": "omes",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " shoot",
+        "pred": " are",
+        "correct": false
+      },
+      {
+        "token": "iz",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "omes",
+        "pred": "ome",
+        "correct": false
+      },
+      {
+        "token": " Hurricane",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " Katrina",
+        "pred": " Maria",
+        "correct": false
+      },
+      {
+        "token": " those",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " rh",
+        "pred": " areas",
+        "correct": false
+      },
+      {
+        "token": ",",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " those",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " occurred",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      }
+    ],
+    "late_halters": [
+      {
+        "token": " mainland",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.96484375,
+        "target": " he",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": "ton",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 5.617039278149605e-09,
+        "target": " have",
+        "pred": " were",
+        "correct": false
+      },
+      {
+        "token": "GA",
+        "category": "rare",
+        "halt_step": 2,
+        "p_first": 3.694822225952521e-13,
+        "target": " is",
+        "pred": " is",
+        "correct": true
+      },
+      {
+        "token": "ass",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 1.545430450278218e-13,
+        "target": " is",
+        "pred": " has",
+        "correct": false
+      },
+      {
+        "token": "ass",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 9.486769009248164e-19,
+        "target": " inv",
+        "pred": " is",
+        "correct": false
+      },
+      {
+        "token": " Picasso",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 3.9637088775634766e-06,
+        "target": " made",
+        "pred": " was",
+        "correct": false
+      },
+      {
+        "token": " base",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.00628662109375,
+        "target": " (",
+        "pred": " as",
+        "correct": false
+      },
+      {
+        "token": " Science",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 1.0132789611816406e-05,
+        "target": " we",
+        "pred": " we",
+        "correct": true
+      },
+      {
+        "token": " drawing",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.0005035400390625,
+        "target": ")",
+        "pred": ")",
+        "correct": true
+      },
+      {
+        "token": " wax",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.51171875,
+        "target": "),",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": "orship",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 3.510081114654895e-12,
+        "target": " donations",
+        "pred": " is",
+        "correct": false
+      },
+      {
+        "token": " collection",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.78515625,
+        "target": " laws",
+        "pred": " in",
+        "correct": false
+      },
+      {
+        "token": "OM",
+        "category": "rare",
+        "halt_step": 2,
+        "p_first": 1.0613732115416497e-13,
+        "target": " or",
+        "pred": ".\n",
+        "correct": false
+      },
+      {
+        "token": " Picasso",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 6.007030606269836e-08,
+        "target": " painted",
+        "pred": "\u2019s",
+        "correct": false
+      },
+      {
+        "token": "I",
+        "category": "function",
+        "halt_step": 2,
+        "p_first": 0.59765625,
+        "target": " purchased",
+        "pred": "\u2019s",
+        "correct": false
+      },
+      {
+        "token": "ager",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.35546875,
+        "target": "'s",
+        "pred": "'s",
+        "correct": true
+      },
+      {
+        "token": " casting",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 2.2351741790771484e-07,
+        "target": " to",
+        "pred": " is",
+        "correct": false
+      },
+      {
+        "token": " OM",
+        "category": "rare",
+        "halt_step": 2,
+        "p_first": 1.014588720084573e-24,
+        "target": ".",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": "ost",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 7.66053886991358e-15,
+        "target": "'s",
+        "pred": " said",
+        "correct": false
+      },
+      {
+        "token": "OM",
+        "category": "rare",
+        "halt_step": 2,
+        "p_first": 0.04345703125,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      }
+    ]
+  }
+}

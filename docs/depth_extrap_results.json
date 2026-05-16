@@ -1,0 +1,89 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_loops4_fast/step_0006103.pt",
+  "step": 6103,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results": [
+    {
+      "n_loops": 4,
+      "loss": 4.221257209777832,
+      "ppl": 68.11907043968785,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.12,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.221257209777832,
+      "ppl": 68.11907043968785,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.75,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.221257209777832,
+      "ppl": 68.11907043968785,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.64,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.221257209777832,
+      "ppl": 68.11907043968785,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.9,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 4.760175168514252,
+      "ppl": 116.76637790059566,
+      "tokens_measured": 65536,
+      "elapsed_s": 21.29,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 6.227240204811096,
+      "ppl": 506.35611422977405,
+      "tokens_measured": 65536,
+      "elapsed_s": 39.22,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 7.306896775960922,
+      "ppl": 1490.5445112318002,
+      "tokens_measured": 65536,
+      "elapsed_s": 82.66,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 7.456286370754242,
+      "ppl": 1730.708897245735,
+      "tokens_measured": 65536,
+      "elapsed_s": 135.52,
+      "act": "off"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture, a new kind of architecture, which, according to the Institute of Technology, is now under development. The main idea behind this new architecture is that it is actually very important to develop a modern architecture",
+    "8": "The recurrent-depth transformer architecture, a new kind of architecture, which, according to the Institute of Technology, is now under development. The main idea behind this new architecture is that it is actually very important to develop a modern architecture",
+    "16": "The recurrent-depth transformer architecture, a new kind of architecture, which, according to the Institute of Technology, is now under development. The main idea behind this new architecture is that it is actually very important to develop a modern architecture",
+    "32": "The recurrent-depth transformer architecture, a new kind of architecture, which, according to the Institute of Technology, is now under development. The main idea behind this new architecture is that it is actually very important to develop a modern architecture"
+  }
+}

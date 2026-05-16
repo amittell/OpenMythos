@@ -1,0 +1,469 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints/ckpt_r214_full.pt",
+  "step": 3051,
+  "K": 32,
+  "act_threshold": 0.99,
+  "n_tokens": 32768,
+  "halt_step_histogram": [
+    0,
+    32768,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "halt_step_mean": 1.0,
+  "halt_step_median": 1.0,
+  "p_first_mean": 1.0,
+  "frac_halt_at_1": 1.0,
+  "frac_halt_at_K": 0.0,
+  "by_category": {
+    "punct": {
+      "n_tokens": 3945,
+      "halt_step_mean": 1.0,
+      "halt_step_median": 1.0,
+      "p_first_mean": 1.0,
+      "frac_halt_at_1": 1.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.22737642585551332
+    },
+    "function": {
+      "n_tokens": 9349,
+      "halt_step_mean": 1.0,
+      "halt_step_median": 1.0,
+      "p_first_mean": 1.0,
+      "frac_halt_at_1": 1.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.24494598352765
+    },
+    "content": {
+      "n_tokens": 17373,
+      "halt_step_mean": 1.0,
+      "halt_step_median": 1.0,
+      "p_first_mean": 1.0,
+      "frac_halt_at_1": 1.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.39221780924422955
+    },
+    "rare": {
+      "n_tokens": 2101,
+      "halt_step_mean": 1.0,
+      "halt_step_median": 1.0,
+      "p_first_mean": 1.0,
+      "frac_halt_at_1": 1.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.4726320799619229
+    }
+  },
+  "by_correctness": {
+    "correct": {
+      "n_tokens": 10994,
+      "halt_step_mean": 1.0,
+      "halt_step_median": 1.0,
+      "p_first_mean": 1.0,
+      "frac_halt_at_1": 1.0,
+      "frac_halt_at_K": 0.0
+    },
+    "incorrect": {
+      "n_tokens": 21774,
+      "halt_step_mean": 1.0,
+      "halt_step_median": 1.0,
+      "p_first_mean": 1.0,
+      "frac_halt_at_1": 1.0,
+      "frac_halt_at_K": 0.0
+    }
+  },
+  "examples": {
+    "early_halters": [
+      {
+        "token": "Ch",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "ond",
+        "pred": ".",
+        "correct": false
+      },
+      {
+        "token": "ond",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "roit",
+        "pred": "ene",
+        "correct": false
+      },
+      {
+        "token": "roit",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "in",
+        "pred": "in",
+        "correct": true
+      },
+      {
+        "token": "in",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " sulfate",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": " sulfate",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " consists",
+        "pred": " is",
+        "correct": false
+      },
+      {
+        "token": " consists",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " of",
+        "pred": " of",
+        "correct": true
+      },
+      {
+        "token": " of",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " repeating",
+        "pred": " a",
+        "correct": false
+      },
+      {
+        "token": " repeating",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " chains",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " chains",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " of",
+        "pred": " of",
+        "correct": true
+      },
+      {
+        "token": " of",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " molecules",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " molecules",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " called",
+        "pred": " and",
+        "correct": false
+      },
+      {
+        "token": " called",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " gly",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " gly",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "cos",
+        "pred": "c",
+        "correct": false
+      },
+      {
+        "token": "cos",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "amin",
+        "pred": "yl",
+        "correct": false
+      },
+      {
+        "token": "amin",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "ogly",
+        "pred": "ogly",
+        "correct": true
+      },
+      {
+        "token": "ogly",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "c",
+        "pred": "c",
+        "correct": true
+      },
+      {
+        "token": "c",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "ans",
+        "pred": "ans",
+        "correct": true
+      },
+      {
+        "token": "ans",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "\n",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": "\n",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "(G",
+        "pred": "-",
+        "correct": false
+      },
+      {
+        "token": "(G",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "AG",
+        "pred": "2",
+        "correct": false
+      }
+    ],
+    "late_halters": [
+      {
+        "token": " grounding",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " electrode",
+        "pred": " and",
+        "correct": false
+      },
+      {
+        "token": "-",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " grounding",
+        "pred": " air",
+        "correct": false
+      },
+      {
+        "token": ",\n",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "-",
+        "pred": "-",
+        "correct": true
+      },
+      {
+        "token": " design",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": ",\n",
+        "pred": " and",
+        "correct": false
+      },
+      {
+        "token": " system",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " design",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": " electrode",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " system",
+        "pred": " and",
+        "correct": false
+      },
+      {
+        "token": " grounding",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " electrode",
+        "pred": " system",
+        "correct": false
+      },
+      {
+        "token": "-",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " grounding",
+        "pred": " soil",
+        "correct": false
+      },
+      {
+        "token": ",\n",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "-",
+        "pred": "-",
+        "correct": true
+      },
+      {
+        "token": " method",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": ",\n",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": "-point",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " method",
+        "pred": " test",
+        "correct": false
+      },
+      {
+        "token": "4",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "-point",
+        "pred": ".",
+        "correct": false
+      },
+      {
+        "token": " ",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "4",
+        "pred": "3",
+        "correct": false
+      },
+      {
+        "token": " a",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " ",
+        "pred": " ",
+        "correct": true
+      },
+      {
+        "token": " using",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " a",
+        "pred": " a",
+        "correct": true
+      },
+      {
+        "token": " testing",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " using",
+        "pred": " and",
+        "correct": false
+      },
+      {
+        "token": "ivity",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " testing",
+        "pred": " and",
+        "correct": false
+      },
+      {
+        "token": " resist",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "ivity",
+        "pred": "ors",
+        "correct": false
+      },
+      {
+        "token": " soil",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " resist",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": "-",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " soil",
+        "pred": " The",
+        "correct": false
+      }
+    ]
+  }
+}

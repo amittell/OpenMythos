@@ -1,0 +1,157 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_act_v3_round212_T4/step_0012207_full.pt",
+  "step": 12207,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 4.122303530573845,
+      "ppl": 61.70120931102743,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.31,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.122303530573845,
+      "ppl": 61.70120931102743,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.28,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.122303530573845,
+      "ppl": 61.70120931102743,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.28,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.122303530573845,
+      "ppl": 61.70120931102743,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.28,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.7840631008148193,
+      "ppl": 43.99443289566748,
+      "tokens_measured": 65536,
+      "elapsed_s": 5.56,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.7807218432426453,
+      "ppl": 43.84768146730969,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.38,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.784582272171974,
+      "ppl": 44.017279475232876,
+      "tokens_measured": 65536,
+      "elapsed_s": 19.94,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.7844942808151245,
+      "ppl": 44.013406505483445,
+      "tokens_measured": 65536,
+      "elapsed_s": 39.14,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.508963514831024,
+      "ppl": 90.82762821596111,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 3.11,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.508963514831024,
+      "ppl": 90.82762821596111,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 3.09,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.508963514831024,
+      "ppl": 90.82762821596111,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 3.07,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.508963514831024,
+      "ppl": 90.82762821596111,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 3.05,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 4.217633962631226,
+      "ppl": 67.8727048034044,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.04,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.217633962631226,
+      "ppl": 67.8727048034044,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.03,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.217633962631226,
+      "ppl": 67.8727048034044,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.02,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.217633962631226,
+      "ppl": 67.8727048034044,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.02,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture, and some of the basic principles of the 18th century are as follows:\n- The 18th century is the period of great change. It is the period of the world\u2019s progress.",
+    "8": "The recurrent-depth transformer architecture, and some of the basic principles of the 18th century are as follows:\n- The 18th century is the period of great change. It is the period of the world\u2019s progress.",
+    "16": "The recurrent-depth transformer architecture, and some of the basic principles of the 18th century are as follows:\n- The 18th century is the period of great change. It is the period of the world\u2019s progress.",
+    "32": "The recurrent-depth transformer architecture, and some of the basic principles of the 18th century are as follows:\n- The 18th century is the period of great change. It is the period of the world\u2019s progress."
+  }
+}

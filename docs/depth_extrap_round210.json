@@ -1,0 +1,157 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_pondernet_round210/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.11421275138855,
+      "ppl": 22.515697922569277,
+      "tokens_measured": 65536,
+      "elapsed_s": 25.05,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.095666825771332,
+      "ppl": 22.101971789129998,
+      "tokens_measured": 65536,
+      "elapsed_s": 31.33,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.095666825771332,
+      "ppl": 22.101971789129998,
+      "tokens_measured": 65536,
+      "elapsed_s": 29.46,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.095666825771332,
+      "ppl": 22.101971789129998,
+      "tokens_measured": 65536,
+      "elapsed_s": 29.73,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.101309150457382,
+      "ppl": 22.227030770074386,
+      "tokens_measured": 65536,
+      "elapsed_s": 20.65,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.096906676888466,
+      "ppl": 22.129391938482428,
+      "tokens_measured": 65536,
+      "elapsed_s": 38.89,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.0976023226976395,
+      "ppl": 22.144791512947695,
+      "tokens_measured": 65536,
+      "elapsed_s": 75.03,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.097406417131424,
+      "ppl": 22.140453649947254,
+      "tokens_measured": 65536,
+      "elapsed_s": 166.4,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.196029825350709,
+      "ppl": 66.4220995296703,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 22.62,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.1941270938882145,
+      "ppl": 66.29583627172047,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 28.89,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.1941270938882145,
+      "ppl": 66.29583627172047,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 26.69,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.1941270938882145,
+      "ppl": 66.29583627172047,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 26.36,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.7399076968431473,
+      "ppl": 42.09410456693676,
+      "tokens_measured": 65536,
+      "elapsed_s": 21.59,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.735375791788101,
+      "ppl": 41.90376969720198,
+      "tokens_measured": 65536,
+      "elapsed_s": 30.88,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.735375791788101,
+      "ppl": 41.90376969720198,
+      "tokens_measured": 65536,
+      "elapsed_s": 28.01,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.735375791788101,
+      "ppl": 41.90376969720198,
+      "tokens_measured": 65536,
+      "elapsed_s": 29.1,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, the architecture provides a rich resource of spatial and spatial information that can be used by researchers and engineers to identify, access,",
+    "8": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, it also provides a rich resource for the development of new and emerging architecture and infrastructure.\nThe architecture of the complex lies in",
+    "16": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, it also provides a rich resource for the development of new and emerging architecture and infrastructure.\nThe architecture of the complex lies in",
+    "32": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, it also provides a rich resource for the development of new and emerging architecture and infrastructure.\nThe architecture of the complex lies in"
+  }
+}

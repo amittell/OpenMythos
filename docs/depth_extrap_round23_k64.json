@@ -1,0 +1,191 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_pondernet_joint/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32,
+    64
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.3058521151542664,
+      "ppl": 27.271770379417283,
+      "tokens_measured": 65536,
+      "elapsed_s": 21.82,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.294580966234207,
+      "ppl": 26.966111990632548,
+      "tokens_measured": 65536,
+      "elapsed_s": 34.62,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.2945806235074997,
+      "ppl": 26.966102748627357,
+      "tokens_measured": 65536,
+      "elapsed_s": 37.53,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.2945806235074997,
+      "ppl": 26.966102748627357,
+      "tokens_measured": 65536,
+      "elapsed_s": 40.78,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.2945806235074997,
+      "ppl": 26.966102748627357,
+      "tokens_measured": 65536,
+      "elapsed_s": 46.64,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.2936893105506897,
+      "ppl": 26.9420782201301,
+      "tokens_measured": 65536,
+      "elapsed_s": 26.37,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.2906185686588287,
+      "ppl": 26.859472946533035,
+      "tokens_measured": 65536,
+      "elapsed_s": 48.57,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.290244162082672,
+      "ppl": 26.8494184655791,
+      "tokens_measured": 65536,
+      "elapsed_s": 77.11,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.2900234311819077,
+      "ppl": 26.843492623288505,
+      "tokens_measured": 65536,
+      "elapsed_s": 128.43,
+      "act": "off"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.2902670204639435,
+      "ppl": 26.85003220683784,
+      "tokens_measured": 65536,
+      "elapsed_s": 286.04,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.131080075741183,
+      "ppl": 62.24511608127145,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 20.16,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.133951498387123,
+      "ppl": 62.42410497058018,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 29.28,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.133951498387123,
+      "ppl": 62.42410497058018,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 30.56,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.133951498387123,
+      "ppl": 62.42410497058018,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 28.83,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 4.133951498387123,
+      "ppl": 62.42410497058018,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 26.24,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.7071736454963684,
+      "ppl": 40.73850220911819,
+      "tokens_measured": 65536,
+      "elapsed_s": 21.52,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.706760823726654,
+      "ppl": 40.72168793942778,
+      "tokens_measured": 65536,
+      "elapsed_s": 33.34,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.706760823726654,
+      "ppl": 40.72168793942778,
+      "tokens_measured": 65536,
+      "elapsed_s": 38.1,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.706760823726654,
+      "ppl": 40.72168793942778,
+      "tokens_measured": 65536,
+      "elapsed_s": 35.36,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.706760823726654,
+      "ppl": 40.72168793942778,
+      "tokens_measured": 65536,
+      "elapsed_s": 37.53,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, the architecture of the complex network is described in a variety of different architectural and architectural designs and architecture of the complex infrastructure.",
+    "8": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, the architecture of the complex network is described by a diagram that identifies the main components of the network and their corresponding functional components",
+    "16": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, the architecture of the complex network is described by a diagram that identifies the main components of the network and their corresponding functional components",
+    "32": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, the architecture of the complex network is described by a diagram that identifies the main components of the network and their corresponding functional components",
+    "64": "The recurrent-depth transformer architecture provides a clear reference point for the architecture of the complex infrastructure. In addition, the architecture of the complex network is described by a diagram that identifies the main components of the network and their corresponding functional components"
+  }
+}

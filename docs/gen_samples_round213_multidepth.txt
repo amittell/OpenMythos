@@ -1,0 +1,272 @@
+# Multi-depth generation samples (step 3051, depths=[2, 6, 12, 24])
+
+
+## Sample 1
+
+Prompt: `Once upon a time in a small village nestled between two mountains,`
+
+
+**K=2:** Once upon a time in a small village nestled between two mountains, was the first sign of the end of the last ice age.
+The people who lived in the mountains at the time of the Ice Age described the discovery of the ancient ship that was the 1000's most important to the early people, when their ancestors lived in the country a thousand years later, some 13,000 years before the first humans arrived. They had no idea that the people lived on the north coast of the continent.
+We found evidence that a large body of the people lived in
+
+
+**K=6:** Once upon a time in a small village nestled between two mountains, is the oldest surviving site of its kind in the world. The original site of the first temple was at the site of the old temple, on a site of the old Temple of the Sun. The place was a large temple surrounded by a large stone structure that was used in a temple and also with some other tombs.
+The temple was built by the same architect, John A. Jackson, who was responsible for the construction of the Temple of the Sun. The location of this structure is not known
+
+
+**K=12:** Once upon a time in a small village nestled between two mountains, is the oldest surviving site of its kind in the world. The original site of the first temple was at the site of the old temple, on a site of the old Temple of the Sun. The place was a large temple surrounded by a large stone structure that was used in a temple and also with some other tombs.
+The temple was built by the same architect, John A. Jackson, who was responsible for the construction of the Temple of the Sun. The location of this structure is not known
+
+
+**K=24:** Once upon a time in a small village nestled between two mountains, is the oldest surviving site of its kind in the world. The original site of the first temple was at the site of the old temple, on a site of the old Temple of the Sun. The place was a large temple surrounded by a large stone structure that was used in a temple and also with some other tombs.
+The temple was built by the same architect, John A. Jackson, who was responsible for the construction of the Temple of the Sun. The location of this structure is not known
+
+
+## Sample 2
+
+Prompt: `The key difference between mitosis and meiosis is that`
+
+
+**K=2:** The key difference between mitosis and meiosis is that the mitosis is not a growth between the bone and the bone. The growth of the aorta and venous anastomosis are also characteristic of mitotic disorders. They are known as a secondary disease of the heart, which is more common in men than men. This means that the arteries can lead to atherosclerosis, and that the development of arterial plaque is a more serious problem. This can be measured by a cardiologist, who will order a diagnostic blood test for a CT scan
+
+
+**K=6:** The key difference between mitosis and meiosis is that the mitral root is a very ancient form of the endopharynx.
+The mitral root comprises the mitral root, which is the second largest gland in the body and includes the heart, lungs, liver, and respiratory, reproductive, surgical, and other internal organs.
+In order to have a smooth, curative, non-surgical solution to the problem, we must first have a soft and rigid anterior surface.
+If the mitral root is too hard or thick, it can become a
+
+
+**K=12:** The key difference between mitosis and meiosis is that the mitral root is a very ancient form of the endopharynx.
+The mitral root comprises the mitral root, which is the second largest gland in the body and includes the heart, lungs, liver, and respiratory, reproductive, surgical, and other internal organs.
+In order to have a smooth, curative, non-surgical solution to the problem, we must first have a soft and rigid anterior surface.
+If the mitral root is too hard or thick, it can become a
+
+
+**K=24:** The key difference between mitosis and meiosis is that the mitral root is a very ancient form of the endopharynx.
+The mitral root comprises the mitral root, which is the second largest gland in the body and includes the heart, lungs, liver, and respiratory, reproductive, surgical, and other internal organs.
+In order to have a smooth, curative, non-surgical solution to the problem, we must first have a soft and rigid anterior surface.
+If the mitral root is too hard or thick, it can become a
+
+
+## Sample 3
+
+Prompt: `To compute the area of a triangle, you`
+
+
+**K=2:** To compute the area of a triangle, you can calculate the area of the circle using the equation
+The equation of the perimeter of the circle must be as
+The height (in degrees) of a particular line (by degrees) A
+b) The area of the circle which is
+Which is the area of the circle
+In particular, if you are going to be learning about angles, the circle is
+In some cases the problem is that the circle
+is not an exact line. If you are solving about angles, you can
+
+
+
+**K=6:** To compute the area of a triangle, you can calculate the area of the circle using the equation
+The equation of the square is:
+where the circle is: if two points, it is possible to find the square of the circle containing the square. The circle contains the square root of
+the square root of the square. The square root of the square is:
+The square root of the square root of the square root of the square root of the square root of the square root of the square root of the square root of the square root of
+
+
+**K=12:** To compute the area of a triangle, you can calculate the area of the circle using the equation
+The equation of the square is:
+where the circle is: if two points, it is possible to find the square of the circle containing the square. The circle contains the square root of
+the square root of the square. The square root of the square is:
+The square root of the square root of the square root of the square root of the square root of the square root of the square root of the square root of the square root of
+
+
+**K=24:** To compute the area of a triangle, you can calculate the area of the circle using the equation
+The equation of the square is:
+where the circle is: if two points, it is possible to find the square of the circle containing the square. The circle contains the square root of
+the square root of the square. The square root of the square is:
+The square root of the square root of the square root of the square root of the square root of the square root of the square root of the square root of the square root of
+
+
+## Sample 4
+
+Prompt: `Q: What is the capital of France?
+A:`
+
+
+**K=2:** Q: What is the capital of France?
+A: First of all, the country is a country in which the people of France and France and Russia have the right of self-determination, and those who have the right to vote may not give up their rights.
+What are two of the most important facts about France and the United States?
+On a daily basis, France has a vast country with its own history. The history of France – as well as its history and culture – has been shaped by a variety of different cultures and religions.
+The history
+
+
+**K=6:** Q: What is the capital of France?
+A: The capital of Belgium is located 1 km west of the town of Lotharing, about 1 km east of the town of Lotharing. The city is located in the town of Lotharing.
+The city is located along the coast of the island and contains a large number of towns and villages. It is a natural and cultural centre of the Durgut River. The river's climate is hot and humid with a mild climate. The river has a rich soil and vegetation.
+The
+
+
+**K=12:** Q: What is the capital of France?
+A: The capital of Belgium is located 1 km west of the town of Lotharing, about 1 km east of the town of Lotharing. The city is located in the town of Lotharing.
+The city is located along the coast of the island and contains a large number of towns and villages. It is a natural and cultural centre of the Durgut River. The river's climate is hot and humid with a mild climate. The river has a rich soil and vegetation.
+The
+
+
+**K=24:** Q: What is the capital of France?
+A: The capital of Belgium is located 1 km west of the town of Lotharing, about 1 km east of the town of Lotharing. The city is located in the town of Lotharing.
+The city is located along the coast of the island and contains a large number of towns and villages. It is a natural and cultural centre of the Durgut River. The river's climate is hot and humid with a mild climate. The river has a rich soil and vegetation.
+The
+
+
+## Sample 5
+
+Prompt: `In Python, a list comprehension is written as`
+
+
+**K=2:** In Python, a list comprehension is written as
+- (The definition
+- is used to distinguish
+- (The expression
+is used to calculate
+- is called
+-
+The syntax
+- is a
+- is a
+- is a
+- is a
+- is a
+- is a
+- is a
+- is a
+- is an
+- is a
+- is a
+- is a
+- is a
+- is a
+- is a
+- is the
+- is a
+-
+
+
+**K=6:** In Python, a list comprehension is written as
+The first part of the book contains the basic structure of the data structure. A simple example is
+the description of the process of the process of the process of the process of
+the process of the process of the process. In the second part of the book
+the process of the process of the process of the process of the
+The structure of the process of the process of the process of the process
+The structure of the process of the process of the process of the
+The structure of
+
+
+**K=12:** In Python, a list comprehension is written as
+The first part of the book contains the basic structure of the data structure. A simple example is
+the description of the process of the process of the process of the process of
+the process of the process of the process. In the second part of the book
+the process of the process of the process of the process of the
+The structure of the process of the process of the process of the process
+The structure of the process of the process of the process of the
+The structure of
+
+
+**K=24:** In Python, a list comprehension is written as
+The first part of the book contains the basic structure of the data structure. A simple example is
+the description of the process of the process of the process of the process of
+the process of the process of the process. In the second part of the book
+the process of the process of the process of the process of the
+The structure of the process of the process of the process of the process
+The structure of the process of the process of the process of the
+The structure of
+
+
+## Sample 6
+
+Prompt: `The Roman Empire fell primarily because`
+
+
+**K=2:** The Roman Empire fell primarily because of a lack of Roman tactics.
+It was in the 4th century AD that the Romans began to fight against Roman domination. The Romans also tried to stop the Romans and fight with the Romans in 1 A.D. but that is when the Romans stopped. The Romans used a variety of tactics and tactics. They were known as the Emperor of Rome, in fact he believed that Roman soldiers were responsible for the defeat in Rome.
+In the 5th century AD, Roman soldiers fought against Rome
+
+
+**K=6:** The Roman Empire fell primarily because of a lack of political power in those states. The Roman Empire was still one of the world's great powers until the Roman Republic was abandoned in the 19th century.
+There was great civil war in Europe in the late 19th century. The Romans were driven from Rome. When it became necessary to attack the Roman Empire, they had a powerful army, led by the Romans, from whom they took the offensive. In 1922, the Romans were defeated and defeated by the Arabs. They
+
+
+**K=12:** The Roman Empire fell primarily because of a lack of political power in those states. The Roman Empire was still one of the world's great powers until the Roman Republic was abandoned in the 19th century.
+There was great civil war in Europe in the late 19th century. The Romans were driven from Rome. When it became necessary to attack the Roman Empire, they had a powerful army, led by the Romans, from whom they took the offensive. In 1922, the Romans were defeated and defeated by the Arabs. They
+
+
+**K=24:** The Roman Empire fell primarily because of a lack of political power in those states. The Roman Empire was still one of the world's great powers until the Roman Republic was abandoned in the 19th century.
+There was great civil war in Europe in the late 19th century. The Romans were driven from Rome. When it became necessary to attack the Roman Empire, they had a powerful army, led by the Romans, from whom they took the offensive. In 1922, the Romans were defeated and defeated by the Arabs. They
+
+
+## Sample 7
+
+Prompt: `Dear Claude,
+
+I wanted to write to you because`
+
+
+**K=2:** Dear Claude,
+
+I wanted to write to you because it was the best of the kind of information I have from my friends.”
+The story has been so well received, and so I have not been able to take that in as good a job as I am. The problem is that of lack of information for me and the problems of some topics, such as technology, and that of many others, and I understand that some of the problems with technology and not technology have to be solved or my work is not working well. Most of my research has been
+
+
+**K=6:** Dear Claude,
+
+I wanted to write to you because of
+a particular issue with the idea of giving away the means of providing that person to the
+first person, rather than simply giving it away. Then the
+second question was: "What is the right thing for the child of his or her
+own being?" The solution was a little tricky.
+"To make something happen," said Thomas, "this has to be done by someone who is not
+so much the same as somebody who is doing the service. That is to prove one of
+
+
+**K=12:** Dear Claude,
+
+I wanted to write to you because of
+a particular issue with the idea of giving away the means of providing that person to the
+first person, rather than simply giving it away. Then the
+second question was: "What is the right thing for the child of his or her
+own being?" The solution was a little tricky.
+"To make something happen," said Thomas, "this has to be done by someone who is not
+so much the same as somebody who is doing the service. That is to prove one of
+
+
+**K=24:** Dear Claude,
+
+I wanted to write to you because of
+a particular issue with the idea of giving away the means of providing that person to the
+first person, rather than simply giving it away. Then the
+second question was: "What is the right thing for the child of his or her
+own being?" The solution was a little tricky.
+"To make something happen," said Thomas, "this has to be done by someone who is not
+so much the same as somebody who is doing the service. That is to prove one of
+
+
+## Sample 8
+
+Prompt: `Photosynthesis is the process by which plants`
+
+
+**K=2:** Photosynthesis is the process by which plants use the sunlight and the electrons that are emitted by the sunlight. They can be used in many applications of solar energy. Solar energy is the main source of electrical energy. Many people are now considering the concept of solar power as an energy source. These companies will not only provide solar energy but the sunlight used for solar generation. A solar energy system can be used for various purposes. Solar panels are used to store sunlight in the roof area. They will be placed inside the house of the person who receives
+
+
+**K=6:** Photosynthesis is the process by which plants use the sunlight and the sunlight that goes into photosynthesis.
+When plants are actively growing, their leaves will naturally grow. If they are not, plants will die. The leaves will be ready and the leaves will be open. The plant blooms will be white and orange. The leaves of the plant make an appearance in the summer and the flowers that grow for the winter. The leaves of the plant are often found near water sources.
+The plant does not have to be planted with the help of a special
+
+
+**K=12:** Photosynthesis is the process by which plants use the sunlight and the sunlight that goes into photosynthesis.
+When plants are actively growing, their leaves will naturally grow. If they are not, plants will die. The leaves will be ready and the leaves will be open. The plant blooms will be white and orange. The leaves of the plant make an appearance in the summer and the flowers that grow for the winter. The leaves of the plant are often found near water sources.
+The plant does not have to be planted with the help of a special
+
+
+**K=24:** Photosynthesis is the process by which plants use the sunlight and the sunlight that goes into photosynthesis.
+When plants are actively growing, their leaves will naturally grow. If they are not, plants will die. The leaves will be ready and the leaves will be open. The plant blooms will be white and orange. The leaves of the plant make an appearance in the summer and the flowers that grow for the winter. The leaves of the plant are often found near water sources.
+The plant does not have to be planted with the help of a special
+

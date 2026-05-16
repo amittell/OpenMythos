@@ -1,0 +1,191 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints/ckpt_r27_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32,
+    64
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.5184903293848038,
+      "ppl": 33.733463584716226,
+      "tokens_measured": 65536,
+      "elapsed_s": 5.63,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.4809895157814026,
+      "ppl": 32.49185737969086,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.32,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.486002191901207,
+      "ppl": 32.65513743037798,
+      "tokens_measured": 65536,
+      "elapsed_s": 19.81,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.4859982281923294,
+      "ppl": 32.65500799517636,
+      "tokens_measured": 65536,
+      "elapsed_s": 24.06,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.4859982281923294,
+      "ppl": 32.65500799517636,
+      "tokens_measured": 65536,
+      "elapsed_s": 24.06,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.480316087603569,
+      "ppl": 32.46998381334584,
+      "tokens_measured": 65536,
+      "elapsed_s": 5.59,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.4800146222114563,
+      "ppl": 32.46019671225391,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.34,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.479940876364708,
+      "ppl": 32.45780299582616,
+      "tokens_measured": 65536,
+      "elapsed_s": 19.83,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.47966530919075,
+      "ppl": 32.44885992304695,
+      "tokens_measured": 65536,
+      "elapsed_s": 38.97,
+      "act": "off"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.4798451215028763,
+      "ppl": 32.45469515218287,
+      "tokens_measured": 65536,
+      "elapsed_s": 76.73,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.162651637314091,
+      "ppl": 64.24164248847677,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 7.44,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.1184756079111,
+      "ppl": 61.46547333099024,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 13.93,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.129464378858479,
+      "ppl": 62.14462804222127,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 22.82,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.129451651399853,
+      "ppl": 62.143837104072325,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 22.97,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 4.129451651399853,
+      "ppl": 62.143837104072325,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 22.95,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.7852552980184555,
+      "ppl": 44.046914213365234,
+      "tokens_measured": 65536,
+      "elapsed_s": 5.02,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.7517939805984497,
+      "ppl": 42.597432461342116,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.14,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.756610244512558,
+      "ppl": 42.8030877857598,
+      "tokens_measured": 65536,
+      "elapsed_s": 16.56,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.756598323583603,
+      "ppl": 42.802577536232576,
+      "tokens_measured": 65536,
+      "elapsed_s": 17.0,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.756598323583603,
+      "ppl": 42.802577536232576,
+      "tokens_measured": 65536,
+      "elapsed_s": 17.04,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture, and some of the basic principles of the 5- to 6- and 7-kg, and the 11-kg system. It is also important to note that the 4",
+    "8": "The recurrent-depth transformer architecture, and some of the basic principles of the 5th and 6th centuries. The 6th and 7th centuries brought a dramatic break to the architectural landscape of the 3rd",
+    "16": "The recurrent-depth transformer architecture, and its associated structures are more complex than the structure of the architecture as a whole. The architecture of the complex interconnections of the architecture and construction of the complex and its structures and structures, all",
+    "32": "The recurrent-depth transformer architecture, and its associated structures are more complex than the structure of the architecture as a whole. The architecture of the complex interconnections of the architecture and construction of the complex and its structures and structures, all",
+    "64": "The recurrent-depth transformer architecture, and its associated structures are more complex than the structure of the architecture as a whole. The architecture of the complex interconnections of the architecture and construction of the complex and its structures and structures, all"
+  }
+}

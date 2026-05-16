@@ -1,0 +1,271 @@
+# Multi-depth generation samples (step 3051, depths=[2, 6, 12, 24])
+
+
+## Sample 1
+
+Prompt: `Once upon a time in a small village nestled between two mountains,`
+
+
+**K=2:** Once upon a time in a small village nestled between two mountains, is the home of a very powerful and well-known explorer. If that were to happen, it would be a good idea to ask people who were going to visit him. But who would be responsible for all he would have done as a pilot? There were many problems, but not all of them, but the fact that an idea was invented, the answer is that the idea is to have a friend. The first thing to do is find a way to make a name for this person.
+The word
+
+
+**K=6:** Once upon a time in a small village nestled between two mountains, is the time devoted to death, and to the death of the entire people.
+The Sasanian people had no idea that they were dead on a daily basis. So they made an effort to save the Sasanian people from the destruction. They were shocked to see the Sasanian authorities, in the Sasanian Sasanian tradition, and their leader, Bede, was called Pura. After the death of Ramnath in the year 1180 Bede, the S
+
+
+**K=12:** Once upon a time in a small village nestled between two mountains, is the time devoted to death, and to the death of the entire people.
+The Sasanian people had no idea that they were dead on a daily basis. So they made an effort to save the Sasanian people from the destruction. They were shocked to see the Sasanian authorities, in the Sasanian Sasanian tradition, and their leader, Bede, was called Pura. After the death of Ramnath in the year 1180 Bede, the S
+
+
+**K=24:** Once upon a time in a small village nestled between two mountains, is the time devoted to death, and to the death of the entire people.
+The Sasanian people had no idea that they were dead on a daily basis. So they made an effort to save the Sasanian people from the destruction. They were shocked to see the Sasanian authorities, in the Sasanian Sasanian tradition, and their leader, Bede, was called Pura. After the death of Ramnath in the year 1180 Bede, the S
+
+
+## Sample 2
+
+Prompt: `The key difference between mitosis and meiosis is that`
+
+
+**K=2:** The key difference between mitosis and meiosis is that the mitosis is not a strong or absent reaction that results in the normal growth of the tissues. The difference is due to an increase in the number of cells in the body where the cell divides. So, a tumor with normal growth of stem cells in which the cell divides will be much smaller. This is because this is the most important part of the organ’s function.
+The more stem cells in the human body the more a person has, the greater its amount of growth.
+The cells in the
+
+
+**K=6:** The key difference between mitosis and meiosis is that the mitotic cells produce a type of cell called a myelopathy. The myelopathy is a process where the myelopathy is not completely understood but is the same for all the cells. So, we see that the myelopathy is in a state of normal growth and development, and can be divided into four stages, and are called the myelotrophies. They include:
+- the development of new myelopathy, which is caused by a series of events that occur in
+
+
+**K=12:** The key difference between mitosis and meiosis is that the mitotic cells produce a type of cell called a myelopathy. The myelopathy is a process where the myelopathy is not completely understood but is the same for all the cells. So, we see that the myelopathy is in a state of normal growth and development, and can be divided into four stages, and are called the myelotrophies. They include:
+- the development of new myelopathy, which is caused by a series of events that occur in
+
+
+**K=24:** The key difference between mitosis and meiosis is that the mitotic cells produce a type of cell called a myelopathy. The myelopathy is a process where the myelopathy is not completely understood but is the same for all the cells. So, we see that the myelopathy is in a state of normal growth and development, and can be divided into four stages, and are called the myelotrophies. They include:
+- the development of new myelopathy, which is caused by a series of events that occur in
+
+
+## Sample 3
+
+Prompt: `To compute the area of a triangle, you`
+
+
+**K=2:** To compute the area of a triangle, you can calculate the area of the circle using the equation
+The area of the rectangle is the area of the circle. Using this equation, it is possible to calculate the area of the circle.
+The area of the circle contains the area of the circle. The area is the area of the circle.
+The area of the circle contains the area of the circle.
+The area of the circle contains the area of the circle.
+The area of the circle contains the area of the circle.
+The area of the circle
+
+
+**K=6:** To compute the area of a triangle, you can either have it or use the square to find the area of the square.
+If you are interested in learning more about geometry, you will want to do a little more math.
+You can find out about the area of a square with the square. The square is the area of the square.
+You need to know the area of a square. This is because you can determine the area of a square of square.
+So the area of the square is the area of the square. A square is the
+
+
+**K=12:** To compute the area of a triangle, you can either have it or use the square to find the area of the square.
+If you are interested in learning more about geometry, you will want to do a little more math.
+You can find out about the area of a square with the square. The square is the area of the square.
+You need to know the area of a square. This is because you can determine the area of a square of square.
+So the area of the square is the area of the square. A square is the
+
+
+**K=24:** To compute the area of a triangle, you can either have it or use the square to find the area of the square.
+If you are interested in learning more about geometry, you will want to do a little more math.
+You can find out about the area of a square with the square. The square is the area of the square.
+You need to know the area of a square. This is because you can determine the area of a square of square.
+So the area of the square is the area of the square. A square is the
+
+
+## Sample 4
+
+Prompt: `Q: What is the capital of France?
+A:`
+
+
+**K=2:** Q: What is the capital of France?
+A: First of all, the city was a major administrative centre for Italy. The capital was divided into several capitals, such as the Cathedral of the Holy Trinity (as well as the City Hall of Saint Michael) in their own right.
+The capital of Italy was built in the 13th century after a reign of 4th century, during the reign of the Emperor himself.
+The city was a great architectural center and was a popular hub of industrial growth for some time, as well as for the port
+
+
+**K=6:** Q: What is the capital of France?
+A: First of all, the city was a major administrative centre for Italy. The capital was divided into several parts, such as the administrative and administrative districts, the administrative districts, and the central administrative district. The capital was located in the northern half of Italy. It had a population of 8,500 inhabitants and the capital was located in the central district. The capital was not only the capital of Italy, but also the main administrative centre of the city. Many of these were also the headquarters of the
+
+
+**K=12:** Q: What is the capital of France?
+A: First of all, the city was a major administrative centre for Italy. The capital was divided into several parts, such as the administrative and administrative districts, the administrative districts, and the central administrative district. The capital was located in the northern half of Italy. It had a population of 8,500 inhabitants and the capital was located in the central district. The capital was not only the capital of Italy, but also the main administrative centre of the city. Many of these were also the headquarters of the
+
+
+**K=24:** Q: What is the capital of France?
+A: First of all, the city was a major administrative centre for Italy. The capital was divided into several parts, such as the administrative and administrative districts, the administrative districts, and the central administrative district. The capital was located in the northern half of Italy. It had a population of 8,500 inhabitants and the capital was located in the central district. The capital was not only the capital of Italy, but also the main administrative centre of the city. Many of these were also the headquarters of the
+
+
+## Sample 5
+
+Prompt: `In Python, a list comprehension is written as`
+
+
+**K=2:** In Python, a list comprehension is written as
+A. is an abstract
+cognitive view of the logic
+differential thinking
+differential or concrete thinking
+evidence is a framework based on the principles and
+exhibits of the analysis. The general assumptions of the
+intervention of the theory are
+a) The theory states that the behavior is the
+assumulated form of the theory is
+a) The theory is a
+an explanation of the theory
+the theory asserts the
+evidence can be
+
+
+
+**K=6:** In Python, a list comprehension is written as a non-technical definition
+- A description of a special kind of data type
+- An array of numbers or data types
+- An array of numbers or logical numbers
+- A list of numbers or numbers
+- A collection of numbers or numbers
+- An array of numbers or a list of numbers.
+- A statement that is in a list of values that contains a specified number of characters
+- A list of numbers, including values that are in a list of numbers and their relationships
+-
+
+
+**K=12:** In Python, a list comprehension is written as a non-technical definition
+- A description of a special kind of data type
+- An array of numbers or data types
+- An array of numbers or logical numbers
+- A list of numbers or numbers
+- A collection of numbers or numbers
+- An array of numbers or a list of numbers.
+- A statement that is in a list of values that contains a specified number of characters
+- A list of numbers, including values that are in a list of numbers and their relationships
+-
+
+
+**K=24:** In Python, a list comprehension is written as a non-technical definition
+- A description of a special kind of data type
+- An array of numbers or data types
+- An array of numbers or logical numbers
+- A list of numbers or numbers
+- A collection of numbers or numbers
+- An array of numbers or a list of numbers.
+- A statement that is in a list of values that contains a specified number of characters
+- A list of numbers, including values that are in a list of numbers and their relationships
+-
+
+
+## Sample 6
+
+Prompt: `The Roman Empire fell primarily because`
+
+
+**K=2:** The Roman Empire fell primarily because of a lack of political power.
+It was in the 4th century AD that the Romans began to use imperial taxation to gain control of the land. In the late 4th century AD, there were some 100,000 population who were living in the Roman Empire. However, the Romans continued to control the Roman Empire and established a form of Roman culture that lasted until the 4th century AD. The Roman Republic of Turkey was the greatest power in Europe and the Empire became a unified
+
+
+**K=6:** The Roman Empire fell primarily because of a lack of political power.
+On the other hand, the Roman empire grew as a result of a Roman victory. The Roman Empire fell during the first half of the 4th century BC in the first half of the 7th century BC. The Roman empire became a powerful empire and developed along with the Roman Empire, which established a powerful Roman power in the 9th century BC.
+The Roman Empire was divided into two parts: the Eastern and the Western Roman Empire. The Western Roman
+
+
+**K=12:** The Roman Empire fell primarily because of a lack of political power.
+On the other hand, the Roman empire grew as a result of a Roman victory. The Roman Empire fell during the first half of the 4th century BC in the first half of the 7th century BC. The Roman empire became a powerful empire and developed along with the Roman Empire, which established a powerful Roman power in the 9th century BC.
+The Roman Empire was divided into two parts: the Eastern and the Western Roman Empire. The Western Roman
+
+
+**K=24:** The Roman Empire fell primarily because of a lack of political power.
+On the other hand, the Roman empire grew as a result of a Roman victory. The Roman Empire fell during the first half of the 4th century BC in the first half of the 7th century BC. The Roman empire became a powerful empire and developed along with the Roman Empire, which established a powerful Roman power in the 9th century BC.
+The Roman Empire was divided into two parts: the Eastern and the Western Roman Empire. The Western Roman
+
+
+## Sample 7
+
+Prompt: `Dear Claude,
+
+I wanted to write to you because`
+
+
+**K=2:** Dear Claude,
+
+I wanted to write to you because it was the best strategy. The result is not really the end of the game.
+- The problem of getting kids to learn and develop skills is the focus of this post. I’m so excited to be able to see the game of how to develop for them.
+- I hope some of you want to talk to someone. One of the things they don’t really want to be is that I’m not a good player.
+- If you are a fan of the game, here are some examples of
+
+
+**K=6:** Dear Claude,
+
+I wanted to write to you because it was the best way to learn.
+- Start with the letter and then use your imagination.
+- Set aside time to get up and move around the room.
+- Use your imagination and imagination to make your points more interesting.
+- Make it fun! Make it memorable!
+- Use some simple, creative materials. Try them out on a piece of paper. They really love it and don't matter.
+- Try something new.
+- Try something new.
+- Let the teacher know about it to help him.
+
+
+
+**K=12:** Dear Claude,
+
+I wanted to write to you because it was the best way to learn.
+- Start with the letter and then use your imagination.
+- Set aside time to get up and move around the room.
+- Use your imagination and imagination to make your points more interesting.
+- Make it fun! Make it memorable!
+- Use some simple, creative materials. Try them out on a piece of paper. They really love it and don't matter.
+- Try something new.
+- Try something new.
+- Let the teacher know about it to help him.
+
+
+
+**K=24:** Dear Claude,
+
+I wanted to write to you because it was the best way to learn.
+- Start with the letter and then use your imagination.
+- Set aside time to get up and move around the room.
+- Use your imagination and imagination to make your points more interesting.
+- Make it fun! Make it memorable!
+- Use some simple, creative materials. Try them out on a piece of paper. They really love it and don't matter.
+- Try something new.
+- Try something new.
+- Let the teacher know about it to help him.
+
+
+
+## Sample 8
+
+Prompt: `Photosynthesis is the process by which plants`
+
+
+**K=2:** Photosynthesis is the process by which plants grow. In this case, the plants will grow in their full size and shape. The shape of the leaves will be very delicate and the plant will be very attractive. If you have a pot of soil, such as the root system, it will be very important that the plant is planted in a container of water. This will allow for good drainage of water and air as well as a water supply.
+The final step in growing a large, compact plant will be very easy to grow.
+The new
+
+
+**K=6:** Photosynthesis is the process by which plants grow. In this process, the plants will grow and reproduce themselves.
+In this chapter, we will discuss the development of plants in terms of plant growth, plant growth, plant growth and plant growth.
+In: Plant Physiology: What is the difference between plant and animal life? What can you make of these?
+1. A plant that has been cultivated for thousands of years will grow and improve its quality. In: Plant Physiology: What is the difference between plant and animal life? What is
+
+
+**K=12:** Photosynthesis is the process by which plants grow. In this process, the plants will grow and reproduce themselves.
+In this chapter, we will discuss the development of plants in terms of plant growth, plant growth, plant growth and plant growth.
+In: Plant Physiology: What is the difference between plant and animal life? What can you make of these?
+1. A plant that has been cultivated for thousands of years will grow and improve its quality. In: Plant Physiology: What is the difference between plant and animal life? What is
+
+
+**K=24:** Photosynthesis is the process by which plants grow. In this process, the plants will grow and reproduce themselves.
+In this chapter, we will discuss the development of plants in terms of plant growth, plant growth, plant growth and plant growth.
+In: Plant Physiology: What is the difference between plant and animal life? What can you make of these?
+1. A plant that has been cultivated for thousands of years will grow and improve its quality. In: Plant Physiology: What is the difference between plant and animal life? What is
+

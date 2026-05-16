@@ -1,0 +1,191 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints/ckpt_r25_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32,
+    64
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.726572796702385,
+      "ppl": 41.53650988331346,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.1,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.726572796702385,
+      "ppl": 41.53650988331346,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.09,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.726572796702385,
+      "ppl": 41.53650988331346,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.09,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.726572796702385,
+      "ppl": 41.53650988331346,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.09,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.726572796702385,
+      "ppl": 41.53650988331346,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.1,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.4803075343370438,
+      "ppl": 32.469706090107934,
+      "tokens_measured": 65536,
+      "elapsed_s": 5.89,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.478047698736191,
+      "ppl": 32.39641273898991,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.95,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.4779472947120667,
+      "ppl": 32.393160172071866,
+      "tokens_measured": 65536,
+      "elapsed_s": 20.8,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.477755218744278,
+      "ppl": 32.38693882198713,
+      "tokens_measured": 65536,
+      "elapsed_s": 40.74,
+      "act": "off"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.477815791964531,
+      "ppl": 32.388900662582614,
+      "tokens_measured": 65536,
+      "elapsed_s": 81.61,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.194965433355274,
+      "ppl": 66.3514379910702,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 2.5,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.194965433355274,
+      "ppl": 66.3514379910702,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 2.46,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.194965433355274,
+      "ppl": 66.3514379910702,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 2.46,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.194965433355274,
+      "ppl": 66.3514379910702,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 2.45,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 4.194965433355274,
+      "ppl": 66.3514379910702,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 2.46,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.8396989703178406,
+      "ppl": 46.51147099883772,
+      "tokens_measured": 65536,
+      "elapsed_s": 1.96,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.8396989703178406,
+      "ppl": 46.51147099883772,
+      "tokens_measured": 65536,
+      "elapsed_s": 1.96,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.8396989703178406,
+      "ppl": 46.51147099883772,
+      "tokens_measured": 65536,
+      "elapsed_s": 1.96,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.8396989703178406,
+      "ppl": 46.51147099883772,
+      "tokens_measured": 65536,
+      "elapsed_s": 1.96,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.8396989703178406,
+      "ppl": 46.51147099883772,
+      "tokens_measured": 65536,
+      "elapsed_s": 1.97,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture, a new kind of architecture, which can be found in the architecture as well as the architecture of the present building. In this case, a few of the buildings and buildings of the existing buildings may",
+    "8": "The recurrent-depth transformer architecture, a new kind of architecture, which can be found in the architecture as well as the architecture of the present building. In this case, a few of the buildings and buildings of the existing buildings may",
+    "16": "The recurrent-depth transformer architecture, a new kind of architecture, which can be found in the architecture as well as the architecture of the present building. In this case, a few of the buildings and buildings of the existing buildings may",
+    "32": "The recurrent-depth transformer architecture, a new kind of architecture, which can be found in the architecture as well as the architecture of the present building. In this case, a few of the buildings and buildings of the existing buildings may",
+    "64": "The recurrent-depth transformer architecture, a new kind of architecture, which can be found in the architecture as well as the architecture of the present building. In this case, a few of the buildings and buildings of the existing buildings may"
+  }
+}

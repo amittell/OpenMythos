@@ -1,0 +1,157 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_act_v3_round29_T1/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.457373633980751,
+      "ppl": 31.733523126256465,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.66,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.457373633980751,
+      "ppl": 31.733523126256465,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.37,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.457373633980751,
+      "ppl": 31.733523126256465,
+      "tokens_measured": 65536,
+      "elapsed_s": 11.0,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.457373633980751,
+      "ppl": 31.733523126256465,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.97,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.589607298374176,
+      "ppl": 36.219849539495385,
+      "tokens_measured": 65536,
+      "elapsed_s": 21.13,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.5953449606895447,
+      "ppl": 36.42826413980179,
+      "tokens_measured": 65536,
+      "elapsed_s": 36.66,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.595938876271248,
+      "ppl": 36.44990587953588,
+      "tokens_measured": 65536,
+      "elapsed_s": 66.06,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.595718488097191,
+      "ppl": 36.44187363647275,
+      "tokens_measured": 65536,
+      "elapsed_s": 137.67,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.179277949617155,
+      "ppl": 65.31867281003592,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 8.5,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.179277949617155,
+      "ppl": 65.31867281003592,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 10.04,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.179277949617155,
+      "ppl": 65.31867281003592,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 10.15,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.179277949617155,
+      "ppl": 65.31867281003592,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 8.9,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.7812950909137726,
+      "ppl": 43.872824254428714,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.47,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.7812950909137726,
+      "ppl": 43.872824254428714,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.28,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.7812950909137726,
+      "ppl": 43.872824254428714,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.23,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.7812950909137726,
+      "ppl": 43.872824254428714,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.44,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture provides a clear reference for the design of the 5G power station as well as the design of the 5G power station. The 5G power station is set to operate as a power",
+    "8": "The recurrent-depth transformer architecture provides a clear reference for the design of the 5G power station as well as the design of the 5G power station. The 5G power station is set to operate as a power",
+    "16": "The recurrent-depth transformer architecture provides a clear reference for the design of the 5G power station as well as the design of the 5G power station. The 5G power station is set to operate as a power",
+    "32": "The recurrent-depth transformer architecture provides a clear reference for the design of the 5G power station as well as the design of the 5G power station. The 5G power station is set to operate as a power"
+  }
+}

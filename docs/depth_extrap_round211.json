@@ -1,0 +1,157 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_act_v3_round211_T2/step_0012207_full.pt",
+  "step": 12207,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.9851502031087875,
+      "ppl": 53.793368802330995,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.1,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.9851502031087875,
+      "ppl": 53.793368802330995,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.09,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.9851502031087875,
+      "ppl": 53.793368802330995,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.09,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.9851502031087875,
+      "ppl": 53.793368802330995,
+      "tokens_measured": 65536,
+      "elapsed_s": 2.07,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.7631557136774063,
+      "ppl": 43.08417299074511,
+      "tokens_measured": 65536,
+      "elapsed_s": 5.49,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.765453487634659,
+      "ppl": 43.18328450573489,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.95,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.765688955783844,
+      "ppl": 43.19345399106115,
+      "tokens_measured": 65536,
+      "elapsed_s": 19.52,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.7656836956739426,
+      "ppl": 43.19322678934368,
+      "tokens_measured": 65536,
+      "elapsed_s": 38.71,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.44180271889199,
+      "ppl": 84.92790489617121,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 2.36,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.44180271889199,
+      "ppl": 84.92790489617121,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 2.32,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.44180271889199,
+      "ppl": 84.92790489617121,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 2.32,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.44180271889199,
+      "ppl": 84.92790489617121,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 2.32,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 4.168623864650726,
+      "ppl": 64.62645613540998,
+      "tokens_measured": 65536,
+      "elapsed_s": 1.88,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.168623864650726,
+      "ppl": 64.62645613540998,
+      "tokens_measured": 65536,
+      "elapsed_s": 1.86,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.168623864650726,
+      "ppl": 64.62645613540998,
+      "tokens_measured": 65536,
+      "elapsed_s": 1.86,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.168623864650726,
+      "ppl": 64.62645613540998,
+      "tokens_measured": 65536,
+      "elapsed_s": 1.86,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture, and some of the basic principles of the 18th century are as follows:\n- The 18th-century city of La Pella (Rocion) and Santa Maria (Rocion",
+    "8": "The recurrent-depth transformer architecture, and some of the basic principles of the 18th century are as follows:\n- The 18th-century city of La Pella (Rocion) and Santa Maria (Rocion",
+    "16": "The recurrent-depth transformer architecture, and some of the basic principles of the 18th century are as follows:\n- The 18th-century city of La Pella (Rocion) and Santa Maria (Rocion",
+    "32": "The recurrent-depth transformer architecture, and some of the basic principles of the 18th century are as follows:\n- The 18th-century city of La Pella (Rocion) and Santa Maria (Rocion"
+  }
+}

@@ -1,0 +1,469 @@
+{
+  "ckpt_path": "/home/alex/OpenMythos/checkpoints_3b_varT_pondernet_from_r2/step_0003051_full.pt",
+  "step": 3051,
+  "K": 32,
+  "act_threshold": 0.99,
+  "n_tokens": 32768,
+  "halt_step_histogram": [
+    0,
+    0,
+    0,
+    2,
+    91,
+    17574,
+    14926,
+    164,
+    10,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "halt_step_mean": 5.463653564453125,
+  "halt_step_median": 5.0,
+  "p_first_mean": 0.20199619233608246,
+  "frac_halt_at_1": 0.0,
+  "frac_halt_at_K": 0.0,
+  "by_category": {
+    "punct": {
+      "n_tokens": 4124,
+      "halt_step_mean": 5.427012609117361,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20482711493968964,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.238360814742968
+    },
+    "function": {
+      "n_tokens": 9564,
+      "halt_step_mean": 5.466332078628189,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.2013162076473236,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.24194897532413218
+    },
+    "content": {
+      "n_tokens": 17102,
+      "halt_step_mean": 5.470471289907613,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20161664485931396,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.39042217284528125
+    },
+    "rare": {
+      "n_tokens": 1978,
+      "halt_step_mean": 5.468149646107179,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.2026633769273758,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.47269969666329625
+    }
+  },
+  "by_correctness": {
+    "correct": {
+      "n_tokens": 10909,
+      "halt_step_mean": 5.483270693922449,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20110644400119781,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    },
+    "incorrect": {
+      "n_tokens": 21859,
+      "halt_step_mean": 5.453863397227686,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20244023203849792,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    }
+  },
+  "examples": {
+    "early_halters": [
+      {
+        "token": "ing",
+        "category": "content",
+        "halt_step": 3,
+        "p_first": 0.408203125,
+        "target": " on",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": "sa",
+        "category": "rare",
+        "halt_step": 3,
+        "p_first": 0.4140625,
+        "target": "usage",
+        "pred": "iled",
+        "correct": false
+      },
+      {
+        "token": " person",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.2412109375,
+        "target": " as",
+        "pred": " as",
+        "correct": true
+      },
+      {
+        "token": "e",
+        "category": "rare",
+        "halt_step": 4,
+        "p_first": 0.2578125,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      },
+      {
+        "token": "ax",
+        "category": "rare",
+        "halt_step": 4,
+        "p_first": 0.357421875,
+        "target": "ative",
+        "pred": "atives",
+        "correct": false
+      },
+      {
+        "token": " rid",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.294921875,
+        "target": " the",
+        "pred": " the",
+        "correct": true
+      },
+      {
+        "token": " and",
+        "category": "function",
+        "halt_step": 4,
+        "p_first": 0.23828125,
+        "target": " mental",
+        "pred": " surgical",
+        "correct": false
+      },
+      {
+        "token": ":\n",
+        "category": "punct",
+        "halt_step": 4,
+        "p_first": 0.25390625,
+        "target": "-",
+        "pred": "-",
+        "correct": true
+      },
+      {
+        "token": " Ted",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.2216796875,
+        "target": " believed",
+        "pred": " Andrews",
+        "correct": false
+      },
+      {
+        "token": " Pe",
+        "category": "rare",
+        "halt_step": 4,
+        "p_first": 0.259765625,
+        "target": "ase",
+        "pred": "oria",
+        "correct": false
+      },
+      {
+        "token": " the",
+        "category": "function",
+        "halt_step": 4,
+        "p_first": 0.287109375,
+        "target": " Republic",
+        "pred": " European",
+        "correct": false
+      },
+      {
+        "token": "Iron",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.25390625,
+        "target": " reaches",
+        "pred": " is",
+        "correct": false
+      },
+      {
+        "token": " Beh",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.28515625,
+        "target": "ren",
+        "pred": "ro",
+        "correct": false
+      },
+      {
+        "token": "RO",
+        "category": "rare",
+        "halt_step": 4,
+        "p_first": 0.275390625,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      },
+      {
+        "token": ".M",
+        "category": "rare",
+        "halt_step": 4,
+        "p_first": 0.248046875,
+        "target": ".J",
+        "pred": ".",
+        "correct": false
+      },
+      {
+        "token": "bo",
+        "category": "rare",
+        "halt_step": 4,
+        "p_first": 0.263671875,
+        "target": "hydrate",
+        "pred": "hydrate",
+        "correct": true
+      },
+      {
+        "token": " Fre",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.302734375,
+        "target": "esia",
+        "pred": "esc",
+        "correct": false
+      },
+      {
+        "token": " treated",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.2451171875,
+        "target": " areas",
+        "pred": " areas",
+        "correct": true
+      },
+      {
+        "token": " Virtual",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.271484375,
+        "target": " Herb",
+        "pred": " Herb",
+        "correct": true
+      },
+      {
+        "token": "ul",
+        "category": "rare",
+        "halt_step": 4,
+        "p_first": 0.263671875,
+        "target": "fur",
+        "pred": "fur",
+        "correct": true
+      }
+    ],
+    "late_halters": [
+      {
+        "token": "L",
+        "category": "rare",
+        "halt_step": 9,
+        "p_first": 0.0791015625,
+        "target": "IFE",
+        "pred": "IFE",
+        "correct": true
+      },
+      {
+        "token": "L",
+        "category": "rare",
+        "halt_step": 8,
+        "p_first": 0.1142578125,
+        "target": "IFE",
+        "pred": "IFE",
+        "correct": true
+      },
+      {
+        "token": "king",
+        "category": "content",
+        "halt_step": 8,
+        "p_first": 0.1240234375,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      },
+      {
+        "token": "th",
+        "category": "rare",
+        "halt_step": 8,
+        "p_first": 0.10693359375,
+        "target": " -",
+        "pred": "es",
+        "correct": false
+      },
+      {
+        "token": " re",
+        "category": "rare",
+        "halt_step": 8,
+        "p_first": 0.111328125,
+        "target": "traction",
+        "pred": "abs",
+        "correct": false
+      },
+      {
+        "token": "L",
+        "category": "rare",
+        "halt_step": 8,
+        "p_first": 0.12255859375,
+        "target": "IFE",
+        "pred": "IFE",
+        "correct": true
+      },
+      {
+        "token": "L",
+        "category": "rare",
+        "halt_step": 8,
+        "p_first": 0.0927734375,
+        "target": "IFE",
+        "pred": "IFE",
+        "correct": true
+      },
+      {
+        "token": " meth",
+        "category": "content",
+        "halt_step": 8,
+        "p_first": 0.1025390625,
+        "target": "ad",
+        "pred": "amphetamine",
+        "correct": false
+      },
+      {
+        "token": " mast",
+        "category": "content",
+        "halt_step": 8,
+        "p_first": 0.1396484375,
+        "target": "oid",
+        "pred": "oid",
+        "correct": true
+      },
+      {
+        "token": "L",
+        "category": "rare",
+        "halt_step": 8,
+        "p_first": 0.11572265625,
+        "target": "IFE",
+        "pred": "UNE",
+        "correct": false
+      },
+      {
+        "token": "L",
+        "category": "rare",
+        "halt_step": 8,
+        "p_first": 0.11279296875,
+        "target": "IFE",
+        "pred": "UNE",
+        "correct": false
+      },
+      {
+        "token": " narrowly",
+        "category": "content",
+        "halt_step": 7,
+        "p_first": 0.1767578125,
+        "target": " egg",
+        "pred": " ov",
+        "correct": false
+      },
+      {
+        "token": "utely",
+        "category": "content",
+        "halt_step": 7,
+        "p_first": 0.1611328125,
+        "target": " rough",
+        "pred": " colored",
+        "correct": false
+      },
+      {
+        "token": " be",
+        "category": "function",
+        "halt_step": 7,
+        "p_first": 0.1728515625,
+        "target": " taken",
+        "pred": " taken",
+        "correct": true
+      },
+      {
+        "token": ",",
+        "category": "punct",
+        "halt_step": 7,
+        "p_first": 0.166015625,
+        "target": " secund",
+        "pred": " ",
+        "correct": false
+      },
+      {
+        "token": " part",
+        "category": "content",
+        "halt_step": 7,
+        "p_first": 0.1689453125,
+        "target": " of",
+        "pred": " of",
+        "correct": true
+      },
+      {
+        "token": " a",
+        "category": "function",
+        "halt_step": 7,
+        "p_first": 0.16796875,
+        "target": " horizontal",
+        "pred": " stem",
+        "correct": false
+      },
+      {
+        "token": " br",
+        "category": "rare",
+        "halt_step": 7,
+        "p_first": 0.15234375,
+        "target": "act",
+        "pred": "acts",
+        "correct": false
+      },
+      {
+        "token": "icide",
+        "category": "content",
+        "halt_step": 7,
+        "p_first": 0.1591796875,
+        "target": " to",
+        "pred": " to",
+        "correct": true
+      },
+      {
+        "token": "ile",
+        "category": "content",
+        "halt_step": 7,
+        "p_first": 0.162109375,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      }
+    ]
+  }
+}

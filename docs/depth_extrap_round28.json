@@ -1,0 +1,157 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_act_finetune_round28_retry/step_0001220_full.pt",
+  "step": 1220,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.499204069375992,
+      "ppl": 33.089104842979566,
+      "tokens_measured": 65536,
+      "elapsed_s": 5.53,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.46308870613575,
+      "ppl": 31.915401730284348,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.09,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.456908091902733,
+      "ppl": 31.71875327421799,
+      "tokens_measured": 65536,
+      "elapsed_s": 19.13,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.4546805322170258,
+      "ppl": 31.6481764943219,
+      "tokens_measured": 65536,
+      "elapsed_s": 36.47,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.442944809794426,
+      "ppl": 31.27893318618205,
+      "tokens_measured": 65536,
+      "elapsed_s": 5.55,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.446842700242996,
+      "ppl": 31.401092969145516,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.09,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.446387395262718,
+      "ppl": 31.38679914940108,
+      "tokens_measured": 65536,
+      "elapsed_s": 18.88,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.4462039172649384,
+      "ppl": 31.38104089060948,
+      "tokens_measured": 65536,
+      "elapsed_s": 36.85,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.22267383065043,
+      "ppl": 68.21563772015783,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 7.36,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.17559158903448,
+      "ppl": 65.07832790045245,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 12.71,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.168810352464102,
+      "ppl": 64.63850930575066,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 20.44,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.165995341903557,
+      "ppl": 64.45680708625875,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 30.54,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.7850621938705444,
+      "ppl": 44.03840939271245,
+      "tokens_measured": 65536,
+      "elapsed_s": 4.93,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.7621643096208572,
+      "ppl": 43.04148033320278,
+      "tokens_measured": 65536,
+      "elapsed_s": 8.71,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.760131075978279,
+      "ppl": 42.954055854676426,
+      "tokens_measured": 65536,
+      "elapsed_s": 16.28,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.759713798761368,
+      "ppl": 42.93613584486027,
+      "tokens_measured": 65536,
+      "elapsed_s": 32.16,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture, and its associated functionaries, which are the basis for the architecture of the complex. The architecture of the complex consists of a complex and a few hundred buildings, and is of a higher quality.",
+    "8": "The recurrent-depth transformer architecture, and its associated functionaries, which are the basis for the architecture of the complex. The architecture of the complex consists of a complex and a few hundred buildings, and is of a higher quality.",
+    "16": "The recurrent-depth transformer architecture, and its associated functionaries, which are the basis for the architecture of the complex. The architecture of the complex consists of a complex and a few hundred buildings, and is of a higher quality.",
+    "32": "The recurrent-depth transformer architecture, and its associated functionaries, which are the basis for the architecture of the complex. The architecture of the complex consists of a complex and a few hundred buildings, and is of a higher quality."
+  }
+}

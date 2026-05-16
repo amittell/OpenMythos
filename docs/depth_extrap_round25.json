@@ -1,0 +1,157 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_act_v3_round25_fixedT8/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.72656974196434,
+      "ppl": 41.53638300035026,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.85,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.72656974196434,
+      "ppl": 41.53638300035026,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.52,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.72656974196434,
+      "ppl": 41.53638300035026,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.54,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.72656974196434,
+      "ppl": 41.53638300035026,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.6,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.480186492204666,
+      "ppl": 32.46577612549556,
+      "tokens_measured": 65536,
+      "elapsed_s": 24.02,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.478135660290718,
+      "ppl": 32.39926250314854,
+      "tokens_measured": 65536,
+      "elapsed_s": 40.09,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.477951943874359,
+      "ppl": 32.393310773480756,
+      "tokens_measured": 65536,
+      "elapsed_s": 86.06,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.4777608811855316,
+      "ppl": 32.38712221164481,
+      "tokens_measured": 65536,
+      "elapsed_s": 143.89,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.195506379849581,
+      "ppl": 66.38734027857649,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 10.68,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.195506379849581,
+      "ppl": 66.38734027857649,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 10.01,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.195506379849581,
+      "ppl": 66.38734027857649,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 9.97,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.195506379849581,
+      "ppl": 66.38734027857649,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 10.05,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.8397204875946045,
+      "ppl": 46.51247180979922,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.39,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.8397204875946045,
+      "ppl": 46.51247180979922,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.36,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.8397204875946045,
+      "ppl": 46.51247180979922,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.33,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.8397204875946045,
+      "ppl": 46.51247180979922,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.09,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture, a new kind of architecture, which can be found in the architecture as well as the architecture of the present building. In this case, a few of the buildings and buildings of the existing buildings may",
+    "8": "The recurrent-depth transformer architecture, a new kind of architecture, which can be found in the architecture as well as the architecture of the present building. In this case, a few of the buildings and buildings of the existing buildings may",
+    "16": "The recurrent-depth transformer architecture, a new kind of architecture, which can be found in the architecture as well as the architecture of the present building. In this case, a few of the buildings and buildings of the existing buildings may",
+    "32": "The recurrent-depth transformer architecture, a new kind of architecture, which can be found in the architecture as well as the architecture of the present building. In this case, a few of the buildings and buildings of the existing buildings may"
+  }
+}

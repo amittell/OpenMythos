@@ -1,0 +1,31 @@
+{
+  "ckpt": "/home/alexm/OpenMythos/checkpoints/../checkpoints_3b_varT_act_v3_round211_T2/step_0012207_full.pt",
+  "device": "cuda:0",
+  "device_name": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "n_params_b": 3.55781501,
+  "prompt_len": 512,
+  "gen_len": 128,
+  "batch": 1,
+  "by_T": [
+    {
+      "T": 1,
+      "error": "expected mat1 and mat2 to have the same dtype, but got: float != c10::BFloat16"
+    },
+    {
+      "T": 2,
+      "error": "expected mat1 and mat2 to have the same dtype, but got: float != c10::BFloat16"
+    },
+    {
+      "T": 4,
+      "error": "expected mat1 and mat2 to have the same dtype, but got: float != c10::BFloat16"
+    },
+    {
+      "T": 8,
+      "error": "expected mat1 and mat2 to have the same dtype, but got: float != c10::BFloat16"
+    },
+    {
+      "T": 16,
+      "error": "expected mat1 and mat2 to have the same dtype, but got: float != c10::BFloat16"
+    }
+  ]
+}

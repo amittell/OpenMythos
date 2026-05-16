@@ -1,0 +1,681 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_act_v3_round211_T2/step_0012207_full.pt",
+  "act_threshold": 0.99,
+  "trained_max_loop_iters": 12,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results": {
+    "4": [
+      {
+        "iter": 1,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 2,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 3,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 4,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      }
+    ],
+    "8": [
+      {
+        "iter": 1,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 2,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 3,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 4,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 5,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 6,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 7,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 8,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      }
+    ],
+    "16": [
+      {
+        "iter": 1,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 2,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 3,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 4,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 5,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 6,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 7,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 8,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 9,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 10,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 11,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 12,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 13,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 14,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 15,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 16,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      }
+    ],
+    "32": [
+      {
+        "iter": 1,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 2,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 3,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 4,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 5,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 6,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 7,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 8,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 9,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 10,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 11,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 12,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 13,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 14,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 15,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 16,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 17,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 18,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 19,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 20,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 21,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 22,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 23,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 24,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 25,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 26,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 27,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 28,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 29,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 30,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 31,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      },
+      {
+        "iter": 32,
+        "p_mean": 1.0,
+        "p_median": 1.0,
+        "p_min": 1.0,
+        "p_max": 1.0,
+        "p_std": 0.0,
+        "cum_p_mean": 1.0,
+        "cum_p_median": 1.0,
+        "frac_above_threshold": 1.0
+      }
+    ]
+  }
+}

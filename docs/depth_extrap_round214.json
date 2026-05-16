@@ -1,0 +1,157 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_act_v3_round214_T16/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.9371628910303116,
+      "ppl": 51.272927868980716,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.7,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.9371628910303116,
+      "ppl": 51.272927868980716,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.66,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.9371628910303116,
+      "ppl": 51.272927868980716,
+      "tokens_measured": 65536,
+      "elapsed_s": 11.11,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.9371628910303116,
+      "ppl": 51.272927868980716,
+      "tokens_measured": 65536,
+      "elapsed_s": 11.15,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.7447710186243057,
+      "ppl": 42.29932035325881,
+      "tokens_measured": 65536,
+      "elapsed_s": 24.89,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.7428431808948517,
+      "ppl": 42.21785268100929,
+      "tokens_measured": 65536,
+      "elapsed_s": 38.69,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.7411498576402664,
+      "ppl": 42.14642470170246,
+      "tokens_measured": 65536,
+      "elapsed_s": 64.74,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.743239179253578,
+      "ppl": 42.23457419200687,
+      "tokens_measured": 65536,
+      "elapsed_s": 124.83,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.168320719991096,
+      "ppl": 64.60686793954017,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 10.15,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.168320719991096,
+      "ppl": 64.60686793954017,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 10.14,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.168320719991096,
+      "ppl": 64.60686793954017,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 10.01,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.168320719991096,
+      "ppl": 64.60686793954017,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 10.04,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.8689855486154556,
+      "ppl": 47.893775521574575,
+      "tokens_measured": 65536,
+      "elapsed_s": 9.88,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.8689855486154556,
+      "ppl": 47.893775521574575,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.46,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.8689855486154556,
+      "ppl": 47.893775521574575,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.4,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.8689855486154556,
+      "ppl": 47.893775521574575,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.45,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture, and its structural integrity, would have been the basis for the architecture of the building. The design of the building would be a building that would have been constructed to be used to build a modern building",
+    "8": "The recurrent-depth transformer architecture, and its structural integrity, would have been the basis for the architecture of the building. The design of the building would be a building that would have been constructed to be used to build a modern building",
+    "16": "The recurrent-depth transformer architecture, and its structural integrity, would have been the basis for the architecture of the building. The design of the building would be a building that would have been constructed to be used to build a modern building",
+    "32": "The recurrent-depth transformer architecture, and its structural integrity, would have been the basis for the architecture of the building. The design of the building would be a building that would have been constructed to be used to build a modern building"
+  }
+}

@@ -1,0 +1,469 @@
+{
+  "ckpt_path": "/home/alex/OpenMythos/checkpoints/ckpt_r213_full.pt",
+  "step": 3051,
+  "K": 32,
+  "act_threshold": 0.99,
+  "n_tokens": 32768,
+  "halt_step_histogram": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    23474,
+    9291,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "halt_step_mean": 5.28363037109375,
+  "halt_step_median": 5.0,
+  "p_first_mean": 0.2027028501033783,
+  "frac_halt_at_1": 0.0,
+  "frac_halt_at_K": 0.0,
+  "by_category": {
+    "punct": {
+      "n_tokens": 4124,
+      "halt_step_mean": 5.261881668283221,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20200446248054504,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.23787584869059167
+    },
+    "function": {
+      "n_tokens": 9564,
+      "halt_step_mean": 5.275616896695943,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20210523903369904,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.23933500627352572
+    },
+    "content": {
+      "n_tokens": 17102,
+      "halt_step_mean": 5.2891474681323825,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.2036113440990448,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.38837562858145247
+    },
+    "rare": {
+      "n_tokens": 1978,
+      "halt_step_mean": 5.320020222446916,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.1991935670375824,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.4696663296258847
+    }
+  },
+  "by_correctness": {
+    "correct": {
+      "n_tokens": 10841,
+      "halt_step_mean": 5.301724933124251,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20228311419487,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    },
+    "incorrect": {
+      "n_tokens": 21927,
+      "halt_step_mean": 5.274684179322296,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.202910378575325,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    }
+  },
+  "examples": {
+    "early_halters": [
+      {
+        "token": "-metal",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.255859375,
+        "target": " casting",
+        "pred": " metal",
+        "correct": false
+      },
+      {
+        "token": " by",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.19921875,
+        "target": " machines",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " jobs",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.1953125,
+        "target": " once",
+        "pred": " that",
+        "correct": false
+      },
+      {
+        "token": " the",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.2001953125,
+        "target": " jobs",
+        "pred": " same",
+        "correct": false
+      },
+      {
+        "token": "Automation",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.20703125,
+        "target": " is",
+        "pred": " is",
+        "correct": true
+      },
+      {
+        "token": " to",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.208984375,
+        "target": " do",
+        "pred": " perform",
+        "correct": false
+      },
+      {
+        "token": " for",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.19921875,
+        "target": " machines",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " possible",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2060546875,
+        "target": " for",
+        "pred": " to",
+        "correct": false
+      },
+      {
+        "token": " makes",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.1943359375,
+        "target": " it",
+        "pred": " it",
+        "correct": true
+      },
+      {
+        "token": " is",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.189453125,
+        "target": " likely",
+        "pred": " expected",
+        "correct": false
+      },
+      {
+        "token": " as",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.20703125,
+        "target": " technological",
+        "pred": " a",
+        "correct": false
+      },
+      {
+        "token": " for",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.208984375,
+        "target": " labour",
+        "pred": " skilled",
+        "correct": false
+      },
+      {
+        "token": " demand",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2060546875,
+        "target": " for",
+        "pred": " for",
+        "correct": true
+      },
+      {
+        "token": " is",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.1943359375,
+        "target": " changing",
+        "pred": " a",
+        "correct": false
+      },
+      {
+        "token": "\n",
+        "category": "punct",
+        "halt_step": 5,
+        "p_first": 0.19921875,
+        "target": "Automation",
+        "pred": "The",
+        "correct": false
+      },
+      {
+        "token": " once",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.1982421875,
+        "target": " performed",
+        "pred": " they",
+        "correct": false
+      },
+      {
+        "token": " those",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.2158203125,
+        "target": " by",
+        "pred": " who",
+        "correct": false
+      },
+      {
+        "token": " and",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.1982421875,
+        "target": " those",
+        "pred": " businesses",
+        "correct": false
+      },
+      {
+        "token": " people",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.203125,
+        "target": " and",
+        "pred": "\n",
+        "correct": false
+      },
+      {
+        "token": " by",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.2021484375,
+        "target": " people",
+        "pred": " a",
+        "correct": false
+      }
+    ],
+    "late_halters": [
+      {
+        "token": "este",
+        "category": "content",
+        "halt_step": 7,
+        "p_first": 0.1494140625,
+        "target": "at",
+        "pred": "at",
+        "correct": true
+      },
+      {
+        "token": " sache",
+        "category": "content",
+        "halt_step": 7,
+        "p_first": 0.171875,
+        "target": "m",
+        "pred": "m",
+        "correct": true
+      },
+      {
+        "token": ".\n",
+        "category": "punct",
+        "halt_step": 6,
+        "p_first": 0.1953125,
+        "target": "Leaves",
+        "pred": "The",
+        "correct": false
+      },
+      {
+        "token": " more",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1845703125,
+        "target": " strategic",
+        "pred": " efficient",
+        "correct": false
+      },
+      {
+        "token": " flowers",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1953125,
+        "target": " in",
+        "pred": " in",
+        "correct": true
+      },
+      {
+        "token": " habitats",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1953125,
+        "target": ".",
+        "pred": ".",
+        "correct": true
+      },
+      {
+        "token": " enable",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1943359375,
+        "target": " employees",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " of",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.1923828125,
+        "target": " disturbed",
+        "pred": " tropical",
+        "correct": false
+      },
+      {
+        "token": " that",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.1875,
+        "target": " enable",
+        "pred": " is",
+        "correct": false
+      },
+      {
+        "token": " continuously",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1923828125,
+        "target": " that",
+        "pred": ".",
+        "correct": false
+      },
+      {
+        "token": " edges",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.181640625,
+        "target": ",",
+        "pred": ".",
+        "correct": false
+      },
+      {
+        "token": ").\n",
+        "category": "punct",
+        "halt_step": 6,
+        "p_first": 0.203125,
+        "target": "-",
+        "pred": "-",
+        "correct": true
+      },
+      {
+        "token": " hortic",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.181640625,
+        "target": "ultural",
+        "pred": "ultural",
+        "correct": true
+      },
+      {
+        "token": " system",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.2001953125,
+        "target": " that",
+        "pred": " has",
+        "correct": false
+      },
+      {
+        "token": " a",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.1943359375,
+        "target": " serious",
+        "pred": " hybrid",
+        "correct": false
+      },
+      {
+        "token": " be",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.1884765625,
+        "target": " gathered",
+        "pred": " collected",
+        "correct": false
+      },
+      {
+        "token": " to",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.193359375,
+        "target": " be",
+        "pred": " be",
+        "correct": true
+      },
+      {
+        "token": " oval",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.193359375,
+        "target": " to",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": " majority",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1953125,
+        "target": " of",
+        "pred": " of",
+        "correct": true
+      },
+      {
+        "token": " allowing",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.197265625,
+        "target": " information",
+        "pred": " the",
+        "correct": false
+      }
+    ]
+  }
+}

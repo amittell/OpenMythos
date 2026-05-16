@@ -1,0 +1,253 @@
+# Multi-depth generation samples (step 3051, depths=[2, 6, 12, 24])
+
+
+## Sample 1
+
+Prompt: `Once upon a time in a small village nestled between two mountains,`
+
+
+**K=2:** Once upon a time in a small village nestled between two mountains, is located in the same location, and the same day, in a large area of the village called the "Saddam" in the village of La Grange. The latter city was destroyed while the city was under the control of the city, not the city proper. The result was an earthquake in the area of the city. There was the town's destruction in the 8th century or so after the 16th century.
+The town was built in 1890 on the site of
+
+
+**K=6:** Once upon a time in a small village nestled between two mountains, is located in the same location, and the same day, in a large area of the village called the "Saddam" in the village of La Grange. The latter city was destroyed while the city was under the control of the city, not the city proper. The result was an earthquake in the area of the city. There was the town's destruction in the 8th century or so after the 16th century.
+The town was built in 1890 on the site of
+
+
+**K=12:** Once upon a time in a small village nestled between two mountains, is located in the same location, and the same day, in a large area of the village called the "Saddam" in the village of La Grange. The latter city was destroyed while the city was under the control of the city, not the city proper. The result was an earthquake in the area of the city. There was the town's destruction in the 8th century or so after the 16th century.
+The town was built in 1890 on the site of
+
+
+**K=24:** Once upon a time in a small village nestled between two mountains, is located in the same location, and the same day, in a large area of the village called the "Saddam" in the village of La Grange. The latter city was destroyed while the city was under the control of the city, not the city proper. The result was an earthquake in the area of the city. There was the town's destruction in the 8th century or so after the 16th century.
+The town was built in 1890 on the site of
+
+
+## Sample 2
+
+Prompt: `The key difference between mitosis and meiosis is that`
+
+
+**K=2:** The key difference between mitosis and meiosis is that the amount of time it takes to get the right dose of chemotherapy is relatively good. If a small dose is not enough to make this process go smoothly you can get the same effect as the dose of the drug. This gives the time of day the best possible dose of chemotherapy at a dose of 6 g per day for your body and will help you get the right dose of any medicine.
+This is the correct dose of a drug (in a large dose) to make this medicine for your body
+
+
+**K=6:** The key difference between mitosis and meiosis is that the amount of time it takes to get the right dose of chemotherapy is relatively good. If a small dose is not enough to make this process go smoothly you can get the same effect as the dose of the drug. This gives the time of day the best possible dose of chemotherapy at a dose of 6 g per day for your body and will help you get the right dose of any medicine.
+This is the correct dose of a drug (in a large dose) to make this medicine for your body
+
+
+**K=12:** The key difference between mitosis and meiosis is that the amount of time it takes to get the right dose of chemotherapy is relatively good. If a small dose is not enough to make this process go smoothly you can get the same effect as the dose of the drug. This gives the time of day the best possible dose of chemotherapy at a dose of 6 g per day for your body and will help you get the right dose of any medicine.
+This is the correct dose of a drug (in a large dose) to make this medicine for your body
+
+
+**K=24:** The key difference between mitosis and meiosis is that the amount of time it takes to get the right dose of chemotherapy is relatively good. If a small dose is not enough to make this process go smoothly you can get the same effect as the dose of the drug. This gives the time of day the best possible dose of chemotherapy at a dose of 6 g per day for your body and will help you get the right dose of any medicine.
+This is the correct dose of a drug (in a large dose) to make this medicine for your body
+
+
+## Sample 3
+
+Prompt: `To compute the area of a triangle, you`
+
+
+**K=2:** To compute the area of a triangle, you can calculate the area of a circle using a simple equation.
+There are different methods to determine the area of an object. For example, it may be a simple solution to the question of how many of the objects in the field have to be found. The best example is a mathematical equation which includes the volume of the surface area of an object. This is quite similar to the equation, but the more complicated the solution, the more complicated the solution. The problem with the area of the object, the
+
+
+**K=6:** To compute the area of a triangle, you can calculate the area of a circle using a simple equation.
+There are different methods to determine the area of an object. For example, it may be a simple solution to the question of how many of the objects in the field have to be found. The best example is a mathematical equation which includes the volume of the surface area of an object. This is quite similar to the equation, but the more complicated the solution, the more complicated the solution. The problem with the area of the object, the
+
+
+**K=12:** To compute the area of a triangle, you can calculate the area of a circle using a simple equation.
+There are different methods to determine the area of an object. For example, it may be a simple solution to the question of how many of the objects in the field have to be found. The best example is a mathematical equation which includes the volume of the surface area of an object. This is quite similar to the equation, but the more complicated the solution, the more complicated the solution. The problem with the area of the object, the
+
+
+**K=24:** To compute the area of a triangle, you can calculate the area of a circle using a simple equation.
+There are different methods to determine the area of an object. For example, it may be a simple solution to the question of how many of the objects in the field have to be found. The best example is a mathematical equation which includes the volume of the surface area of an object. This is quite similar to the equation, but the more complicated the solution, the more complicated the solution. The problem with the area of the object, the
+
+
+## Sample 4
+
+Prompt: `Q: What is the capital of France?
+A:`
+
+
+**K=2:** Q: What is the capital of France?
+A: The capital of Belgium is not a city or a city for its own private capital. In 2011, the state of the country of the country is famous for its own population. This has been the capital of the country.
+The capital of the country is the most important city in the city. It is the most important city in the world.
+The city is a city within the city center, it is the most important city out of its own history. The city is also famous for its many
+
+
+**K=6:** Q: What is the capital of France?
+A: The capital of Belgium is not a city or a city for its own private capital. In 2011, the state of the country of the country is famous for its own population. This has been the capital of the country.
+The capital of the country is the most important city in the city. It is the most important city in the world.
+The city is a city within the city center, it is the most important city out of its own history. The city is also famous for its many
+
+
+**K=12:** Q: What is the capital of France?
+A: The capital of Belgium is not a city or a city for its own private capital. In 2011, the state of the country of the country is famous for its own population. This has been the capital of the country.
+The capital of the country is the most important city in the city. It is the most important city in the world.
+The city is a city within the city center, it is the most important city out of its own history. The city is also famous for its many
+
+
+**K=24:** Q: What is the capital of France?
+A: The capital of Belgium is not a city or a city for its own private capital. In 2011, the state of the country of the country is famous for its own population. This has been the capital of the country.
+The capital of the country is the most important city in the city. It is the most important city in the world.
+The city is a city within the city center, it is the most important city out of its own history. The city is also famous for its many
+
+
+## Sample 5
+
+Prompt: `In Python, a list comprehension is written as`
+
+
+**K=2:** In Python, a list comprehension is written as a non-structural input to the program.
+An example of the type of
+the program is a
+- An example of a program
+- An example of a program that
+can make a program that is based on the program:
+- An example of the program
+- An example of a program that uses
+- An example of a program that uses the program's name
+- An example of a program that uses a program that uses
+the program's name
+- An example of an
+
+
+**K=6:** In Python, a list comprehension is written as a non-structural input to the program.
+An example of the type of
+the program is a
+- An example of a program
+- An example of a program that
+can make a program that is based on the program:
+- An example of the program
+- An example of a program that uses
+- An example of a program that uses the program's name
+- An example of a program that uses a program that uses
+the program's name
+- An example of an
+
+
+**K=12:** In Python, a list comprehension is written as a non-structural input to the program.
+An example of the type of
+the program is a
+- An example of a program
+- An example of a program that
+can make a program that is based on the program:
+- An example of the program
+- An example of a program that uses
+- An example of a program that uses the program's name
+- An example of a program that uses a program that uses
+the program's name
+- An example of an
+
+
+**K=24:** In Python, a list comprehension is written as a non-structural input to the program.
+An example of the type of
+the program is a
+- An example of a program
+- An example of a program that
+can make a program that is based on the program:
+- An example of the program
+- An example of a program that uses
+- An example of a program that uses the program's name
+- An example of a program that uses a program that uses
+the program's name
+- An example of an
+
+
+## Sample 6
+
+Prompt: `The Roman Empire fell primarily because`
+
+
+**K=2:** The Roman Empire fell primarily because of a lack of political pressure.
+It was in the final phase of the conflict that the Roman Empire experienced so many changes to the Roman Empire that the Romans were not only an economic and political system but are still trying to secure the Roman Empire’s power. The Roman empire was used in the Roman world and it is still used today as a historical symbol of Roman culture, art, architecture, and history.
+The Roman Empire
+The Roman Empire was the greatest power in Europe and the world is still considered
+
+
+**K=6:** The Roman Empire fell primarily because of a lack of political pressure.
+It was in the final phase of the conflict that the Roman Empire experienced so many changes to the Roman Empire that the Romans were not only an economic and political system but are still trying to secure the Roman Empire’s power. The Roman empire was used in the Roman world and it is still used today as a historical symbol of Roman culture, art, architecture, and history.
+The Roman Empire
+The Roman Empire was the greatest power in Europe and the world is still considered
+
+
+**K=12:** The Roman Empire fell primarily because of a lack of political pressure.
+It was in the final phase of the conflict that the Roman Empire experienced so many changes to the Roman Empire that the Romans were not only an economic and political system but are still trying to secure the Roman Empire’s power. The Roman empire was used in the Roman world and it is still used today as a historical symbol of Roman culture, art, architecture, and history.
+The Roman Empire
+The Roman Empire was the greatest power in Europe and the world is still considered
+
+
+**K=24:** The Roman Empire fell primarily because of a lack of political pressure.
+It was in the final phase of the conflict that the Roman Empire experienced so many changes to the Roman Empire that the Romans were not only an economic and political system but are still trying to secure the Roman Empire’s power. The Roman empire was used in the Roman world and it is still used today as a historical symbol of Roman culture, art, architecture, and history.
+The Roman Empire
+The Roman Empire was the greatest power in Europe and the world is still considered
+
+
+## Sample 7
+
+Prompt: `Dear Claude,
+
+I wanted to write to you because`
+
+
+**K=2:** Dear Claude,
+
+I wanted to write to you because it was the best of you. I would not have told you the best that you could read it in the paper before you read it. All the other people, they did not know how to do it. The reason they are getting ready to write is because they could not have been doing all the good things to do. One thing they do is to write down your answers and look at your answers.
+When you have the correct answer
+You can read the paper in the comments to your own experience
+
+
+**K=6:** Dear Claude,
+
+I wanted to write to you because it was the best of you. I would not have told you the best that you could read it in the paper before you read it. All the other people, they did not know how to do it. The reason they are getting ready to write is because they could not have been doing all the good things to do. One thing they do is to write down your answers and look at your answers.
+When you have the correct answer
+You can read the paper in the comments to your own experience
+
+
+**K=12:** Dear Claude,
+
+I wanted to write to you because it was the best of you. I would not have told you the best that you could read it in the paper before you read it. All the other people, they did not know how to do it. The reason they are getting ready to write is because they could not have been doing all the good things to do. One thing they do is to write down your answers and look at your answers.
+When you have the correct answer
+You can read the paper in the comments to your own experience
+
+
+**K=24:** Dear Claude,
+
+I wanted to write to you because it was the best of you. I would not have told you the best that you could read it in the paper before you read it. All the other people, they did not know how to do it. The reason they are getting ready to write is because they could not have been doing all the good things to do. One thing they do is to write down your answers and look at your answers.
+When you have the correct answer
+You can read the paper in the comments to your own experience
+
+
+## Sample 8
+
+Prompt: `Photosynthesis is the process by which plants`
+
+
+**K=2:** Photosynthesis is the process by which plants grow to produce leaves from the seed plants.
+As a general rule, the first year old flower buds of the plant are 2-3 inches tall, with 2-3 pairs of yellow, white, yellow, orange, red, and blue flowers.
+The number of leaves on the flowers depends on the number of different plants.
+The fruit is a dark yellow, with a large, dark brown, yellow, cream, pink, red, pink, and white flowers.
+The fruit is a small
+
+
+**K=6:** Photosynthesis is the process by which plants grow to produce leaves from the seed plants.
+As a general rule, the first year old flower buds of the plant are 2-3 inches tall, with 2-3 pairs of yellow, white, yellow, orange, red, and blue flowers.
+The number of leaves on the flowers depends on the number of different plants.
+The fruit is a dark yellow, with a large, dark brown, yellow, cream, pink, red, pink, and white flowers.
+The fruit is a small
+
+
+**K=12:** Photosynthesis is the process by which plants grow to produce leaves from the seed plants.
+As a general rule, the first year old flower buds of the plant are 2-3 inches tall, with 2-3 pairs of yellow, white, yellow, orange, red, and blue flowers.
+The number of leaves on the flowers depends on the number of different plants.
+The fruit is a dark yellow, with a large, dark brown, yellow, cream, pink, red, pink, and white flowers.
+The fruit is a small
+
+
+**K=24:** Photosynthesis is the process by which plants grow to produce leaves from the seed plants.
+As a general rule, the first year old flower buds of the plant are 2-3 inches tall, with 2-3 pairs of yellow, white, yellow, orange, red, and blue flowers.
+The number of leaves on the flowers depends on the number of different plants.
+The fruit is a dark yellow, with a large, dark brown, yellow, cream, pink, red, pink, and white flowers.
+The fruit is a small
+

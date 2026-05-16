@@ -1,0 +1,118 @@
+{
+  "ckpt_path": "/home/alex/OpenMythos/checkpoints_3b_varT_pondernet_joint/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "trained_max_loop_iters": 12,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results": {
+    "4": {
+      "histogram": [
+        0,
+        0,
+        0,
+        0,
+        65536
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 4.0,
+      "median_halt_step": 4,
+      "elapsed_s": 5.24,
+      "max_budget": 4,
+      "frac_using_full_budget": 1.0
+    },
+    "8": {
+      "histogram": [
+        0,
+        0,
+        0,
+        0,
+        104,
+        36718,
+        28548,
+        159,
+        7
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 5.4391937255859375,
+      "median_halt_step": 5,
+      "elapsed_s": 8.66,
+      "max_budget": 8,
+      "frac_using_full_budget": 0.0001068115234375
+    },
+    "16": {
+      "histogram": [
+        0,
+        0,
+        0,
+        0,
+        104,
+        36718,
+        28548,
+        159,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 5.4391937255859375,
+      "median_halt_step": 5,
+      "elapsed_s": 16.51,
+      "max_budget": 16,
+      "frac_using_full_budget": 0.0
+    },
+    "32": {
+      "histogram": [
+        0,
+        0,
+        0,
+        0,
+        104,
+        36718,
+        28548,
+        159,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 5.4391937255859375,
+      "median_halt_step": 5,
+      "elapsed_s": 32.33,
+      "max_budget": 32,
+      "frac_using_full_budget": 0.0
+    }
+  }
+}

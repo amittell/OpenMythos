@@ -1,0 +1,469 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints/ckpt_r26_full.pt",
+  "step": 3051,
+  "K": 32,
+  "act_threshold": 0.99,
+  "n_tokens": 32768,
+  "halt_step_histogram": [
+    0,
+    0,
+    0,
+    0,
+    8,
+    23360,
+    9391,
+    9,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "halt_step_mean": 5.286895751953125,
+  "halt_step_median": 5.0,
+  "p_first_mean": 0.20384427905082703,
+  "frac_halt_at_1": 0.0,
+  "frac_halt_at_K": 0.0,
+  "by_category": {
+    "punct": {
+      "n_tokens": 3945,
+      "halt_step_mean": 5.234980988593156,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20396095514297485,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.27300380228136883
+    },
+    "function": {
+      "n_tokens": 9349,
+      "halt_step_mean": 5.290940207508824,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20361259579658508,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.31885763183228155
+    },
+    "content": {
+      "n_tokens": 17373,
+      "halt_step_mean": 5.294537500719508,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20411129295825958,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.48713520980832326
+    },
+    "rare": {
+      "n_tokens": 2101,
+      "halt_step_mean": 5.303188957639219,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20244823396205902,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.5821037601142314
+    }
+  },
+  "by_correctness": {
+    "correct": {
+      "n_tokens": 13744,
+      "halt_step_mean": 5.290599534342259,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.2033681422472,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    },
+    "incorrect": {
+      "n_tokens": 19024,
+      "halt_step_mean": 5.284219932716568,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.2041882574558258,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    }
+  },
+  "examples": {
+    "early_halters": [
+      {
+        "token": "ute",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.2412109375,
+        "target": " until",
+        "pred": " in",
+        "correct": false
+      },
+      {
+        "token": "-sh",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.2451171875,
+        "target": "ape",
+        "pred": "ape",
+        "correct": true
+      },
+      {
+        "token": " Virt",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.251953125,
+        "target": "anen",
+        "pred": "anen",
+        "correct": true
+      },
+      {
+        "token": " Virt",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.2412109375,
+        "target": "anen",
+        "pred": "anen",
+        "correct": true
+      },
+      {
+        "token": "Virt",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.2412109375,
+        "target": "anen",
+        "pred": "anen",
+        "correct": true
+      },
+      {
+        "token": "Virt",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.2490234375,
+        "target": "anen",
+        "pred": "anen",
+        "correct": true
+      },
+      {
+        "token": " Virt",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.259765625,
+        "target": "anen",
+        "pred": "anen",
+        "correct": true
+      },
+      {
+        "token": " Virt",
+        "category": "content",
+        "halt_step": 4,
+        "p_first": 0.263671875,
+        "target": "anen",
+        "pred": "anen",
+        "correct": true
+      },
+      {
+        "token": ",\n",
+        "category": "punct",
+        "halt_step": 5,
+        "p_first": 0.21484375,
+        "target": "-",
+        "pred": "-",
+        "correct": true
+      },
+      {
+        "token": " method",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.21875,
+        "target": ",\n",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": "-point",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2158203125,
+        "target": " method",
+        "pred": " test",
+        "correct": false
+      },
+      {
+        "token": "4",
+        "category": "rare",
+        "halt_step": 5,
+        "p_first": 0.21484375,
+        "target": "-point",
+        "pred": "-in",
+        "correct": false
+      },
+      {
+        "token": " ",
+        "category": "punct",
+        "halt_step": 5,
+        "p_first": 0.21875,
+        "target": "4",
+        "pred": "3",
+        "correct": false
+      },
+      {
+        "token": " a",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.20703125,
+        "target": " ",
+        "pred": " ",
+        "correct": true
+      },
+      {
+        "token": " using",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.212890625,
+        "target": " a",
+        "pred": " a",
+        "correct": true
+      },
+      {
+        "token": " testing",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.21484375,
+        "target": " using",
+        "pred": "\n",
+        "correct": false
+      },
+      {
+        "token": "ogly",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.16796875,
+        "target": "c",
+        "pred": "c",
+        "correct": true
+      },
+      {
+        "token": "amin",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.1923828125,
+        "target": "ogly",
+        "pred": "ogly",
+        "correct": true
+      },
+      {
+        "token": "cos",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.1923828125,
+        "target": "amin",
+        "pred": "yl",
+        "correct": false
+      },
+      {
+        "token": " gly",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.208984375,
+        "target": "cos",
+        "pred": "cos",
+        "correct": true
+      }
+    ],
+    "late_halters": [
+      {
+        "token": "ipro",
+        "category": "content",
+        "halt_step": 7,
+        "p_first": 0.162109375,
+        "target": "city",
+        "pred": "cal",
+        "correct": false
+      },
+      {
+        "token": "Il",
+        "category": "rare",
+        "halt_step": 7,
+        "p_first": 0.162109375,
+        "target": "\u2019s",
+        "pred": "\u2019s",
+        "correct": true
+      },
+      {
+        "token": " Telecommunications",
+        "category": "content",
+        "halt_step": 7,
+        "p_first": 0.1796875,
+        "target": " Bond",
+        "pred": " Ground",
+        "correct": false
+      },
+      {
+        "token": "Il",
+        "category": "rare",
+        "halt_step": 7,
+        "p_first": 0.1630859375,
+        "target": " gained",
+        "pred": "\u2019s",
+        "correct": false
+      },
+      {
+        "token": " NST",
+        "category": "content",
+        "halt_step": 7,
+        "p_first": 0.166015625,
+        "target": "C",
+        "pred": "C",
+        "correct": true
+      },
+      {
+        "token": "'s",
+        "category": "rare",
+        "halt_step": 7,
+        "p_first": 0.17578125,
+        "target": " Pavilion",
+        "pred": " Exhibit",
+        "correct": false
+      },
+      {
+        "token": "ail",
+        "category": "content",
+        "halt_step": 7,
+        "p_first": 0.16796875,
+        "target": ".",
+        "pred": ".",
+        "correct": true
+      },
+      {
+        "token": "child",
+        "category": "content",
+        "halt_step": 7,
+        "p_first": 0.1748046875,
+        "target": " \u201c",
+        "pred": "\u201d)",
+        "correct": false
+      },
+      {
+        "token": "Il",
+        "category": "rare",
+        "halt_step": 7,
+        "p_first": 0.1669921875,
+        "target": ".",
+        "pred": "\u2019s",
+        "correct": false
+      },
+      {
+        "token": " the",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.2021484375,
+        "target": " Atlantic",
+        "pred": " upper",
+        "correct": false
+      },
+      {
+        "token": " especially",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1923828125,
+        "target": " over",
+        "pred": " in",
+        "correct": false
+      },
+      {
+        "token": " occurs",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1982421875,
+        "target": " especially",
+        "pred": " in",
+        "correct": false
+      },
+      {
+        "token": " This",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.208984375,
+        "target": " occurs",
+        "pred": " is",
+        "correct": false
+      },
+      {
+        "token": ".",
+        "category": "punct",
+        "halt_step": 6,
+        "p_first": 0.1982421875,
+        "target": " This",
+        "pred": " This",
+        "correct": true
+      },
+      {
+        "token": " within",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.19921875,
+        "target": " the",
+        "pred": " the",
+        "correct": true
+      },
+      {
+        "token": ",",
+        "category": "punct",
+        "halt_step": 6,
+        "p_first": 0.19921875,
+        "target": " convection",
+        "pred": " it",
+        "correct": false
+      },
+      {
+        "token": " warm",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.2001953125,
+        "target": " surface",
+        "pred": " surface",
+        "correct": true
+      },
+      {
+        "token": " Low",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.20703125,
+        "target": " is",
+        "pred": " is",
+        "correct": true
+      },
+      {
+        "token": "od",
+        "category": "rare",
+        "halt_step": 6,
+        "p_first": 0.1953125,
+        "target": " air",
+        "pred": "ic",
+        "correct": false
+      },
+      {
+        "token": " cl",
+        "category": "rare",
+        "halt_step": 6,
+        "p_first": 0.1787109375,
+        "target": "od",
+        "pred": "ays",
+        "correct": false
+      }
+    ]
+  }
+}

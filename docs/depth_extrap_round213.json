@@ -1,0 +1,157 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_pondernet_round213/step_0003051_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 3.151725172996521,
+      "ppl": 23.37635807603413,
+      "tokens_measured": 65536,
+      "elapsed_s": 22.65,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.1341986656188965,
+      "ppl": 22.970221636713198,
+      "tokens_measured": 65536,
+      "elapsed_s": 31.12,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.1341986656188965,
+      "ppl": 22.970221636713198,
+      "tokens_measured": 65536,
+      "elapsed_s": 34.66,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.1341986656188965,
+      "ppl": 22.970221636713198,
+      "tokens_measured": 65536,
+      "elapsed_s": 32.66,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 3.14500330388546,
+      "ppl": 23.219752188559262,
+      "tokens_measured": 65536,
+      "elapsed_s": 22.53,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.142034649848938,
+      "ppl": 23.150922993080915,
+      "tokens_measured": 65536,
+      "elapsed_s": 38.32,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.142668843269348,
+      "ppl": 23.165609812769503,
+      "tokens_measured": 65536,
+      "elapsed_s": 78.56,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.1426555663347244,
+      "ppl": 23.165302246524273,
+      "tokens_measured": 65536,
+      "elapsed_s": 151.12,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.24615348113754,
+      "ppl": 69.83626852098463,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 20.95,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.243671010099265,
+      "ppl": 69.66311701767904,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 29.87,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.243671010099265,
+      "ppl": 69.66311701767904,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 27.89,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.243671010099265,
+      "ppl": 69.66311701767904,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 30.7,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.7400356382131577,
+      "ppl": 42.09949048887818,
+      "tokens_measured": 65536,
+      "elapsed_s": 21.72,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.7363570034503937,
+      "ppl": 41.94490634330089,
+      "tokens_measured": 65536,
+      "elapsed_s": 28.37,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.7363570034503937,
+      "ppl": 41.94490634330089,
+      "tokens_measured": 65536,
+      "elapsed_s": 29.04,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.7363570034503937,
+      "ppl": 41.94490634330089,
+      "tokens_measured": 65536,
+      "elapsed_s": 29.11,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture provides a clear reference point for the construction of the complex, which is a logical extension of the planned construction of the complex. If an actual structure is defined by the design principles of the existing architecture,",
+    "8": "The recurrent-depth transformer architecture provides a clear reference point for the construction of the complex, which is a logical extension of the planned construction of the complex. This architecture is a combination of architectural and architectural principles and construction principles.\nThe",
+    "16": "The recurrent-depth transformer architecture provides a clear reference point for the construction of the complex, which is a logical extension of the planned construction of the complex. This architecture is a combination of architectural and architectural principles and construction principles.\nThe",
+    "32": "The recurrent-depth transformer architecture provides a clear reference point for the construction of the complex, which is a logical extension of the planned construction of the complex. This architecture is a combination of architectural and architectural principles and construction principles.\nThe"
+  }
+}

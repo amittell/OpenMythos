@@ -1,0 +1,469 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints/ckpt_r27_full.pt",
+  "step": 3051,
+  "K": 32,
+  "act_threshold": 0.99,
+  "n_tokens": 32768,
+  "halt_step_histogram": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    1,
+    28,
+    157,
+    1413,
+    8122,
+    12686,
+    7411,
+    2229,
+    494,
+    145,
+    42,
+    15,
+    11,
+    4,
+    2,
+    3,
+    1,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+  ],
+  "halt_step_mean": 10.088531494140625,
+  "halt_step_median": 10.0,
+  "p_first_mean": 0.11002881079912186,
+  "frac_halt_at_1": 0.0,
+  "frac_halt_at_K": 0.0,
+  "by_category": {
+    "punct": {
+      "n_tokens": 3945,
+      "halt_step_mean": 9.947528517110266,
+      "halt_step_median": 10.0,
+      "p_first_mean": 0.11034747958183289,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.25602027883396705
+    },
+    "function": {
+      "n_tokens": 9349,
+      "halt_step_mean": 10.115734303134024,
+      "halt_step_median": 10.0,
+      "p_first_mean": 0.1098610907793045,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.29436303347951653
+    },
+    "content": {
+      "n_tokens": 17373,
+      "halt_step_mean": 10.079606285615611,
+      "halt_step_median": 10.0,
+      "p_first_mean": 0.11039862781763077,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.45501640476601624
+    },
+    "rare": {
+      "n_tokens": 2101,
+      "halt_step_mean": 10.306044740599715,
+      "halt_step_median": 10.0,
+      "p_first_mean": 0.10711882263422012,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.5345073774393146
+    }
+  },
+  "by_correctness": {
+    "correct": {
+      "n_tokens": 12790,
+      "halt_step_mean": 10.121344800625488,
+      "halt_step_median": 10.0,
+      "p_first_mean": 0.10978679358959198,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    },
+    "incorrect": {
+      "n_tokens": 19978,
+      "halt_step_mean": 10.067524276704376,
+      "halt_step_median": 10.0,
+      "p_first_mean": 0.11018375307321548,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    }
+  },
+  "examples": {
+    "early_halters": [
+      {
+        "token": "Virt",
+        "category": "content",
+        "halt_step": 3,
+        "p_first": 0.291015625,
+        "target": "anen",
+        "pred": "anen",
+        "correct": true
+      },
+      {
+        "token": " prop",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.18359375,
+        "target": "ionic",
+        "pred": "ionic",
+        "correct": true
+      },
+      {
+        "token": " cab",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1826171875,
+        "target": "ling",
+        "pred": "ling",
+        "correct": true
+      },
+      {
+        "token": " Th",
+        "category": "rare",
+        "halt_step": 6,
+        "p_first": 0.18359375,
+        "target": "eres",
+        "pred": "am",
+        "correct": false
+      },
+      {
+        "token": " Ever",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1640625,
+        "target": " since",
+        "pred": " since",
+        "correct": true
+      },
+      {
+        "token": "\n",
+        "category": "punct",
+        "halt_step": 6,
+        "p_first": 0.1884765625,
+        "target": "Des",
+        "pred": "Des",
+        "correct": true
+      },
+      {
+        "token": "ate",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1591796875,
+        "target": " site",
+        "pred": " information",
+        "correct": false
+      },
+      {
+        "token": " Ade",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.2080078125,
+        "target": "qu",
+        "pred": "qu",
+        "correct": true
+      },
+      {
+        "token": " mend",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.2080078125,
+        "target": "els",
+        "pred": "ic",
+        "correct": false
+      },
+      {
+        "token": "\n",
+        "category": "punct",
+        "halt_step": 6,
+        "p_first": 0.169921875,
+        "target": "Des",
+        "pred": "Des",
+        "correct": true
+      },
+      {
+        "token": "Virt",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.119140625,
+        "target": "anen",
+        "pred": "anen",
+        "correct": true
+      },
+      {
+        "token": " Virt",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1748046875,
+        "target": "anen",
+        "pred": "anen",
+        "correct": true
+      },
+      {
+        "token": " Virt",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1904296875,
+        "target": "anen",
+        "pred": "anen",
+        "correct": true
+      },
+      {
+        "token": " macht",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1669921875,
+        "target": "'s",
+        "pred": " of",
+        "correct": false
+      },
+      {
+        "token": "omo",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1982421875,
+        "target": "zy",
+        "pred": "zy",
+        "correct": true
+      },
+      {
+        "token": " pre",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1513671875,
+        "target": "war",
+        "pred": "war",
+        "correct": true
+      },
+      {
+        "token": "\n",
+        "category": "punct",
+        "halt_step": 6,
+        "p_first": 0.18359375,
+        "target": "Des",
+        "pred": "Des",
+        "correct": true
+      },
+      {
+        "token": "our",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.2294921875,
+        "target": "ished",
+        "pred": "ished",
+        "correct": true
+      },
+      {
+        "token": " wo",
+        "category": "rare",
+        "halt_step": 6,
+        "p_first": 0.2041015625,
+        "target": "ef",
+        "pred": "ef",
+        "correct": true
+      },
+      {
+        "token": " br",
+        "category": "rare",
+        "halt_step": 6,
+        "p_first": 0.1357421875,
+        "target": "ack",
+        "pred": "ack",
+        "correct": true
+      }
+    ],
+    "late_halters": [
+      {
+        "token": " P",
+        "category": "rare",
+        "halt_step": 29,
+        "p_first": 0.053466796875,
+        "target": "ETA",
+        "pred": "ETA",
+        "correct": true
+      },
+      {
+        "token": " P",
+        "category": "rare",
+        "halt_step": 24,
+        "p_first": 0.0634765625,
+        "target": "ETA",
+        "pred": "ETA",
+        "correct": true
+      },
+      {
+        "token": "F",
+        "category": "rare",
+        "halt_step": 22,
+        "p_first": 0.04541015625,
+        "target": ".",
+        "pred": ".",
+        "correct": true
+      },
+      {
+        "token": "che",
+        "category": "content",
+        "halt_step": 21,
+        "p_first": 0.08251953125,
+        "target": " rule",
+        "pred": "wing",
+        "correct": false
+      },
+      {
+        "token": "che",
+        "category": "content",
+        "halt_step": 20,
+        "p_first": 0.044677734375,
+        "target": " (",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": "ios",
+        "category": "content",
+        "halt_step": 20,
+        "p_first": 0.042724609375,
+        "target": "yn",
+        "pred": "yn",
+        "correct": true
+      },
+      {
+        "token": "che",
+        "category": "content",
+        "halt_step": 20,
+        "p_first": 0.04541015625,
+        "target": ":\n",
+        "pred": " in",
+        "correct": false
+      },
+      {
+        "token": " Fou",
+        "category": "content",
+        "halt_step": 19,
+        "p_first": 0.06103515625,
+        "target": "ling",
+        "pred": "pe",
+        "correct": false
+      },
+      {
+        "token": " as",
+        "category": "function",
+        "halt_step": 19,
+        "p_first": 0.0771484375,
+        "target": " vegetarian",
+        "pred": " vegetarian",
+        "correct": true
+      },
+      {
+        "token": " collo",
+        "category": "content",
+        "halt_step": 18,
+        "p_first": 0.05029296875,
+        "target": "idal",
+        "pred": "idal",
+        "correct": true
+      },
+      {
+        "token": "ing",
+        "category": "content",
+        "halt_step": 18,
+        "p_first": 0.06298828125,
+        "target": "ement",
+        "pred": "ement",
+        "correct": true
+      },
+      {
+        "token": "by",
+        "category": "function",
+        "halt_step": 18,
+        "p_first": 0.0390625,
+        "target": " is",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": "ing",
+        "category": "content",
+        "halt_step": 18,
+        "p_first": 0.053466796875,
+        "target": "ement",
+        "pred": "ement",
+        "correct": true
+      },
+      {
+        "token": "ing",
+        "category": "content",
+        "halt_step": 17,
+        "p_first": 0.054931640625,
+        "target": "ement",
+        "pred": "ement",
+        "correct": true
+      },
+      {
+        "token": "u",
+        "category": "rare",
+        "halt_step": 17,
+        "p_first": 0.07373046875,
+        "target": " Bay",
+        "pred": " Bay",
+        "correct": true
+      },
+      {
+        "token": "ing",
+        "category": "content",
+        "halt_step": 17,
+        "p_first": 0.07470703125,
+        "target": "ement",
+        "pred": "ement",
+        "correct": true
+      },
+      {
+        "token": " Jeff",
+        "category": "content",
+        "halt_step": 17,
+        "p_first": 0.0693359375,
+        "target": " Merk",
+        "pred": "ery",
+        "correct": false
+      },
+      {
+        "token": "P",
+        "category": "rare",
+        "halt_step": 17,
+        "p_first": 0.1025390625,
+        "target": "CRM",
+        "pred": "CRM",
+        "correct": true
+      },
+      {
+        "token": "ang",
+        "category": "content",
+        "halt_step": 17,
+        "p_first": 0.08154296875,
+        "target": "eline",
+        "pred": "eline",
+        "correct": true
+      },
+      {
+        "token": "Ear",
+        "category": "content",
+        "halt_step": 17,
+        "p_first": 0.07470703125,
+        "target": "thing",
+        "pred": "thing",
+        "correct": true
+      }
+    ]
+  }
+}

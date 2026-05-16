@@ -1,0 +1,469 @@
+{
+  "ckpt_path": "/home/alex/OpenMythos/checkpoints/ckpt_r210_full.pt",
+  "step": 3051,
+  "K": 32,
+  "act_threshold": 0.99,
+  "n_tokens": 32768,
+  "halt_step_histogram": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    22862,
+    9906,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "halt_step_mean": 5.30230712890625,
+  "halt_step_median": 5.0,
+  "p_first_mean": 0.2031572163105011,
+  "frac_halt_at_1": 0.0,
+  "frac_halt_at_K": 0.0,
+  "by_category": {
+    "punct": {
+      "n_tokens": 4124,
+      "halt_step_mean": 5.290737148399612,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.2028706818819046,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.2390882638215325
+    },
+    "function": {
+      "n_tokens": 9564,
+      "halt_step_mean": 5.291823504809703,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20287667214870453,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.24215809284818068
+    },
+    "content": {
+      "n_tokens": 17102,
+      "halt_step_mean": 5.3099052742369315,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20362646877765656,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.39065606361829025
+    },
+    "rare": {
+      "n_tokens": 1978,
+      "halt_step_mean": 5.311425682507584,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20105387270450592,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.46865520728008087
+    }
+  },
+  "by_correctness": {
+    "correct": {
+      "n_tokens": 10910,
+      "halt_step_mean": 5.310357470210816,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20278145372867584,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    },
+    "incorrect": {
+      "n_tokens": 21858,
+      "halt_step_mean": 5.298288955988654,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20334476232528687,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    }
+  },
+  "examples": {
+    "early_halters": [
+      {
+        "token": "places",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2080078125,
+        "target": " are",
+        "pred": " and",
+        "correct": false
+      },
+      {
+        "token": " support",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.197265625,
+        "target": " artists",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " that",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.197265625,
+        "target": " support",
+        "pred": " allow",
+        "correct": false
+      },
+      {
+        "token": "Tube",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2109375,
+        "target": " that",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": " You",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.20703125,
+        "target": "Tube",
+        "pred": "Tube",
+        "correct": true
+      },
+      {
+        "token": " like",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.212890625,
+        "target": " You",
+        "pred": " online",
+        "correct": false
+      },
+      {
+        "token": " gigs",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2294921875,
+        "target": " to",
+        "pred": " to",
+        "correct": true
+      },
+      {
+        "token": " short",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2041015625,
+        "target": "-term",
+        "pred": "-term",
+        "correct": true
+      },
+      {
+        "token": " that",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.20703125,
+        "target": " enable",
+        "pred": " are",
+        "correct": false
+      },
+      {
+        "token": " platforms",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.19921875,
+        "target": " that",
+        "pred": " like",
+        "correct": false
+      },
+      {
+        "token": " From",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.2001953125,
+        "target": " platforms",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": ".",
+        "category": "punct",
+        "halt_step": 5,
+        "p_first": 0.2001953125,
+        "target": " From",
+        "pred": " They",
+        "correct": false
+      },
+      {
+        "token": " dynamic",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2177734375,
+        "target": " and",
+        "pred": " and",
+        "correct": true
+      },
+      {
+        "token": " are",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.203125,
+        "target": " dynamic",
+        "pred": " a",
+        "correct": false
+      },
+      {
+        "token": ",",
+        "category": "punct",
+        "halt_step": 5,
+        "p_first": 0.2001953125,
+        "target": " influencers",
+        "pred": " entrepreneurs",
+        "correct": false
+      },
+      {
+        "token": "Market",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.208984375,
+        "target": "places",
+        "pred": "-based",
+        "correct": false
+      },
+      {
+        "token": "\n",
+        "category": "punct",
+        "halt_step": 5,
+        "p_first": 0.203125,
+        "target": "Market",
+        "pred": "The",
+        "correct": false
+      },
+      {
+        "token": " gigs",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.21484375,
+        "target": "\n",
+        "pred": "\n",
+        "correct": true
+      },
+      {
+        "token": " and",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.197265625,
+        "target": " gigs",
+        "pred": " innovation",
+        "correct": false
+      },
+      {
+        "token": " entrepreneurship",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2021484375,
+        "target": " and",
+        "pred": "\n",
+        "correct": false
+      }
+    ],
+    "late_halters": [
+      {
+        "token": "ached",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1982421875,
+        "target": " white",
+        "pred": " wheat",
+        "correct": false
+      },
+      {
+        "token": " ble",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.193359375,
+        "target": "ached",
+        "pred": "ached",
+        "correct": true
+      },
+      {
+        "token": " especially",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.2021484375,
+        "target": " ble",
+        "pred": " white",
+        "correct": false
+      },
+      {
+        "token": " amalg",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1748046875,
+        "target": "am",
+        "pred": "am",
+        "correct": true
+      },
+      {
+        "token": " and",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.2080078125,
+        "target": ",",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " their",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.19921875,
+        "target": " blood",
+        "pred": " urine",
+        "correct": false
+      },
+      {
+        "token": " food",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1943359375,
+        "target": ".\n",
+        "pred": ".",
+        "correct": false
+      },
+      {
+        "token": " amalg",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1884765625,
+        "target": "am",
+        "pred": "am",
+        "correct": true
+      },
+      {
+        "token": "am",
+        "category": "rare",
+        "halt_step": 6,
+        "p_first": 0.18359375,
+        "target": " particles",
+        "pred": " fillings",
+        "correct": false
+      },
+      {
+        "token": " the",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.2001953125,
+        "target": " process",
+        "pred": " process",
+        "correct": true
+      },
+      {
+        "token": " is",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.19921875,
+        "target": " of",
+        "pred": " not",
+        "correct": false
+      },
+      {
+        "token": " with",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.20703125,
+        "target": " irrit",
+        "pred": " a",
+        "correct": false
+      },
+      {
+        "token": " quantitative",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.203125,
+        "target": " importance",
+        "pred": " significance",
+        "correct": false
+      },
+      {
+        "token": " means",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1943359375,
+        "target": " that",
+        "pred": " that",
+        "correct": true
+      },
+      {
+        "token": " Mol",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.18359375,
+        "target": "in",
+        "pred": "ten",
+        "correct": false
+      },
+      {
+        "token": " secret",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.177734375,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      },
+      {
+        "token": " to",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.2001953125,
+        "target": " four",
+        "pred": " five",
+        "correct": false
+      },
+      {
+        "token": " four",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1953125,
+        "target": " fold",
+        "pred": "-fold",
+        "correct": false
+      },
+      {
+        "token": " you",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.2021484375,
+        "target": " have",
+        "pred": " are",
+        "correct": false
+      },
+      {
+        "token": "Seems",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.197265625,
+        "target": " that",
+        "pred": " that",
+        "correct": true
+      }
+    ]
+  }
+}
