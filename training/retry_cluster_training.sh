@@ -49,11 +49,12 @@ kill_all_ranks() {
 
 any_rank_running() {
     for h in "${NODES[@]}"; do
-        # Match python training process. The [p] regex trick prevents pgrep
-        # from matching its own bash -c "pgrep ..." command line which contains
-        # the literal pattern string.
+        # Match the actual python training process (cmdline starts with
+        # /usr/bin/python3 then later contains training/3b_varT). This anchored
+        # pattern avoids matching bash/ssh wrappers from other queues running
+        # on the same host that include "python3 training/..." as a substring.
         ssh -q -o ConnectTimeout=5 alexm@"$h" \
-            'pgrep -f "[p]ython3 .*training/3b_varT" >/dev/null 2>&1' && return 0
+            'pgrep -f "^/usr/bin/python3 .*training/3b_varT" >/dev/null 2>&1' && return 0
     done
     return 1
 }
