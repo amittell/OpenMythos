@@ -58,6 +58,16 @@ resources:
     conflicts_with:
       - {service: kebab-rtx-vllm.service, scope: system}
       - {service: kebab-rtx-embedding.service, scope: system}
+    # kebab-rtx6000 FastAPI router (sibling_repos_survey.md:412-481).
+    # admin_models_* applies to TTS backends only (orpheus/qwen3-tts/
+    # omnivoice/csm); vLLM language + vision are out-of-band systemd units
+    # so the scheduler must still SSH for those.  HEALTH wiring is the
+    # only capability the gpufarm coordinator actually consumes today
+    # (PR-D); admin_models_* is forward-compat for the v0.3 inference-
+    # reservation work.
+    router:
+      url: http://kebab-rtx6000.lan:8080
+      capabilities: [health, admin_models_load, admin_models_unload, admin_models_status]  # survey:472-481
     notes: "Has Vault access + GitHub creds -- DO NOT expose to vast.ai/external"
 
   - id: blackwell-gpu1
@@ -81,6 +91,11 @@ resources:
       - eval_gsm8k
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
     # GPU 1 has no service conflicts (vllm/embedding pin to GPU 0)
+    # Same kebab-rtx6000 FastAPI router as gpu0 (host-level surface, not per-GPU).
+    # admin_models_* still TTS-scoped (sibling_repos_survey.md:472-481).
+    router:
+      url: http://kebab-rtx6000.lan:8080
+      capabilities: [health, admin_models_load, admin_models_unload, admin_models_status]  # survey:472-481
     notes: "Has Vault access + GitHub creds -- DO NOT expose to vast.ai/external"
 
   - id: rtx5090
@@ -113,6 +128,14 @@ resources:
       - {service: whisper-cpp.service, scope: user}
       - {service: sdxl.service,        scope: user}
       - {service: outetts.service,     scope: user}
+    # mini-beast stdlib http.server router (sibling_repos_survey.md:71-94).
+    # Exposes /health, /stats, /metrics, /backends, /v1/models. NO admin
+    # endpoints (survey:75): service control is still SSH + systemctl --user.
+    # PR-D wires HEALTH only; stats/metrics are forward-compat for the
+    # dashboard PR.
+    router:
+      url: http://mini-beast.lan:8080
+      capabilities: [health, stats, metrics]  # survey:71-94
     notes: |
       Consumer card -- nvidia-smi --gpu-reset is "Not Supported". Avoid
       SIGKILL on hung CUDA processes (left GPU in error state 2026-05-11,

@@ -1,0 +1,199 @@
+# Inference Model Registry for OpenMythos.
+#
+# This file declares the named, deployable inference targets gpufarm may
+# stand up via `gpufarm reserve <resource> --model <id>` (see PR-B for the
+# CLI wiring). Loaded by gpufarm.manifests.Manifests.load alongside
+# resources.yaml / jobs.yaml / rounds.yaml; absence of this file is not
+# an error and simply disables inference reservations for the project.
+#
+# Source citations for every host's launch specifics:
+#   docs/sibling_repos_survey.md (gpufarm repo)
+#
+# Loader: gpufarm/manifests.py:_load_models (PR-A).
+# Schema: gpufarm/models.py:Model + ModelLaunchSpec.
+# Design: docs/design_inference_reservations.md sections 2 (schema), 6
+#         (per-host posture), 11 (MVP cut).
+
+models:
+  # ---------------------------------------------------------------------
+  # mini-beast / RTX 5090 (consumer card, 32 GB).
+  # Default GPT-OSS-20B + Eagle3 speculative decoding, 131K context, 96
+  # concurrent sequences. survey:166, survey:197-219.
+  # ---------------------------------------------------------------------
+  - id: gpt-oss-20b-eagle3
+    family: vllm
+    vram_gb_min: 28
+    vram_gb_max: 32
+    default_resource_class: rtx5090
+    notes: |
+      Eagle3 draft RedHatAI/gpt-oss-20b-speculator.eagle3, num_speculative_tokens=2
+      (deliberately not 3, see mini-beast/GPT-OSS-20B-EAGLE3-NOTES.md;
+      survey:223-226).
+    launch_by_resource:
+      rtx5090:
+        transport: ssh+systemctl
+        service_unit: vllm-20b.service     # survey:166, survey:194-219
+        scope: user                        # systemctl --user; survey:158-161
+        port: 8082                         # host port; container port 8000; survey:204
+        health_path: /v1/models            # openai-style; survey:113
+        live_probe_path: /v1/chat/completions   # 60s cadence aligns with router; survey:135-138
+        served_name: gpt-oss-20b           # survey:336-340 model id
+        max_seq_len: 131072                # survey:214
+        eagle_draft: RedHatAI/gpt-oss-20b-speculator.eagle3:2   # repo:num_speculative_tokens
+        notes: |
+          Container image built locally (localhost/vllm-tools:latest, survey:210).
+          Container name 'vllm-20b' (survey:203); podman not docker (survey:198).
+          Mutually exclusive on port 8082 with vllm-20b-104k.service,
+          vllm-20b-fast.service, trtllm-20b.service (survey:228-230, 232-235).
+
+  # ---------------------------------------------------------------------
+  # kebab-rtx6000 / RTX PRO 6000 Blackwell (96 GB).
+  # GPT-OSS-120B language. Survey:487, survey:498-521.
+  # ---------------------------------------------------------------------
+  - id: gpt-oss-120b
+    family: vllm
+    vram_gb_min: 78
+    vram_gb_max: 96
+    default_resource_class: blackwell
+    notes: |
+      No EAGLE3 on Blackwell; benchmarked and rejected (kebab-rtx6000
+      README.md:48-71; survey:527-529). Local model path at /models/gpt-oss-120b.
+    launch_by_resource:
+      blackwell-gpu0:
+        transport: ssh+systemctl
+        service_unit: kebab-rtx-vllm.service    # survey:487, survey:498-521
+        scope: system                           # sudo systemctl; survey:660-661
+        port: 8000                              # survey:510, survey:613
+        health_path: /health                    # vLLM standard; survey:584
+        live_probe_path: /v1/chat/completions
+        served_name: gpt-oss-120b               # survey:515 --served-model-name
+        max_seq_len: 131072                     # survey:516
+        kv_offload: false                       # toggled by scripts/start-vllm.sh --kv-offload (survey:562-565)
+        notes: |
+          Docker (not podman) via vllm/vllm-openai:v0.19.0 image; --gpus device=0
+          pin (survey:509). Container name 'kebab-vllm' (survey:508).
+
+  # ---------------------------------------------------------------------
+  # Qwen3-VL-32B-Instruct-FP8 vision-language.
+  # Two viable hosts: blackwell-gpu1 (single-GPU) OR cluster-4node
+  # (tensor-parallel). The launch block shows both transports.
+  #
+  # CONFIRM: spark-cluster Qwen3-VL deploy alias. The cluster's
+  # deploy_model.sh (survey:790-811) currently registers llama3-70b /
+  # gpt-oss-120b-eagle3-throughput / devstral-small-optimized only.
+  # AGENTS.md mentions glm4.7-awq and other gpt-oss variants that "may
+  # live in a non-committed local copy" (survey:813-817). Treat the
+  # cluster alias `qwen3-vl-32b` as aspirational pending a clusterctl
+  # alias addition (small follow-up to spark-cluster repo). Holding the
+  # entry in this manifest so gpufarm's loader contract is exercised by
+  # PR-A's cross-validation tests.
+  # ---------------------------------------------------------------------
+  - id: qwen3-32b-vllm
+    family: vllm
+    vram_gb_min: 76
+    vram_gb_max: 96
+    default_resource_class: blackwell
+    notes: |
+      Qwen3-VL-32B-Instruct-FP8 (vision-language). Survey:488 documents
+      the kebab-rtx-vision-cuda.service unit on GPU 1, port 8001.
+      Cluster path uses Ray/vLLM TP=4 via clusterctl (survey:866-878).
+    launch_by_resource:
+      blackwell-gpu1:
+        transport: ssh+systemctl
+        service_unit: kebab-rtx-vision-cuda.service    # survey:488, survey:536-539
+        scope: system                                  # sudo systemctl
+        port: 8001                                     # survey:614, survey:539
+        health_path: /health
+        live_probe_path: /v1/chat/completions
+        served_name: qwen3-vl-32b                      # survey:537 --served-model-name
+        max_seq_len: 131072                            # survey:537
+        notes: |
+          Image vllm/vllm-openai:latest; --gpus device=1 pin (survey:536-539).
+          --limit-mm-per-prompt '{"image":4,"video":1}' on this unit.
+      cluster-4node:
+        transport: ssh+clusterctl
+        port: 8000                                     # vLLM default on head; survey:715, 725
+        health_path: /health
+        live_probe_path: /v1/chat/completions
+        served_name: qwen3-vl-32b
+        # CONFIRM: clusterctl alias for Qwen3-VL-32B. deploy_model.sh
+        # currently doesn't ship a qwen3-vl-32b alias (survey:790-811);
+        # this command assumes a small clusterctl PR registers it. Pre-PR,
+        # the operator can still deploy via the underlying
+        # `clusterctl vllm deploy -m <alias>` (survey:825-827) with a
+        # locally-edited alias table.
+        deploy_command: "clusterctl vllm deploy -m qwen3-vl-32b --yes"
+        undeploy_command: "clusterctl vllm stop"
+        current_model_command: "clusterctl current-model"    # survey:835-837
+        max_seq_len: 131072
+        notes: |
+          --yes assumption per operator's PR-A decision (defer the small
+          spark-cluster clusterctl follow-up that confirms --yes on
+          `vllm deploy`; design §12 q5).
+
+    # Cluster TRT-LLM and cluster vLLM are mutually exclusive on the
+    # cluster-4node resource (survey:910-912); when a TRT-LLM model entry
+    # is added in v0.3, list it here.
+    conflicts_with_models: []
+
+  # ---------------------------------------------------------------------
+  # gpufarm v0.3 sample entry: ssh+docker transport on blackwell-gpu1.
+  #
+  # This is a documentation example for the v0.3 transport landing PR
+  # (gpufarm/feat/v0.3-ssh-docker-router-http-transports). It exercises
+  # the SSH_DOCKER path on the Blackwell GPU 1 -- the executor SSHes the
+  # full `docker run -d --name ...` line (operator-supplied) and the
+  # ssh+docker stop path issues `docker stop --time=<drain>` then
+  # `docker rm`.
+  #
+  # The deploy_command mirrors the shape used today by the
+  # kebab-rtx-vllm.service unit (survey:498-521) and the vision unit
+  # variant (survey:536-539). Operators that want this in production
+  # should replace the kebab-rtx-vision-cuda.service unit with this
+  # ad-hoc docker invocation -- gpufarm will manage the container
+  # lifecycle instead of systemd.
+  #
+  # Conflict note: this entry is INFORMATIONAL ONLY -- gpu1 already has
+  # qwen3-32b-vllm deployed via ssh+systemctl above. The intent is to
+  # show the schema; operators pick one or the other, not both, at
+  # reserve time. (The scheduler will enforce mutual exclusivity at
+  # the resource level via the existing leasing system.)
+  # ---------------------------------------------------------------------
+  - id: qwen3-vl-32b-docker
+    family: vllm
+    vram_gb_min: 76
+    vram_gb_max: 96
+    default_resource_class: blackwell
+    notes: |
+      ssh+docker variant of qwen3-32b-vllm. Demonstrates the v0.3
+      ssh+docker transport. Mutually exclusive with qwen3-32b-vllm
+      on blackwell-gpu1 at lease time.
+    launch_by_resource:
+      blackwell-gpu1:
+        transport: ssh+docker
+        container_name: vllm-qwen3-vl-32b
+        # Mirrors kebab-rtx-vision-cuda.service template (survey:536-539).
+        # GPU 1 pin via --gpus 'device=1' (compare survey:509 for GPU 0).
+        # Host port 8003 to avoid collisions with vllm-20b (mini-beast,
+        # port 8082) and kebab-vllm (gpu0, port 8000).
+        deploy_command: >-
+          docker run -d --name vllm-qwen3-vl-32b
+          --gpus 'device=1'
+          -p 8003:8000
+          -v /models:/models:ro
+          --shm-size 16g
+          vllm/vllm-openai:v0.19.0
+          --model Qwen/Qwen3-VL-32B-Instruct-FP8
+          --served-model-name qwen3-vl-32b
+          --max-model-len 131072
+          --limit-mm-per-prompt '{"image":4,"video":1}'
+        port: 8003
+        health_path: /health
+        live_probe_path: /v1/chat/completions
+        served_name: qwen3-vl-32b
+        max_seq_len: 131072
+        notes: |
+          Mutually exclusive with qwen3-32b-vllm on this GPU; operator
+          should release one before reserving the other.
+    conflicts_with_models:
+      - qwen3-32b-vllm
