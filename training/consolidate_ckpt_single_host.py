@@ -17,8 +17,47 @@ LOCAL_RANK is mapped to a GPU via modulo: on a 2-GPU host the 4 ranks
 share two cards (ranks 0+2 on cuda:0, ranks 1+3 on cuda:1). Each shard
 is ~11 GB so 2 shards per 96 GB GPU is well within budget.
 
-Usage (run on a single multi-GPU host -- e.g. kebab-rtx6000 with
-2x RTX PRO 6000 Blackwell):
+==============================================================
+KNOWN HARDWARE CEILING: needs ~256 GB system RAM, not just VRAM
+==============================================================
+
+Empirically tested on kebab-rtx6000 (2x RTX PRO 6000 Blackwell @ 96 GB,
+124 GB system RAM) on 2026-05-17. Three configurations failed:
+
+1. NCCL backend, 4 procs on GPU 1 only -> CUDA OOM during FSDP wrap.
+   GPU 1 capped at 96 GB; 4 procs * ~25 GB peak per rank exceeds it.
+
+2. NCCL backend, 4 procs across both GPUs (modulo mapping) -> NCCL
+   aborts with "Duplicate GPU detected: rank 0 and rank 2 both on
+   CUDA device". NCCL strictly enforces 1-proc-per-GPU.
+
+3. Gloo backend, 4 procs across both GPUs, vllm-120b + embedding
+   services stopped to clear GPU 0 -> got past load_state_dict (GPU
+   peak 91/90 GB, fit) but the FULL_STATE_DICT gather to rank 0 with
+   offload_to_cpu=True triggered a global system OOM-kill.
+   Rank 0's total_vm hit 295 GB; physical RAM is only 124 GB; OOM
+   killer took out the consolidator (and dbus along with it).
+
+The 124 GB system RAM is the binding ceiling, not the 192 GB combined
+VRAM. FSDP's FULL_STATE_DICT gather over gloo materialises a working
+set roughly equal to ``world_size * full_model_bytes`` in CPU memory
+during the all-gather, before the rank0_only=True offload kicks in.
+For a 3B-param bf16 model that's ~4 * 6 GB = 24 GB of resident copies
+plus several multiples in virtual address space for the staging
+buffers, so a host with 256+ GB RAM (or a smaller model) is the
+realistic target.
+
+In production we fell back to wait-for-completion: r2.15 will
+self-consolidate on the cluster when training finishes (its training
+script's final consolidate step runs as part of the 4-rank cluster
+job, which has 4*128 GB = 512 GB unified gb10 memory across the four
+nodes -- plenty of headroom for offload_to_cpu).
+
+If you DO have a 256+ GB host, the script below should work as-is.
+The driver script training/intermediate_eval_r215.sh is the
+end-to-end pipeline.
+
+Usage (run on a single multi-GPU host with 256+ GB RAM):
 
     torchrun --nnodes=1 --nproc_per_node=4 --master_addr=127.0.0.1 \\
              --master_port=29555 \\
@@ -83,10 +122,14 @@ def main() -> None:
     torch.cuda.set_device(gpu_idx)
     device = f"cuda:{gpu_idx}"
 
-    # NCCL works fine for intra-host comm. gloo would also work and
-    # avoids any cross-GPU initialization, but FSDP itself wants
-    # NCCL on GPU tensors, so stick with NCCL.
-    dist.init_process_group("nccl")
+    # gloo, not NCCL: NCCL strictly enforces 1-proc-per-GPU and aborts
+    # with "Duplicate GPU detected" when we colocate 4 ranks on 2 cards
+    # (the only way to match the saved world_size=4 on a 2-GPU host).
+    # gloo performs collectives over CPU memory, transparently moving
+    # GPU tensors to/from CPU as needed -- slower than NCCL but works
+    # with shared-GPU procs. Consolidation is one-shot anyway, not a
+    # training inner loop.
+    dist.init_process_group("gloo")
 
     shard_path = f"{src_pattern}_rank{rank}.pt"
     if rank == 0:
