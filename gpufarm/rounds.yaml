@@ -132,3 +132,18 @@ rounds:
       - act_halt_diagnostic
       - act_halt_histogram
       - gen_samples_multidepth
+
+  r215:
+    description: "Round 2.15: scaled joint PonderNet-KL +300M tokens on r2.13 backbone (#63)"
+    # 6x the per-round budget the r2.3 -> r2.6 -> r2.10 -> r2.13 chain used.
+    # Bootstrap is the consolidated r2.13 full ckpt (200M cumulative tokens
+    # of joint training; 100M of bypass before that). Total recipe depth
+    # after this round: ~500M tokens of joint training on top of 100M of
+    # bypass training. Tests whether the depth-extrap CE plateau observed
+    # at the 200M point (r2.13) lifts with another 300M tokens under the
+    # same recipe.
+    ckpt_dir: checkpoints_3b_varT_pondernet_round215
+    ckpt_step: 18306  # 6x r2.13's 3051 (linear extrapolation; will be set
+                      # to the actual final step on consolidation)
+    bootstrap: r213
+    eval_bundle: *eval_defaults

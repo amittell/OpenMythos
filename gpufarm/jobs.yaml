@@ -38,6 +38,25 @@ jobs:
     max_retries: 1
     requires_exclusive: true        # 4-rank cluster training needs the gb10s to itself
 
+  # Joint PonderNet-KL training (rounds 2.3, 2.6, 2.10, 2.13 used this script).
+  # Same cluster + same envelope as train_round; only script differs.
+  - id: train_round_joint
+    script: training/3b_varT_pondernet_joint.py
+    parallel: 4_rank_fsdp
+    resource_class: [gb10]
+    requires_resource: cluster-4node
+    env_required: [CKPT_DIR, BOOTSTRAP_CKPT]
+    env_optional: [TARGET_TOKENS, REINIT_HEAD, LAMBDA_P]
+    input_files:
+      - "{BOOTSTRAP_CKPT}"
+    output_pattern: "{CKPT_DIR}/step_{step_final}_full.pt"
+    estimated_minutes: 1500          # 50M tokens; scales linearly past that
+    timeout_minutes: 10080           # 7 days; covers 300M-token scaled runs
+    priority: 0
+    preemptible: false
+    max_retries: 1
+    requires_exclusive: true
+
   # -------- Cluster consolidation --------
   - id: consolidate
     script: training/consolidate_ckpt.py
