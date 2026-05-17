@@ -16,7 +16,7 @@ resources:
     class: gb10
     vram_gb: 128                    # GB10 unified memory per node
     priority_tier: 0                # most precious (training only)
-    can_run: [train_round, consolidate, eval_4node]
+    can_run: [train_round, train_round_joint, consolidate, eval_4node]
     recovery_hook: |
       # Cluster doesn't have automatic recovery; on NCCL hang the retry_cluster
       # supervisor handles SIGKILL + relaunch (see retry_cluster_training.sh).
