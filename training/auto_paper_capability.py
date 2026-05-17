@@ -184,7 +184,7 @@ def remove_section_if_present(content: str, header: str, next_header_pattern: st
     start = content.index(header)
     # Find the next ### header after start, or fall back to next_header_pattern
     rest = content[start + len(header):]
-    next_match = re.search(r"\n### ", rest)
+    next_match = re.search(r"\n##+ ", rest)
     anchor_match = content.find(next_header_pattern, start)
     if next_match:
         end = start + len(header) + next_match.start() + 1  # +1 to keep the leading \n

@@ -101,6 +101,7 @@ resources:
   - id: rtx5090
     host: mini-beast.lan
     ssh_user: alex                  # different uid from the rtx6000 alexm
+    repo_root: /home/alex/OpenMythos  # alex's home, not /home/alexm/...
     cuda_device: 0
     class: rtx5090
     vram_gb: 32

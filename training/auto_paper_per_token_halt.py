@@ -205,7 +205,13 @@ def remove_section_if_present(content: str, header: str, next_header_pattern: st
         return content
     start = content.index(header)
     rest = content[start + len(header):]
-    next_match = re.search(r"\n### ", rest)
+    # Match the next *equal-or-higher-level* heading: `## ` (top-level) or
+    # `### ` (same-level sibling). Previously this only matched `\n### `,
+    # which silently swallowed the following `## 8. Discussion` block
+    # when removing the §7.23 trailer (the next `###` was `### 8.1`,
+    # past Discussion). Including `\n## ` in the alternation makes the
+    # boundary the next `##` heading we'd hit either way.
+    next_match = re.search(r"\n##+ ", rest)
     anchor_match = content.find(next_header_pattern, start)
     if next_match:
         end = start + len(header) + next_match.start() + 1

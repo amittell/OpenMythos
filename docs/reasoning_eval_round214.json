@@ -1,0 +1,112 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints/ckpt_r214_full.pt",
+  "step": 3051,
+  "vocab_size": 199998,
+  "trained_max_loop_iters": 16,
+  "depths": [
+    4,
+    8,
+    16,
+    32,
+    64
+  ],
+  "limit_per_task": 500,
+  "results": {
+    "arc-easy": {
+      "4": {
+        "acc": 0.358,
+        "n": 500,
+        "correct": 179,
+        "elapsed_s": 60.7
+      },
+      "8": {
+        "acc": 0.358,
+        "n": 500,
+        "correct": 179,
+        "elapsed_s": 61.6
+      },
+      "16": {
+        "acc": 0.358,
+        "n": 500,
+        "correct": 179,
+        "elapsed_s": 60.6
+      },
+      "32": {
+        "acc": 0.358,
+        "n": 500,
+        "correct": 179,
+        "elapsed_s": 61.2
+      },
+      "64": {
+        "acc": 0.358,
+        "n": 500,
+        "correct": 179,
+        "elapsed_s": 61.7
+      }
+    },
+    "arc-challenge": {
+      "4": {
+        "acc": 0.2040133779264214,
+        "n": 299,
+        "correct": 61,
+        "elapsed_s": 38.9
+      },
+      "8": {
+        "acc": 0.2040133779264214,
+        "n": 299,
+        "correct": 61,
+        "elapsed_s": 37.8
+      },
+      "16": {
+        "acc": 0.2040133779264214,
+        "n": 299,
+        "correct": 61,
+        "elapsed_s": 38.2
+      },
+      "32": {
+        "acc": 0.2040133779264214,
+        "n": 299,
+        "correct": 61,
+        "elapsed_s": 38.9
+      },
+      "64": {
+        "acc": 0.2040133779264214,
+        "n": 299,
+        "correct": 61,
+        "elapsed_s": 38.3
+      }
+    },
+    "hellaswag": {
+      "4": {
+        "acc": 0.316,
+        "n": 500,
+        "correct": 158,
+        "elapsed_s": 67.6
+      },
+      "8": {
+        "acc": 0.316,
+        "n": 500,
+        "correct": 158,
+        "elapsed_s": 67.5
+      },
+      "16": {
+        "acc": 0.316,
+        "n": 500,
+        "correct": 158,
+        "elapsed_s": 68.2
+      },
+      "32": {
+        "acc": 0.316,
+        "n": 500,
+        "correct": 158,
+        "elapsed_s": 67.8
+      },
+      "64": {
+        "acc": 0.316,
+        "n": 500,
+        "correct": 158,
+        "elapsed_s": 68.9
+      }
+    }
+  }
+}

@@ -1,0 +1,249 @@
+# Multi-depth generation samples (step 12207, depths=[2, 6, 12, 24])
+
+
+## Sample 1
+
+Prompt: `Once upon a time in a small village nestled between two mountains,`
+
+
+**K=2:** Once upon a time in a small village nestled between two mountains, is the third world, and so on. In some cases, the people who can’t have the knowledge of these three species are in the same category, but in the same way that there is no such thing as a race of men, or a race of men, in a country with an idea of the same kind of a race of men the people. The world is not a race of men. The people who are living in a country with an idea of the people who are going to do
+
+
+**K=6:** Once upon a time in a small village nestled between two mountains, is the third world, and so on. In some cases, the people who can’t have the knowledge of these three species are in the same category, but in the same way that there is no such thing as a race of men, or a race of men, in a country with an idea of the same kind of a race of men the people. The world is not a race of men. The people who are living in a country with an idea of the people who are going to do
+
+
+**K=12:** Once upon a time in a small village nestled between two mountains, is the third world, and so on. In some cases, the people who can’t have the knowledge of these three species are in the same category, but in the same way that there is no such thing as a race of men, or a race of men, in a country with an idea of the same kind of a race of men the people. The world is not a race of men. The people who are living in a country with an idea of the people who are going to do
+
+
+**K=24:** Once upon a time in a small village nestled between two mountains, is the third world, and so on. In some cases, the people who can’t have the knowledge of these three species are in the same category, but in the same way that there is no such thing as a race of men, or a race of men, in a country with an idea of the same kind of a race of men the people. The world is not a race of men. The people who are living in a country with an idea of the people who are going to do
+
+
+## Sample 2
+
+Prompt: `The key difference between mitosis and meiosis is that`
+
+
+**K=2:** The key difference between mitosis and meiosis is that the amount of time it takes to get to the end of the day is called the “the way” and the amount of time that it took for you to get to the end of the day is called the “the way” and the “the way” by this to move to the next day to get to the end of the day are the “the way.”
+The time it takes to get to the end of the day is the number of hours from 1-7. The time it
+
+
+**K=6:** The key difference between mitosis and meiosis is that the amount of time it takes to get to the end of the day is called the “the way” and the amount of time that it took for you to get to the end of the day is called the “the way” and the “the way” by this to move to the next day to get to the end of the day are the “the way.”
+The time it takes to get to the end of the day is the number of hours from 1-7. The time it
+
+
+**K=12:** The key difference between mitosis and meiosis is that the amount of time it takes to get to the end of the day is called the “the way” and the amount of time that it took for you to get to the end of the day is called the “the way” and the “the way” by this to move to the next day to get to the end of the day are the “the way.”
+The time it takes to get to the end of the day is the number of hours from 1-7. The time it
+
+
+**K=24:** The key difference between mitosis and meiosis is that the amount of time it takes to get to the end of the day is called the “the way” and the amount of time that it took for you to get to the end of the day is called the “the way” and the “the way” by this to move to the next day to get to the end of the day are the “the way.”
+The time it takes to get to the end of the day is the number of hours from 1-7. The time it
+
+
+## Sample 3
+
+Prompt: `To compute the area of a triangle, you`
+
+
+**K=2:** To compute the area of a triangle, you can either have it or go.
+When you have a lot of trouble, you can have a lot of trouble. If you need a lot of options, you can just use your own.
+A lot of time is required with your own words. You can use your own words and your own words. You can use your own words and your own words.
+Another way to look at your own words is to know the person.
+If you don't have a lot of time, you can have a lot of
+
+
+**K=6:** To compute the area of a triangle, you can either have it or go.
+When you have a lot of trouble, you can have a lot of trouble. If you need a lot of options, you can just use your own.
+A lot of time is required with your own words. You can use your own words and your own words. You can use your own words and your own words.
+Another way to look at your own words is to know the person.
+If you don't have a lot of time, you can have a lot of
+
+
+**K=12:** To compute the area of a triangle, you can either have it or go.
+When you have a lot of trouble, you can have a lot of trouble. If you need a lot of options, you can just use your own.
+A lot of time is required with your own words. You can use your own words and your own words. You can use your own words and your own words.
+Another way to look at your own words is to know the person.
+If you don't have a lot of time, you can have a lot of
+
+
+**K=24:** To compute the area of a triangle, you can either have it or go.
+When you have a lot of trouble, you can have a lot of trouble. If you need a lot of options, you can just use your own.
+A lot of time is required with your own words. You can use your own words and your own words. You can use your own words and your own words.
+Another way to look at your own words is to know the person.
+If you don't have a lot of time, you can have a lot of
+
+
+## Sample 4
+
+Prompt: `Q: What is the capital of France?
+A:`
+
+
+**K=2:** Q: What is the capital of France?
+A: The capital of France is considered by many to be the major economic and economic importance of the country in terms of the main industry (at a given area) or the major industries (in the case of France) as well as the main economic and social functions (in the case of the major industries).
+The major industries are large, and the major industries are the major industries, such as the following: The major industries are the major industries, such as the following.
+The major industries are: The capital
+
+
+**K=6:** Q: What is the capital of France?
+A: The capital of France is considered by many to be the major economic and economic importance of the country in terms of the main industry (at a given area) or the major industries (in the case of France) as well as the main economic and social functions (in the case of the major industries).
+The major industries are large, and the major industries are the major industries, such as the following: The major industries are the major industries, such as the following.
+The major industries are: The capital
+
+
+**K=12:** Q: What is the capital of France?
+A: The capital of France is considered by many to be the major economic and economic importance of the country in terms of the main industry (at a given area) or the major industries (in the case of France) as well as the main economic and social functions (in the case of the major industries).
+The major industries are large, and the major industries are the major industries, such as the following: The major industries are the major industries, such as the following.
+The major industries are: The capital
+
+
+**K=24:** Q: What is the capital of France?
+A: The capital of France is considered by many to be the major economic and economic importance of the country in terms of the main industry (at a given area) or the major industries (in the case of France) as well as the main economic and social functions (in the case of the major industries).
+The major industries are large, and the major industries are the major industries, such as the following: The major industries are the major industries, such as the following.
+The major industries are: The capital
+
+
+## Sample 5
+
+Prompt: `In Python, a list comprehension is written as`
+
+
+**K=2:** In Python, a list comprehension is written as a non-structural
+- The term “squats” is used
+- The definition of
+- An example of a word
+- The word “squats” is used to mean a word
+- The word “squats” is used to mean something in a negative sense.
+- The word “squats” is used to mean a word in a negative sense.
+- The word “squats” is used to mean something in an equation.
+- The
+
+
+**K=6:** In Python, a list comprehension is written as a non-structural
+- The term “squats” is used
+- The definition of
+- An example of a word
+- The word “squats” is used to mean a word
+- The word “squats” is used to mean something in a negative sense.
+- The word “squats” is used to mean a word in a negative sense.
+- The word “squats” is used to mean something in an equation.
+- The
+
+
+**K=12:** In Python, a list comprehension is written as a non-structural
+- The term “squats” is used
+- The definition of
+- An example of a word
+- The word “squats” is used to mean a word
+- The word “squats” is used to mean something in a negative sense.
+- The word “squats” is used to mean a word in a negative sense.
+- The word “squats” is used to mean something in an equation.
+- The
+
+
+**K=24:** In Python, a list comprehension is written as a non-structural
+- The term “squats” is used
+- The definition of
+- An example of a word
+- The word “squats” is used to mean a word
+- The word “squats” is used to mean something in a negative sense.
+- The word “squats” is used to mean a word in a negative sense.
+- The word “squats” is used to mean something in an equation.
+- The
+
+
+## Sample 6
+
+Prompt: `The Roman Empire fell primarily because`
+
+
+**K=2:** The Roman Empire fell primarily because of a lack of political power.
+It was in the 4th century (B.C.) that a large group of people who were unable to go to the level of government and the fact that they are still trying to get the necessary support from the government. Many people think that such was the case. The problem is that some people are not taking up the money, but there is a way to go to the level of government.
+In the 5th century, there was an interesting article by
+
+
+**K=6:** The Roman Empire fell primarily because of a lack of political power.
+It was in the 4th century (B.C.) that a large group of people who were unable to go to the level of government and the fact that they are still trying to get the necessary support from the government. Many people think that such was the case. The problem is that some people are not taking up the money, but there is a way to go to the level of government.
+In the 5th century, there was an interesting article by
+
+
+**K=12:** The Roman Empire fell primarily because of a lack of political power.
+It was in the 4th century (B.C.) that a large group of people who were unable to go to the level of government and the fact that they are still trying to get the necessary support from the government. Many people think that such was the case. The problem is that some people are not taking up the money, but there is a way to go to the level of government.
+In the 5th century, there was an interesting article by
+
+
+**K=24:** The Roman Empire fell primarily because of a lack of political power.
+It was in the 4th century (B.C.) that a large group of people who were unable to go to the level of government and the fact that they are still trying to get the necessary support from the government. Many people think that such was the case. The problem is that some people are not taking up the money, but there is a way to go to the level of government.
+In the 5th century, there was an interesting article by
+
+
+## Sample 7
+
+Prompt: `Dear Claude,
+
+I wanted to write to you because`
+
+
+**K=2:** Dear Claude,
+
+I wanted to write to you because of your own.
+It is a great way to start from scratch and you can quickly find the right words. It is so important to use the right words.
+As a rule of thumb, make your writing skills level. There are many ways to get help with your writing skills. You have all these.
+This is a great way to start writing in the first place. You have to start your writing or build your writing.
+This is also a great way to start your writing. In this one,
+
+
+**K=6:** Dear Claude,
+
+I wanted to write to you because of your own.
+It is a great way to start from scratch and you can quickly find the right words. It is so important to use the right words.
+As a rule of thumb, make your writing skills level. There are many ways to get help with your writing skills. You have all these.
+This is a great way to start writing in the first place. You have to start your writing or build your writing.
+This is also a great way to start your writing. In this one,
+
+
+**K=12:** Dear Claude,
+
+I wanted to write to you because of your own.
+It is a great way to start from scratch and you can quickly find the right words. It is so important to use the right words.
+As a rule of thumb, make your writing skills level. There are many ways to get help with your writing skills. You have all these.
+This is a great way to start writing in the first place. You have to start your writing or build your writing.
+This is also a great way to start your writing. In this one,
+
+
+**K=24:** Dear Claude,
+
+I wanted to write to you because of your own.
+It is a great way to start from scratch and you can quickly find the right words. It is so important to use the right words.
+As a rule of thumb, make your writing skills level. There are many ways to get help with your writing skills. You have all these.
+This is a great way to start writing in the first place. You have to start your writing or build your writing.
+This is also a great way to start your writing. In this one,
+
+
+## Sample 8
+
+Prompt: `Photosynthesis is the process by which plants`
+
+
+**K=2:** Photosynthesis is the process by which plants grow to the bottom of the seed.
+The final step for the project is to find a suitable model of the plant. If you are the type of plant, you may have found that it is the same as what you have to make a plant.
+These two types of plant are not too different from any other type of plant, but they are not for us!
+The first step for a plant to get a larger number of plants is to find the right number of plants. This is a great idea
+
+
+**K=6:** Photosynthesis is the process by which plants grow to the bottom of the seed.
+The final step for the project is to find a suitable model of the plant. If you are the type of plant, you may have found that it is the same as what you have to make a plant.
+These two types of plant are not too different from any other type of plant, but they are not for us!
+The first step for a plant to get a larger number of plants is to find the right number of plants. This is a great idea
+
+
+**K=12:** Photosynthesis is the process by which plants grow to the bottom of the seed.
+The final step for the project is to find a suitable model of the plant. If you are the type of plant, you may have found that it is the same as what you have to make a plant.
+These two types of plant are not too different from any other type of plant, but they are not for us!
+The first step for a plant to get a larger number of plants is to find the right number of plants. This is a great idea
+
+
+**K=24:** Photosynthesis is the process by which plants grow to the bottom of the seed.
+The final step for the project is to find a suitable model of the plant. If you are the type of plant, you may have found that it is the same as what you have to make a plant.
+These two types of plant are not too different from any other type of plant, but they are not for us!
+The first step for a plant to get a larger number of plants is to find the right number of plants. This is a great idea
+

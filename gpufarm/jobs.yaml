@@ -36,6 +36,7 @@ jobs:
     priority: 0                     # highest -- training is precious
     preemptible: false
     max_retries: 1
+    requires_exclusive: true        # 4-rank cluster training needs the gb10s to itself
 
   # -------- Cluster consolidation --------
   - id: consolidate
@@ -55,6 +56,7 @@ jobs:
     priority: 1
     preemptible: false
     max_retries: 2
+    requires_exclusive: true        # cluster consolidation needs all 4 ranks
 
   # -------- Per-ckpt evals --------
   - id: inference_benchmark
@@ -169,6 +171,7 @@ jobs:
     priority: 7                    # lower than evals -- big time investment
     preemptible: false             # losing 2h of SFT progress is expensive
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
+    requires_exclusive: true       # 2h SFT on a tight 32GB box -- needs the GPU to itself
 
   - id: gen_samples_multidepth
     script: training/gen_samples_multidepth.py

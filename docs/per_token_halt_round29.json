@@ -1,0 +1,469 @@
+{
+  "ckpt_path": "checkpoints_3b_varT_act_v3_round29_T1/step_0003051_full.pt",
+  "step": 3051,
+  "K": 32,
+  "act_threshold": 0.99,
+  "n_tokens": 32768,
+  "halt_step_histogram": [
+    0,
+    32768,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "halt_step_mean": 1.0,
+  "halt_step_median": 1.0,
+  "p_first_mean": 1.0,
+  "frac_halt_at_1": 1.0,
+  "frac_halt_at_K": 0.0,
+  "by_category": {
+    "punct": {
+      "n_tokens": 4124,
+      "halt_step_mean": 1.0,
+      "halt_step_median": 1.0,
+      "p_first_mean": 1.0,
+      "frac_halt_at_1": 1.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.23957322987390883
+    },
+    "function": {
+      "n_tokens": 9564,
+      "halt_step_mean": 1.0,
+      "halt_step_median": 1.0,
+      "p_first_mean": 1.0,
+      "frac_halt_at_1": 1.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.2378711836051861
+    },
+    "content": {
+      "n_tokens": 17102,
+      "halt_step_mean": 1.0,
+      "halt_step_median": 1.0,
+      "p_first_mean": 1.0,
+      "frac_halt_at_1": 1.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.3878493743421822
+    },
+    "rare": {
+      "n_tokens": 1978,
+      "halt_step_mean": 1.0,
+      "halt_step_median": 1.0,
+      "p_first_mean": 1.0,
+      "frac_halt_at_1": 1.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.4575328614762386
+    }
+  },
+  "by_correctness": {
+    "correct": {
+      "n_tokens": 10801,
+      "halt_step_mean": 1.0,
+      "halt_step_median": 1.0,
+      "p_first_mean": 1.0,
+      "frac_halt_at_1": 1.0,
+      "frac_halt_at_K": 0.0
+    },
+    "incorrect": {
+      "n_tokens": 21967,
+      "halt_step_mean": 1.0,
+      "halt_step_median": 1.0,
+      "p_first_mean": 1.0,
+      "frac_halt_at_1": 1.0,
+      "frac_halt_at_K": 0.0
+    }
+  },
+  "examples": {
+    "early_halters": [
+      {
+        "token": " gift",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " made",
+        "pred": " of",
+        "correct": false
+      },
+      {
+        "token": " made",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " in",
+        "pred": " by",
+        "correct": false
+      },
+      {
+        "token": " in",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " a",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " a",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " different",
+        "pred": " special",
+        "correct": false
+      },
+      {
+        "token": " different",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " material",
+        "pred": " way",
+        "correct": false
+      },
+      {
+        "token": " material",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": ".",
+        "pred": ".",
+        "correct": true
+      },
+      {
+        "token": ".",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " The",
+        "pred": " The",
+        "correct": true
+      },
+      {
+        "token": " The",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " first",
+        "pred": " first",
+        "correct": true
+      },
+      {
+        "token": " the",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " couple",
+        "pred": " name",
+        "correct": false
+      },
+      {
+        "token": " couple",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " used",
+        "pred": " were",
+        "correct": false
+      },
+      {
+        "token": " used",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " to",
+        "pred": " to",
+        "correct": true
+      },
+      {
+        "token": " to",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " give",
+        "pred": " celebrate",
+        "correct": false
+      },
+      {
+        "token": " give",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " each",
+        "pred": " their",
+        "correct": false
+      },
+      {
+        "token": " each",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " other",
+        "pred": " other",
+        "correct": true
+      },
+      {
+        "token": " other",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " a",
+        "pred": " a",
+        "correct": true
+      },
+      {
+        "token": " a",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " gift",
+        "pred": " name",
+        "correct": false
+      },
+      {
+        "token": " the",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " Middle",
+        "pred": " ancient",
+        "correct": false
+      },
+      {
+        "token": " Middle",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " Ages",
+        "pred": " Ages",
+        "correct": true
+      },
+      {
+        "token": " Ages",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": ".",
+        "pred": ".",
+        "correct": true
+      },
+      {
+        "token": ".",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " On",
+        "pred": " The",
+        "correct": false
+      }
+    ],
+    "late_halters": [
+      {
+        "token": "-ze",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "alous",
+        "pred": "ting",
+        "correct": false
+      },
+      {
+        "token": " over",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": "-ze",
+        "pred": "use",
+        "correct": false
+      },
+      {
+        "token": " by",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " over",
+        "pred": " muscle",
+        "correct": false
+      },
+      {
+        "token": " caused",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " by",
+        "pred": " by",
+        "correct": true
+      },
+      {
+        "token": " pain",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " caused",
+        "pred": " and",
+        "correct": false
+      },
+      {
+        "token": " muscle",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " pain",
+        "pred": " pain",
+        "correct": true
+      },
+      {
+        "token": " relieve",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " muscle",
+        "pred": " muscle",
+        "correct": true
+      },
+      {
+        "token": " help",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " relieve",
+        "pred": " you",
+        "correct": false
+      },
+      {
+        "token": " onset",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " muscle",
+        "pred": " muscle",
+        "correct": true
+      },
+      {
+        "token": " delayed",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " onset",
+        "pred": " muscle",
+        "correct": false
+      },
+      {
+        "token": " as",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " delayed",
+        "pred": " \u201c",
+        "correct": false
+      },
+      {
+        "token": " known",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " as",
+        "pred": " as",
+        "correct": true
+      },
+      {
+        "token": " Also",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " known",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": ".",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " Also",
+        "pred": " By",
+        "correct": false
+      },
+      {
+        "token": " exercising",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": ".",
+        "pred": ".\n",
+        "correct": false
+      },
+      {
+        "token": "alous",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " exercising",
+        "pred": " muscle",
+        "correct": false
+      },
+      {
+        "token": " health",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " professionals",
+        "pred": " professionals",
+        "correct": true
+      },
+      {
+        "token": " by",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " health",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": ")",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": " by",
+        "pred": " or",
+        "correct": false
+      },
+      {
+        "token": "S",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 1.0,
+        "target": ")",
+        "pred": "),",
+        "correct": false
+      }
+    ]
+  }
+}
