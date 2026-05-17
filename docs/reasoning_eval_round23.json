@@ -1,5 +1,5 @@
 {
-  "ckpt_path": "/home/alex/OpenMythos/checkpoints_3b_varT_pondernet_joint/step_0003051_full.pt",
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints/ckpt_r23_full.pt",
   "step": 3051,
   "vocab_size": 199998,
   "trained_max_loop_iters": 12,
@@ -10,38 +10,38 @@
     32,
     64
   ],
-  "limit_per_task": 300,
+  "limit_per_task": 500,
   "results": {
     "arc-easy": {
       "4": {
-        "acc": 0.35333333333333333,
-        "n": 300,
-        "correct": 106,
-        "elapsed_s": 71.8
+        "acc": 0.352,
+        "n": 500,
+        "correct": 176,
+        "elapsed_s": 210.4
       },
       "8": {
-        "acc": 0.35,
-        "n": 300,
-        "correct": 105,
-        "elapsed_s": 104.4
+        "acc": 0.352,
+        "n": 500,
+        "correct": 176,
+        "elapsed_s": 310.8
       },
       "16": {
-        "acc": 0.35,
-        "n": 300,
-        "correct": 105,
-        "elapsed_s": 104.8
+        "acc": 0.352,
+        "n": 500,
+        "correct": 176,
+        "elapsed_s": 311.2
       },
       "32": {
-        "acc": 0.35,
-        "n": 300,
-        "correct": 105,
-        "elapsed_s": 104.4
+        "acc": 0.352,
+        "n": 500,
+        "correct": 176,
+        "elapsed_s": 311.2
       },
       "64": {
-        "acc": 0.35,
-        "n": 300,
-        "correct": 105,
-        "elapsed_s": 104.8
+        "acc": 0.352,
+        "n": 500,
+        "correct": 176,
+        "elapsed_s": 311.1
       }
     },
     "arc-challenge": {
@@ -49,63 +49,63 @@
         "acc": 0.22408026755852842,
         "n": 299,
         "correct": 67,
-        "elapsed_s": 74.8
+        "elapsed_s": 133.6
       },
       "8": {
-        "acc": 0.22408026755852842,
+        "acc": 0.23076923076923078,
         "n": 299,
-        "correct": 67,
-        "elapsed_s": 109.5
+        "correct": 69,
+        "elapsed_s": 196.1
       },
       "16": {
-        "acc": 0.22408026755852842,
+        "acc": 0.23076923076923078,
         "n": 299,
-        "correct": 67,
-        "elapsed_s": 109.7
+        "correct": 69,
+        "elapsed_s": 195.5
       },
       "32": {
-        "acc": 0.22408026755852842,
+        "acc": 0.23076923076923078,
         "n": 299,
-        "correct": 67,
-        "elapsed_s": 109.5
+        "correct": 69,
+        "elapsed_s": 195.8
       },
       "64": {
-        "acc": 0.22408026755852842,
+        "acc": 0.23076923076923078,
         "n": 299,
-        "correct": 67,
-        "elapsed_s": 109.5
+        "correct": 69,
+        "elapsed_s": 195.7
       }
     },
     "hellaswag": {
       "4": {
-        "acc": 0.32666666666666666,
-        "n": 300,
-        "correct": 98,
-        "elapsed_s": 81.5
+        "acc": 0.32,
+        "n": 500,
+        "correct": 160,
+        "elapsed_s": 240.0
       },
       "8": {
-        "acc": 0.31,
-        "n": 300,
-        "correct": 93,
-        "elapsed_s": 120.6
+        "acc": 0.314,
+        "n": 500,
+        "correct": 157,
+        "elapsed_s": 354.1
       },
       "16": {
-        "acc": 0.31,
-        "n": 300,
-        "correct": 93,
-        "elapsed_s": 120.6
+        "acc": 0.314,
+        "n": 500,
+        "correct": 157,
+        "elapsed_s": 354.4
       },
       "32": {
-        "acc": 0.31,
-        "n": 300,
-        "correct": 93,
-        "elapsed_s": 120.6
+        "acc": 0.314,
+        "n": 500,
+        "correct": 157,
+        "elapsed_s": 354.1
       },
       "64": {
-        "acc": 0.31,
-        "n": 300,
-        "correct": 93,
-        "elapsed_s": 120.5
+        "acc": 0.314,
+        "n": 500,
+        "correct": 157,
+        "elapsed_s": 354.6
       }
     }
   }

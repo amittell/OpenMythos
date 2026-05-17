@@ -1,5 +1,5 @@
 {
-  "ckpt_path": "/home/alex/OpenMythos/checkpoints_3b_varT_pondernet_from_r2/step_0003051_full.pt",
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints/ckpt_r24_full.pt",
   "step": 3051,
   "vocab_size": 199998,
   "trained_max_loop_iters": 12,
@@ -17,31 +17,31 @@
         "acc": 0.354,
         "n": 500,
         "correct": 177,
-        "elapsed_s": 115.1
+        "elapsed_s": 206.5
       },
       "8": {
         "acc": 0.348,
         "n": 500,
         "correct": 174,
-        "elapsed_s": 168.4
+        "elapsed_s": 300.1
       },
       "16": {
         "acc": 0.348,
         "n": 500,
         "correct": 174,
-        "elapsed_s": 168.6
+        "elapsed_s": 299.5
       },
       "32": {
         "acc": 0.348,
         "n": 500,
         "correct": 174,
-        "elapsed_s": 168.4
+        "elapsed_s": 299.5
       },
       "64": {
         "acc": 0.348,
         "n": 500,
         "correct": 174,
-        "elapsed_s": 168.1
+        "elapsed_s": 300.6
       }
     },
     "arc-challenge": {
@@ -49,31 +49,31 @@
         "acc": 0.23411371237458195,
         "n": 299,
         "correct": 70,
-        "elapsed_s": 71.9
+        "elapsed_s": 129.9
       },
       "8": {
         "acc": 0.23745819397993312,
         "n": 299,
         "correct": 71,
-        "elapsed_s": 105.8
+        "elapsed_s": 190.2
       },
       "16": {
         "acc": 0.23745819397993312,
         "n": 299,
         "correct": 71,
-        "elapsed_s": 105.8
+        "elapsed_s": 190.2
       },
       "32": {
         "acc": 0.23745819397993312,
         "n": 299,
         "correct": 71,
-        "elapsed_s": 105.9
+        "elapsed_s": 190.7
       },
       "64": {
         "acc": 0.23745819397993312,
         "n": 299,
         "correct": 71,
-        "elapsed_s": 105.5
+        "elapsed_s": 190.3
       }
     },
     "hellaswag": {
@@ -81,31 +81,31 @@
         "acc": 0.312,
         "n": 500,
         "correct": 156,
-        "elapsed_s": 130.1
+        "elapsed_s": 233.9
       },
       "8": {
         "acc": 0.306,
         "n": 500,
         "correct": 153,
-        "elapsed_s": 194.4
+        "elapsed_s": 349.5
       },
       "16": {
         "acc": 0.306,
         "n": 500,
         "correct": 153,
-        "elapsed_s": 194.4
+        "elapsed_s": 349.3
       },
       "32": {
         "acc": 0.306,
         "n": 500,
         "correct": 153,
-        "elapsed_s": 193.9
+        "elapsed_s": 348.8
       },
       "64": {
         "acc": 0.306,
         "n": 500,
         "correct": 153,
-        "elapsed_s": 194.4
+        "elapsed_s": 349.4
       }
     }
   }
