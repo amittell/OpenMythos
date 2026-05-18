@@ -130,13 +130,15 @@ resources:
       - {service: sdxl.service,        scope: user}
       - {service: outetts.service,     scope: user}
     # mini-beast stdlib http.server router (sibling_repos_survey.md:71-94).
-    # Exposes /health, /stats, /metrics, /backends, /v1/models. NO admin
-    # endpoints (survey:75): service control is still SSH + systemctl --user.
-    # PR-D wires HEALTH only; stats/metrics are forward-compat for the
-    # dashboard PR.
+    # Exposes /health, /stats, /metrics, /backends, /v1/models. As of
+    # 2026-05-18 also exposes /admin/models/{load,unload,status} backed by
+    # systemctl --user against the unit registry in router.py:SERVICE_UNITS
+    # -- the load handler waits for the backend's own /health 200 (not just
+    # systemd active) so callers get an honest "ready to serve" signal.
+    # Accepts gpufarm-style {"model_id": "..."} and legacy {"model": "..."}.
     router:
       url: http://mini-beast.lan:8080
-      capabilities: [health, stats, metrics]  # survey:71-94
+      capabilities: [health, stats, metrics, admin_models_load, admin_models_unload, admin_models_status]
     notes: |
       Consumer card -- nvidia-smi --gpu-reset is "Not Supported". Avoid
       SIGKILL on hung CUDA processes (left GPU in error state 2026-05-11,
