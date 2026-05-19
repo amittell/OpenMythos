@@ -90,12 +90,19 @@ resources:
       - eval_listops
       - eval_gsm8k
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
-    # GPU 1 has no service conflicts (vllm/embedding pin to GPU 0)
+    # vllm-120b / embedding / ocr pin to GPU 0; GPU 1 hosts kebab-rtx-vision-cuda
+    # (Qwen3-VL-32B-FP8, system-scope service, ~85 GB VRAM resident). Any job
+    # scheduled on blackwell-gpu1 must evict vision-cuda first; the executor
+    # can do that via SSH+systemctl OR via the router admin endpoint at
+    # /admin/models/unload {"model_id":"qwen3-vl-32b"} (preferred, since it
+    # also returns a structured status payload). Reload via /admin/models/load
+    # after the job exits.
+    conflicts_with:
+      - {service: kebab-rtx-vision-cuda.service, scope: system}
     # Same kebab-rtx6000 FastAPI router as gpu0 (host-level surface, not per-GPU).
-    # admin_models_* still TTS-scoped (sibling_repos_survey.md:472-481).
     router:
       url: http://kebab-rtx6000.lan:8080
-      capabilities: [health, admin_models_load, admin_models_unload, admin_models_status]  # survey:472-481
+      capabilities: [health, admin_models_load, admin_models_unload, admin_models_status]
     notes: "Has Vault access + GitHub creds -- DO NOT expose to vast.ai/external"
 
   - id: rtx5090

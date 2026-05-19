@@ -1,100 +1,159 @@
 #!/usr/bin/env bash
 # Run an intermediate-checkpoint eval of r2.15 on kebab-rtx6000 GPU 1.
 #
-# Pipeline:
-#   1. Pick the most recent step_NNNNNNN_rank0.pt on kebab-spark
-#   2. Rsync the matching rank1/2/3 shards from the gx10 nodes back to
-#      kebab-rtx6000 (NOT kebab-spark -- the consolidator runs there
-#      and we want all 4 shards local for it)
-#   3. Run consolidate_ckpt_single_host.py via 4-rank torchrun on
-#      kebab-rtx6000 (2 GPUs, 2 procs per GPU)
-#   4. Dispatch the standard eval bundle (per_token_halt, depth_extrap,
-#      reasoning_eval, gen_samples_multidepth) against the consolidated
-#      ckpt -- pinned to blackwell-gpu1 via env_overrides so the
-#      operator's vllm-120b on gpu0 stays untouched
+# Pipeline (idempotent, skip-if-output-exists):
+#   1. Stage rank 1/2/3 shards from gx10 nodes to kebab-spark
+#   2. Run streaming consolidator on kebab-spark (single process, ~2 min, ~17 GB RAM)
+#      -- replaces the OLD 4-rank torchrun consolidator that OOM'd at 295 GB
+#   3. Ship the 16 GB consolidated full.pt from spark to kebab-rtx6000
+#      (vs the OLD 44 GB-of-rank-shards transfer)
+#   4. Use kebab-rtx-router's /admin/models/unload to evict vision off GPU 1
+#   5. Run the eval bundle on kebab-rtx6000 GPU 1
+#   6. Re-load vision via /admin/models/load
+#   7. Pull eval JSON results back to kebab-spark
 #
-# Usage (run on kebab-spark.lan):
+# Usage (run on kebab-spark.lan, your laptop, or anywhere with ssh access):
 #
-#   STEP=$(ls /home/alexm/OpenMythos/checkpoints_3b_varT_pondernet_round215/step_*_rank0.pt \
-#          | sort | tail -1 | sed 's/.*step_0*\([0-9]*\)_rank0.pt/\1/')
-#   bash training/intermediate_eval_r215.sh $STEP
+#   bash training/intermediate_eval_r215.sh 7400
+#   EVALS="per_token_halt_analysis depth_extrap" bash training/intermediate_eval_r215.sh 7400
+#   bash training/intermediate_eval_r215.sh 7400 --force        # ignore existing outputs
 #
-# Or pass a specific step:
-#   bash training/intermediate_eval_r215.sh 1400
+# Env vars:
+#   EVALS  whitespace-separated list of eval script basenames (no .py).
+#          Default: "per_token_halt_analysis" (the cheap one, ~80s).
+#          Heavier: "per_token_halt_analysis depth_extrap reasoning_eval gen_samples_multidepth".
 
 set -euo pipefail
 
-STEP=${1:?STEP required (e.g. 1400)}
+STEP=${1:?STEP required (e.g. 7400)}
+FORCE_FLAG=${2:-}
 PADDED=$(printf "%07d" "$STEP")
 CKPT_DIR=checkpoints_3b_varT_pondernet_round215
 SHARD_PREFIX="$CKPT_DIR/step_${PADDED}"
-FULL_PATH="$CKPT_DIR/step_${PADDED}_full.pt"
+FULL_NAME="step_${PADDED}_full.pt"
+FULL_PATH="$CKPT_DIR/$FULL_NAME"
 
 REPO_SPARK=/home/alexm/OpenMythos
 REPO_RTX=/home/alexm/OpenMythos
+ROUTER_URL=http://kebab-rtx6000.lan:8080
+EVALS=${EVALS:-per_token_halt_analysis}
 
-# Where the 3 rank shards live (one per gx10 node).
+# Where the 3 rank shards live (one per gx10 node, via .200g storage net).
 declare -A RANK_HOST=(
   [1]=kebab-gx10-200g
   [2]=kebab-gx10-2-200g
   [3]=kebab-gx10-3-200g
 )
 
-echo "[intermediate-eval] step=$STEP src=$SHARD_PREFIX dst=$FULL_PATH"
+log() { echo "[$(date '+%H:%M:%S')] [r215-eval step=$STEP] $*"; }
 
-# --------------- 1. Verify rank-0 shard on kebab-spark ---------------
+# ---- Idempotency: if all requested eval outputs exist, exit early ----
+if [[ "$FORCE_FLAG" != "--force" ]]; then
+    all_present=1
+    for evalname in $EVALS; do
+        out="$REPO_SPARK/docs/intermediate_r215_step${STEP}_${evalname}.json"
+        if ! ssh -q alexm@kebab-spark.lan "test -f $out" 2>/dev/null; then
+            all_present=0
+            break
+        fi
+    done
+    if [[ "$all_present" -eq 1 ]]; then
+        log "all eval outputs already present on spark; pass --force to rerun"
+        exit 0
+    fi
+fi
+
+log "starting pipeline; evals=[$EVALS]"
+
+# ---- 1. Verify rank-0 shard on kebab-spark ----
 ssh -q alexm@kebab-spark.lan "test -f $REPO_SPARK/${SHARD_PREFIX}_rank0.pt" || {
-  echo "[intermediate-eval] FATAL: rank-0 shard not on kebab-spark: $SHARD_PREFIX"
-  exit 1
+    log "FATAL: rank-0 shard not on kebab-spark: $SHARD_PREFIX"
+    exit 1
 }
 
-# --------------- 2. Mkdir on kebab-rtx6000 + rsync all 4 shards there ---------------
-ssh -q alexm@kebab-rtx6000.lan "mkdir -p $REPO_RTX/$CKPT_DIR"
-
-# Rank 0: kebab-spark -> kebab-rtx6000
-echo "[intermediate-eval] rsync rank0: kebab-spark -> kebab-rtx6000"
-ssh -q alexm@kebab-spark.lan \
-    "rsync -avz --partial $REPO_SPARK/${SHARD_PREFIX}_rank0.pt alexm@kebab-rtx6000.lan:$REPO_RTX/$CKPT_DIR/" &
-
-# Ranks 1/2/3: gx10 nodes -> kebab-rtx6000 (parallel)
+# ---- 2. Stage rank 1/2/3 to kebab-spark in parallel ----
+log "rsync rank 1/2/3 from gx10 nodes to spark..."
 for r in 1 2 3; do
-    host=${RANK_HOST[$r]}
-    echo "[intermediate-eval] rsync rank$r: $host -> kebab-rtx6000"
-    ssh -q alexm@$host \
-        "rsync -avz --partial $REPO_SPARK/${SHARD_PREFIX}_rank${r}.pt alexm@kebab-rtx6000.lan:$REPO_RTX/$CKPT_DIR/" &
+    h=${RANK_HOST[$r]}
+    src="alexm@$h:$REPO_SPARK/${SHARD_PREFIX}_rank${r}.pt"
+    dst="$REPO_SPARK/${SHARD_PREFIX}_rank${r}.pt"
+    ssh -q alexm@kebab-spark.lan "test -f $dst || rsync -az --partial '$src' '$dst'" &
 done
 wait
-echo "[intermediate-eval] all 4 shards on kebab-rtx6000"
+log "all 4 ranks staged on spark"
 
-# --------------- 3. Run single-host consolidator on kebab-rtx6000 ---------------
-echo "[intermediate-eval] consolidating via 4-rank single-host torchrun..."
-ssh -q alexm@kebab-rtx6000.lan "
-    cd $REPO_RTX && \
-    /home/alexm/venvs/vllm-turboquant/bin/python3 -m torch.distributed.run \
-        --nnodes=1 --nproc_per_node=4 \
-        --master_addr=127.0.0.1 --master_port=29555 \
-        training/consolidate_ckpt_single_host.py \
-        $SHARD_PREFIX \
-        $FULL_PATH
-"
-echo "[intermediate-eval] consolidation done; full ckpt at $FULL_PATH"
+# ---- 3. Run streaming consolidator on kebab-spark (single process, ~2 min) ----
+if ssh -q alexm@kebab-spark.lan "test -f $REPO_SPARK/$FULL_PATH" && [[ "$FORCE_FLAG" != "--force" ]]; then
+    log "consolidated ckpt already exists on spark; skipping consolidator"
+else
+    log "running streaming consolidator on spark..."
+    ssh -q alexm@kebab-spark.lan "
+        cd $REPO_SPARK && \
+        python3 training/consolidate_ckpt_streaming.py $SHARD_PREFIX $FULL_PATH
+    "
+fi
+log "consolidated ckpt at spark:$REPO_SPARK/$FULL_PATH"
 
-# --------------- 4. Run eval bundle on blackwell-gpu1 ---------------
-# Pin to GPU 1 via CUDA_VISIBLE_DEVICES so vllm-120b on GPU 0 stays warm.
-ssh -q alexm@kebab-rtx6000.lan "
-    cd $REPO_RTX && \
-    rm -f /run/user/1000/r215_step${STEP}_evals.log
-    nohup setsid -f bash -c '
-        export CUDA_VISIBLE_DEVICES=1
-        export CKPT=$FULL_PATH
-        export CKPT_DIR=$CKPT_DIR
-        for evalname in per_token_halt_analysis depth_extrap reasoning_eval; do
-            export OUT=$REPO_RTX/docs/intermediate_r215_step${STEP}_\${evalname}.json
-            echo \"[eval] running \$evalname -> \$OUT\"
-            /home/alexm/venvs/vllm-turboquant/bin/python3 training/\${evalname}.py
-        done
-    ' > /run/user/1000/r215_step${STEP}_evals.log 2>&1 </dev/null
-"
-echo "[intermediate-eval] eval bundle dispatched on kebab-rtx6000 GPU 1"
-echo "[intermediate-eval] tail /run/user/1000/r215_step${STEP}_evals.log on kebab-rtx6000 to watch progress"
-echo "[intermediate-eval] outputs will land at $REPO_RTX/docs/intermediate_r215_step${STEP}_*.json"
+# ---- 4. Ship the 16 GB full.pt to kebab-rtx6000 ----
+log "ship consolidated ckpt to rtx6000..."
+ssh -q alexm@kebab-spark.lan "mkdir -p $REPO_SPARK/$CKPT_DIR" 2>/dev/null
+ssh -q alexm@kebab-rtx6000.lan "mkdir -p $REPO_RTX/$CKPT_DIR"
+ssh -q alexm@kebab-spark.lan "rsync -avz --partial $REPO_SPARK/$FULL_PATH alexm@kebab-rtx6000.lan:$REPO_RTX/$FULL_PATH"
+log "consolidated ckpt at rtx6000:$REPO_RTX/$FULL_PATH"
+
+# ---- 5. Evict vision via the router we built (frees GPU 1 for the eval) ----
+log "unload vision-cuda via $ROUTER_URL/admin/models/unload..."
+unload_resp=$(curl -s --max-time 10 -X POST "$ROUTER_URL/admin/models/unload" \
+    -H 'Content-Type: application/json' \
+    -d '{"model_id":"qwen3-vl-32b"}' || echo "{}")
+echo "    -> $unload_resp"
+# kebab-rtx-router's admin/models/unload uses systemctl; tolerate a stale
+# "unknown model: qwen3-vl-32b" by falling back to systemctl on the host.
+if ! echo "$unload_resp" | grep -q '"status"'; then
+    log "router unload didn't respond cleanly; falling back to ssh+systemctl"
+    ssh -q alexm@kebab-rtx6000.lan "sudo systemctl stop kebab-rtx-vision-cuda.service"
+fi
+
+# ---- 6. Run eval bundle on kebab-rtx6000 GPU 1 ----
+PYTHON=/home/alexm/venvs/vllm-turboquant/bin/python3
+log "run eval bundle on rtx6000 GPU 1: $EVALS"
+for evalname in $EVALS; do
+    out="$REPO_RTX/docs/intermediate_r215_step${STEP}_${evalname}.json"
+    if [[ "$FORCE_FLAG" != "--force" ]] && \
+       ssh -q alexm@kebab-rtx6000.lan "test -f $out" 2>/dev/null; then
+        log "  $evalname: output exists, skipping"
+        continue
+    fi
+    log "  $evalname running..."
+    ssh -q alexm@kebab-rtx6000.lan "
+        cd $REPO_RTX && \
+        CUDA_VISIBLE_DEVICES=1 \
+        CKPT=$REPO_RTX/$FULL_PATH \
+        CKPT_DIR=$CKPT_DIR \
+        OUT=$out \
+        $PYTHON training/${evalname}.py
+    " || log "  $evalname FAILED (continuing)"
+    log "  $evalname done -> $out"
+done
+
+# ---- 7. Restart vision-cuda via the router ----
+log "reload vision-cuda via $ROUTER_URL/admin/models/load..."
+load_resp=$(curl -s --max-time 240 -X POST "$ROUTER_URL/admin/models/load" \
+    -H 'Content-Type: application/json' \
+    -d '{"model_id":"qwen3-vl-32b"}' || echo "{}")
+echo "    -> $(echo "$load_resp" | head -c 200)"
+if ! echo "$load_resp" | grep -qE '"status":"(loaded|already_loaded)"'; then
+    log "router load didn't confirm; falling back to ssh+systemctl"
+    ssh -q alexm@kebab-rtx6000.lan "sudo systemctl start kebab-rtx-vision-cuda.service"
+fi
+
+# ---- 8. Pull eval JSON results back to spark for the paper pipeline ----
+log "pull eval JSON outputs back to spark..."
+for evalname in $EVALS; do
+    out="docs/intermediate_r215_step${STEP}_${evalname}.json"
+    ssh -q alexm@kebab-spark.lan "
+        rsync -az alexm@kebab-rtx6000.lan:$REPO_RTX/$out $REPO_SPARK/$out 2>/dev/null
+    " || true
+done
+
+log "PIPELINE COMPLETE step=$STEP evals=[$EVALS]"
