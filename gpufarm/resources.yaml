@@ -127,15 +127,15 @@ resources:
       - depth_extrap_k64  # proven flaky: r2.13 hung 15h at n_loops=32, required reboot
       - sft_lora          # 32 GB tight for 3B + lora + ultrachat seq_len 2048
       - reasoning_eval    # bench long; let Blackwell handle
+    # Active conflicts_with services only (gpufarm derives extras from the
+    # router at runtime, so don't pre-declare alternatives like
+    # vllm-20b-128k/fast/vanilla or sdxl/outetts that aren't currently
+    # serving -- if any of those get activated, bump them into the router's
+    # SERVICE_UNITS and gpufarm will pick them up on the next refresh tick).
     conflicts_with:
       - {service: vllm-20b.service,    scope: user}
-      - {service: vllm-20b-128k.service, scope: user}
-      - {service: vllm-20b-fast.service, scope: user}
-      - {service: vllm-20b-vanilla.service, scope: user}
       - {service: florence2.service,   scope: user}
       - {service: whisper-cpp.service, scope: user}
-      - {service: sdxl.service,        scope: user}
-      - {service: outetts.service,     scope: user}
     # mini-beast stdlib http.server router (sibling_repos_survey.md:71-94).
     # Exposes /health, /stats, /metrics, /backends, /v1/models. As of
     # 2026-05-18 also exposes /admin/models/{load,unload,status} backed by
