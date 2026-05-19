@@ -39,13 +39,36 @@ log "eval-script=$EVAL_SCRIPT"
 # downstream script's idempotency for crash recovery across restarts).
 declare -A SEEN
 
+# gx10 hostnames -- training cleans up old shards aggressively (keeps ~2 saves),
+# so the watcher must verify each step is on ALL 4 nodes before dispatching.
+GX10_HOSTS=(kebab-gx10-200g kebab-gx10-2-200g kebab-gx10-3-200g)
+
+# Is a given step still present on all 3 gx10 nodes? (spark rank-0 already
+# verified by the step enumeration.) Returns 0 if yes, 1 if any rank missing.
+shards_complete() {
+    local step="$1"
+    local padded
+    padded=$(printf "%07d" "$step")
+    local idx=1
+    for h in "${GX10_HOSTS[@]}"; do
+        if ! ssh -o ConnectTimeout=5 -o BatchMode=yes -q alexm@"$h" \
+                "test -f $CKPT_DIR/step_${padded}_rank${idx}.pt" 2>/dev/null; then
+            return 1
+        fi
+        idx=$((idx + 1))
+    done
+    return 0
+}
+
 while true; do
     # Enumerate available checkpoints on kebab-spark (just rank-0 is enough; the
-    # eval script handles the gather + rsync).
+    # eval script handles the gather + rsync). Sort REVERSE so we process the
+    # newest step first -- gx10 rank shards age out fast, so the latest step
+    # is the most likely to still be intact across all 4 nodes.
     steps=$(ssh -q alexm@kebab-spark.lan "
         ls $CKPT_DIR/step_*_rank0.pt 2>/dev/null \
             | sed -n 's|.*step_0*\([0-9]\+\)_rank0\.pt|\1|p' \
-            | sort -n
+            | sort -rn
     " || true)
 
     for step in $steps; do
@@ -57,6 +80,14 @@ while true; do
             continue
         fi
         if [[ -n "${SEEN[$step]:-}" ]]; then
+            continue
+        fi
+
+        # Skip the step if the gx10 rank shards have already been cleaned up
+        # by training (we can't consolidate without all 4).
+        if ! shards_complete "$step"; then
+            log "skip step=$step: rank 1/2/3 already cleaned from gx10 nodes"
+            SEEN[$step]=1
             continue
         fi
         SEEN[$step]=1

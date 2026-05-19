@@ -71,16 +71,54 @@ ssh -q alexm@kebab-spark.lan "test -f $REPO_SPARK/${SHARD_PREFIX}_rank0.pt" || {
     exit 1
 }
 
-# ---- 2. Stage rank 1/2/3 to kebab-spark in parallel ----
+# ---- 2. Pre-check: all 4 ranks reachable on their origin nodes BEFORE we rsync ----
+# Training cleans up old shards on gx10 nodes (keeps last ~2 saves). If we try
+# to rsync a step that's already been deleted from gx10 we get a silent
+# "broken pipe" and the consolidator runs with only rank-0, producing a
+# corrupted full state dict. Verify presence first.
+log "pre-check: rank 1/2/3 source files exist on origin nodes..."
+for r in 1 2 3; do
+    h=${RANK_HOST[$r]}
+    src_path="$REPO_SPARK/${SHARD_PREFIX}_rank${r}.pt"
+    if ! ssh -o ConnectTimeout=5 -q alexm@$h "test -f $src_path" 2>/dev/null; then
+        log "FATAL: rank $r shard not on $h (training likely cleaned it; pick a newer step)"
+        exit 2
+    fi
+done
+log "  all 4 source shards present"
+
+# ---- 3. Stage rank 1/2/3 to kebab-spark in parallel, checking each exit code ----
 log "rsync rank 1/2/3 from gx10 nodes to spark..."
+declare -A RSYNC_PIDS
 for r in 1 2 3; do
     h=${RANK_HOST[$r]}
     src="alexm@$h:$REPO_SPARK/${SHARD_PREFIX}_rank${r}.pt"
     dst="$REPO_SPARK/${SHARD_PREFIX}_rank${r}.pt"
-    ssh -q alexm@kebab-spark.lan "test -f $dst || rsync -az --partial '$src' '$dst'" &
+    ssh -o ConnectTimeout=10 -q alexm@kebab-spark.lan \
+        "test -f $dst || rsync -az --partial '$src' '$dst'" &
+    RSYNC_PIDS[$r]=$!
 done
-wait
-log "all 4 ranks staged on spark"
+fail_count=0
+for r in 1 2 3; do
+    if ! wait "${RSYNC_PIDS[$r]}"; then
+        log "FATAL: rsync rank $r failed (pid ${RSYNC_PIDS[$r]})"
+        fail_count=$((fail_count + 1))
+    fi
+done
+if [[ "$fail_count" -gt 0 ]]; then
+    log "FATAL: $fail_count rsyncs failed; aborting (no consolidator dispatched)"
+    exit 2
+fi
+
+# Belt-and-braces: verify all 4 rank files now exist on spark with non-zero size
+for r in 0 1 2 3; do
+    dst="$REPO_SPARK/${SHARD_PREFIX}_rank${r}.pt"
+    if ! ssh -q alexm@kebab-spark.lan "test -s $dst" 2>/dev/null; then
+        log "FATAL: rank $r missing or empty on spark after stage: $dst"
+        exit 2
+    fi
+done
+log "all 4 ranks staged on spark (verified)"
 
 # ---- 3. Run streaming consolidator on kebab-spark (single process, ~2 min) ----
 if ssh -q alexm@kebab-spark.lan "test -f $REPO_SPARK/$FULL_PATH" && [[ "$FORCE_FLAG" != "--force" ]]; then
