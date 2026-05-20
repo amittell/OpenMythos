@@ -194,6 +194,13 @@ for evalname in $EVALS; do
         extra_env="LIMIT=${REASONING_LIMIT:-200} DEPTHS=${REASONING_DEPTHS:-4,8,16,32}"
     fi
     log "  $evalname running... ${extra_env:+($extra_env)}"
+    # Remote-side `timeout` bounds each eval AND -- critically -- makes the
+    # remote python self-terminate if the local watcher kills our ssh client
+    # (e.g. the cycle-level timeout fires). Without it, SSH-launched evals
+    # orphan onto GPU 1 and contend with the next cycle's eval (seen live
+    # 2026-05-20: a step-10600 reasoning_eval survived a watcher restart and
+    # fought the step-11000 eval for the GPU). --signal=TERM + a short
+    # --kill-after gives the script a chance to flush before SIGKILL.
     if ! ssh -q alexm@kebab-rtx6000.lan "
         cd $REPO_RTX && \
         CUDA_VISIBLE_DEVICES=1 \
@@ -201,9 +208,9 @@ for evalname in $EVALS; do
         CKPT_DIR=$CKPT_DIR \
         OUT=$out \
         $extra_env \
-        $PYTHON training/${evalname}.py
+        timeout --signal=TERM --kill-after=30 ${REMOTE_EVAL_TIMEOUT:-1200} $PYTHON training/${evalname}.py
     "; then
-        log "  $evalname FAILED (script exited non-zero)"
+        log "  $evalname FAILED (script exited non-zero or hit remote ${REMOTE_EVAL_TIMEOUT:-1200}s timeout)"
         eval_failures=$((eval_failures + 1))
         continue
     fi
