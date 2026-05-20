@@ -47,18 +47,28 @@ declare -A RANK_HOST=(
 
 log() { echo "[$(date '+%H:%M:%S')] [r215-eval step=$STEP] $*"; }
 
-# ---- Idempotency: if all requested eval outputs exist, exit early ----
+# ---- Idempotency: if all requested eval outputs exist AND are valid JSON, exit early ----
+# Bug we caught the hard way: `test -f` accepts 0-byte / corrupt JSON, so a
+# crashed eval that left a stub file would be silently treated as "already
+# done" forever. Now validates non-empty + json.load parseability.
+json_valid_remote() {
+    local host="$1" path="$2"
+    ssh -o ConnectTimeout=5 -q "$host" \
+        "test -s '$path' && python3 -c 'import json,sys; json.load(open(sys.argv[1]))' '$path' 2>/dev/null" \
+        2>/dev/null
+}
+
 if [[ "$FORCE_FLAG" != "--force" ]]; then
-    all_present=1
+    all_valid=1
     for evalname in $EVALS; do
         out="$REPO_SPARK/docs/intermediate_r215_step${STEP}_${evalname}.json"
-        if ! ssh -q alexm@kebab-spark.lan "test -f $out" 2>/dev/null; then
-            all_present=0
+        if ! json_valid_remote alexm@kebab-spark.lan "$out"; then
+            all_valid=0
             break
         fi
     done
-    if [[ "$all_present" -eq 1 ]]; then
-        log "all eval outputs already present on spark; pass --force to rerun"
+    if [[ "$all_valid" -eq 1 ]]; then
+        log "all eval outputs already present + valid on spark; pass --force to rerun"
         exit 0
     fi
 fi
@@ -155,22 +165,38 @@ fi
 # ---- 6. Run eval bundle on kebab-rtx6000 GPU 1 ----
 PYTHON=/home/alexm/venvs/vllm-turboquant/bin/python3
 log "run eval bundle on rtx6000 GPU 1: $EVALS"
+eval_failures=0
 for evalname in $EVALS; do
     out="$REPO_RTX/docs/intermediate_r215_step${STEP}_${evalname}.json"
-    if [[ "$FORCE_FLAG" != "--force" ]] && \
-       ssh -q alexm@kebab-rtx6000.lan "test -f $out" 2>/dev/null; then
-        log "  $evalname: output exists, skipping"
+    if [[ "$FORCE_FLAG" != "--force" ]] \
+        && json_valid_remote alexm@kebab-rtx6000.lan "$out"; then
+        log "  $evalname: valid output exists, skipping"
         continue
     fi
     log "  $evalname running..."
-    ssh -q alexm@kebab-rtx6000.lan "
+    if ! ssh -q alexm@kebab-rtx6000.lan "
         cd $REPO_RTX && \
         CUDA_VISIBLE_DEVICES=1 \
         CKPT=$REPO_RTX/$FULL_PATH \
         CKPT_DIR=$CKPT_DIR \
         OUT=$out \
         $PYTHON training/${evalname}.py
-    " || log "  $evalname FAILED (continuing)"
+    "; then
+        log "  $evalname FAILED (script exited non-zero)"
+        eval_failures=$((eval_failures + 1))
+        continue
+    fi
+    # Validate the output before declaring success -- a script that exits 0
+    # but produced a 0-byte / unparseable JSON should be flagged so the next
+    # watcher tick re-runs it instead of permanently treating it as "done".
+    if ! json_valid_remote alexm@kebab-rtx6000.lan "$out"; then
+        log "  $evalname FAILED (script exited 0 but output is missing or invalid JSON)"
+        # Remove the bogus file so the per-eval idempotency check above
+        # re-dispatches on the next watcher tick.
+        ssh -q alexm@kebab-rtx6000.lan "rm -f $out" 2>/dev/null
+        eval_failures=$((eval_failures + 1))
+        continue
+    fi
     log "  $evalname done -> $out"
 done
 
@@ -193,5 +219,45 @@ for evalname in $EVALS; do
         rsync -az alexm@kebab-rtx6000.lan:$REPO_RTX/$out $REPO_SPARK/$out 2>/dev/null
     " || true
 done
+
+# ---- 9. Cleanup: free disk on spark + rtx6000 only if every eval succeeded ----
+# Bytes per evaluated step otherwise leak permanently:
+#   spark:   3x ~11 GB rank shards (rsync'd from gx10) + 1x ~16 GB full.pt
+#   rtx6000: 1x ~16 GB full.pt
+# Rank 0 on spark is kept (training writes it; training also self-prunes).
+# All deletes guarded by json_valid_remote() checks so we never throw away
+# the consolidated ckpt when an eval might still need a retry.
+if [[ "$eval_failures" -eq 0 ]]; then
+    all_valid=1
+    for evalname in $EVALS; do
+        out_spark="$REPO_SPARK/docs/intermediate_r215_step${STEP}_${evalname}.json"
+        if ! json_valid_remote alexm@kebab-spark.lan "$out_spark"; then
+            all_valid=0
+            break
+        fi
+    done
+    if [[ "$all_valid" -eq 1 ]]; then
+        log "cleanup: all evals valid, freeing disk..."
+        # spark: ranks 1/2/3 (rsync'd from gx10; originals still on gx10) + full.pt
+        ssh -q alexm@kebab-spark.lan "
+            rm -f $REPO_SPARK/${SHARD_PREFIX}_rank1.pt \
+                  $REPO_SPARK/${SHARD_PREFIX}_rank2.pt \
+                  $REPO_SPARK/${SHARD_PREFIX}_rank3.pt \
+                  $REPO_SPARK/$FULL_PATH
+        " 2>/dev/null
+        # rtx6000: full.pt (eval JSONs are tiny and pulled back to spark)
+        ssh -q alexm@kebab-rtx6000.lan "rm -f $REPO_RTX/$FULL_PATH" 2>/dev/null
+        log "cleanup: freed ~60 GB on spark + ~16 GB on rtx6000"
+    else
+        log "cleanup: skipped (some eval JSONs not yet valid on spark; retry on next tick)"
+    fi
+else
+    log "cleanup: skipped ($eval_failures eval failure(s); preserving ckpts for retry)"
+fi
+
+if [[ "$eval_failures" -gt 0 ]]; then
+    log "PIPELINE PARTIAL step=$STEP evals=[$EVALS] failures=$eval_failures"
+    exit 1
+fi
 
 log "PIPELINE COMPLETE step=$STEP evals=[$EVALS]"

@@ -24,6 +24,11 @@ POLL_SEC=${POLL_SEC:-60}
 START_STEP=${START_STEP:-0}
 EVALS=${EVALS:-per_token_halt_analysis}
 MIN_STEP_GAP=${MIN_STEP_GAP:-200}
+# Hard cap per dispatched cycle. A hung consolidator / rsync / eval would
+# otherwise block all subsequent ticks. Default 1500s = 25 min comfortably
+# covers stream-consolidate (~2 min) + ship (~30s) + 3 evals (~5+5+1.5 min)
+# + vision cycle (~10s) with margin.
+CYCLE_TIMEOUT_SEC=${CYCLE_TIMEOUT_SEC:-1500}
 
 REPO_SPARK=/home/alexm/OpenMythos
 CKPT_DIR=$REPO_SPARK/checkpoints_3b_varT_pondernet_round215
@@ -92,11 +97,23 @@ while true; do
         fi
         SEEN[$step]=1
 
-        log "dispatch step=$step"
+        log "dispatch step=$step (timeout ${CYCLE_TIMEOUT_SEC}s)"
         # Sequential dispatch -- the underlying script already handles concurrency
         # (rsync in parallel, evals on rtx6000 GPU 1). Running two eval bundles at
         # once would fight for GPU 1 and break the vision lifecycle dance.
-        EVALS="$EVALS" bash "$EVAL_SCRIPT" "$step" || log "step=$step FAILED (continuing)"
+        # `timeout` kills the pipeline if a consolidator/rsync/eval hangs so the
+        # next watcher tick can move on to a later step.
+        if timeout --signal=TERM --kill-after=60 "$CYCLE_TIMEOUT_SEC" \
+            env EVALS="$EVALS" bash "$EVAL_SCRIPT" "$step"; then
+            log "step=$step done"
+        else
+            rc=$?
+            if [[ "$rc" -eq 124 ]] || [[ "$rc" -eq 137 ]]; then
+                log "step=$step TIMED OUT after ${CYCLE_TIMEOUT_SEC}s (rc=$rc) -- continuing"
+            else
+                log "step=$step FAILED (rc=$rc) -- continuing"
+            fi
+        fi
     done
 
     sleep "$POLL_SEC"
