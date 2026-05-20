@@ -162,7 +162,18 @@ if ! echo "$unload_resp" | grep -q '"status"'; then
     ssh -q alexm@kebab-rtx6000.lan "sudo systemctl stop kebab-rtx-vision-cuda.service"
 fi
 
-# ---- 6. Run eval bundle on kebab-rtx6000 GPU 1 ----
+# ---- 6. Run eval bundle on kebab-rtx6000 GPU 1 (per-eval pull-back) ----
+# Each eval's JSON is pulled back to spark IMMEDIATELY after it completes +
+# validates, so if a later (slower) eval times out and the watcher kills the
+# whole cycle, the already-finished evals are safe on spark. (Previously the
+# pull-back was a single end-of-pipeline step, so a timeout stranded all
+# completed evals on rtx6000 -- caught 2026-05-20 with reasoning_eval.)
+#
+# Per-eval scope overrides: reasoning_eval at full scope (3 tasks x 5 depths
+# x 500 examples, K=64 dominant) runs ~25 min and blew the cycle budget.
+# For intermediate trend-tracking we trim it to LIMIT=200 + DEPTHS=4,8,16,32
+# (~3x faster, K=64 dropped) -- still enough signal to watch the curve.
+# depth_extrap KEEPS K=64 (extrapolation past trained depth is its whole point).
 PYTHON=/home/alexm/venvs/vllm-turboquant/bin/python3
 log "run eval bundle on rtx6000 GPU 1: $EVALS"
 eval_failures=0
@@ -171,33 +182,41 @@ for evalname in $EVALS; do
     if [[ "$FORCE_FLAG" != "--force" ]] \
         && json_valid_remote alexm@kebab-rtx6000.lan "$out"; then
         log "  $evalname: valid output exists, skipping"
+        # Still ensure spark has it (an earlier cycle may have produced it
+        # on rtx6000 but timed out before pulling it back).
+        ssh -q alexm@kebab-spark.lan \
+            "rsync -az alexm@kebab-rtx6000.lan:$out $REPO_SPARK/docs/ 2>/dev/null" || true
         continue
     fi
-    log "  $evalname running..."
+    # Per-eval env overrides (trim the slow reasoning_eval; leave others default)
+    extra_env=""
+    if [[ "$evalname" == "reasoning_eval" ]]; then
+        extra_env="LIMIT=${REASONING_LIMIT:-200} DEPTHS=${REASONING_DEPTHS:-4,8,16,32}"
+    fi
+    log "  $evalname running... ${extra_env:+($extra_env)}"
     if ! ssh -q alexm@kebab-rtx6000.lan "
         cd $REPO_RTX && \
         CUDA_VISIBLE_DEVICES=1 \
         CKPT=$REPO_RTX/$FULL_PATH \
         CKPT_DIR=$CKPT_DIR \
         OUT=$out \
+        $extra_env \
         $PYTHON training/${evalname}.py
     "; then
         log "  $evalname FAILED (script exited non-zero)"
         eval_failures=$((eval_failures + 1))
         continue
     fi
-    # Validate the output before declaring success -- a script that exits 0
-    # but produced a 0-byte / unparseable JSON should be flagged so the next
-    # watcher tick re-runs it instead of permanently treating it as "done".
     if ! json_valid_remote alexm@kebab-rtx6000.lan "$out"; then
-        log "  $evalname FAILED (script exited 0 but output is missing or invalid JSON)"
-        # Remove the bogus file so the per-eval idempotency check above
-        # re-dispatches on the next watcher tick.
+        log "  $evalname FAILED (exited 0 but output missing/invalid JSON)"
         ssh -q alexm@kebab-rtx6000.lan "rm -f $out" 2>/dev/null
         eval_failures=$((eval_failures + 1))
         continue
     fi
-    log "  $evalname done -> $out"
+    # PER-EVAL pull-back: get this JSON onto spark right now.
+    ssh -q alexm@kebab-spark.lan \
+        "rsync -az alexm@kebab-rtx6000.lan:$out $REPO_SPARK/docs/ 2>/dev/null" || true
+    log "  $evalname done -> pulled to spark"
 done
 
 # ---- 7. Restart vision-cuda via the router ----
@@ -210,15 +229,6 @@ if ! echo "$load_resp" | grep -qE '"status":"(loaded|already_loaded)"'; then
     log "router load didn't confirm; falling back to ssh+systemctl"
     ssh -q alexm@kebab-rtx6000.lan "sudo systemctl start kebab-rtx-vision-cuda.service"
 fi
-
-# ---- 8. Pull eval JSON results back to spark for the paper pipeline ----
-log "pull eval JSON outputs back to spark..."
-for evalname in $EVALS; do
-    out="docs/intermediate_r215_step${STEP}_${evalname}.json"
-    ssh -q alexm@kebab-spark.lan "
-        rsync -az alexm@kebab-rtx6000.lan:$REPO_RTX/$out $REPO_SPARK/$out 2>/dev/null
-    " || true
-done
 
 # ---- 9. Cleanup: free disk on spark + rtx6000 only if every eval succeeded ----
 # Bytes per evaluated step otherwise leak permanently:
