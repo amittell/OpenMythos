@@ -14,19 +14,29 @@ StartLimitBurst=5
 
 [Service]
 Type=simple
-# Default eval bundle: cheap halt analysis + the two heavier evals. Each
-# checkpoint runs all three; the eval-script handles vision-cuda lifecycle
-# on rtx6000 GPU 1 around the eval phase. Override per-run by editing
-# this unit's drop-in (`systemctl --user edit r215-eval-watcher`).
+# Default eval bundle: cheap halt analysis + depth_extrap. Each checkpoint
+# runs both; the eval-script handles vision-cuda lifecycle on rtx6000 GPU 1
+# around the eval phase. Override per-run by editing this unit's drop-in
+# (`systemctl --user edit r215-eval-watcher`).
 # systemd's Environment= splits on whitespace unless the entire assignment is
 # quoted. Without the quotes here, a multi-word EVALS would get truncated to
 # the first token (silently producing the "wait, only per_token_halt ran?"
 # bug we hit on first deploy).
-Environment="EVALS=per_token_halt_analysis depth_extrap reasoning_eval"
+#
+# reasoning_eval is DROPPED from the per-200-step bundle as of r2.15 step 11205
+# (2026-05-21). At LIMIT=200/DEPTHS=4,8,16,32 it still runs ~1400s on r2.15 and
+# exceeds the 1200s remote-eval ceiling on every cycle (per-task K=4..32 is
+# ~470s; three tasks is ~1400s). The paper (docs/paper/main.md §7.21) only
+# consumes one row per *round* of training, not per intermediate step -- the
+# K-invariance signal is identical across all 14 prior rounds at 3 sig figs,
+# so per-step tracking adds no information for the figure. The post-training
+# full-scope reasoning_eval (LIMIT=500, K=4..64) is still run once per round
+# from the round-completion eval pipeline; that's what populates the paper.
+Environment="EVALS=per_token_halt_analysis depth_extrap"
 Environment=START_STEP=8000
 Environment=POLL_SEC=60
 Environment=MIN_STEP_GAP=200
-Environment=CYCLE_TIMEOUT_SEC=2400
+Environment=CYCLE_TIMEOUT_SEC=1500
 
 ExecStart=/bin/bash %h/OpenMythos/training/intermediate_eval_r215_watcher.sh
 StandardOutput=append:%h/OpenMythos/intermediate_eval_r215_watcher.log

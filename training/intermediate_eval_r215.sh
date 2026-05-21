@@ -75,7 +75,12 @@ reload_vision() {
         VISION_UNLOADED=0
     else
         log "router load didn't confirm; falling back to ssh+systemctl"
-        if ssh -o ConnectTimeout=10 -q "$RTX" "sudo systemctl start kebab-rtx-vision-cuda.service"; then
+        # reset-failed first so a unit left in `failed` state by a prior
+        # SIGKILL-on-stop (Bug B) doesn't block the subsequent start.
+        # reset-failed is a no-op on a clean unit.
+        if ssh -o ConnectTimeout=10 -q "$RTX" \
+                "sudo systemctl reset-failed kebab-rtx-vision-cuda.service; \
+                 sudo systemctl start kebab-rtx-vision-cuda.service"; then
             VISION_UNLOADED=0
         fi
     fi
@@ -272,21 +277,47 @@ if ! acquire_gpu_lock; then
     exit 3
 fi
 log "unload vision-cuda via $ROUTER_URL/admin/models/unload..."
-unload_resp=$(curl -s --max-time 10 -X POST "$ROUTER_URL/admin/models/unload" \
+# --max-time 240: the router's admin_unload synchronously waits on
+# `sudo systemctl stop` -> `docker stop --time=120 kebab-rtx-vision`, which
+# can legitimately take 60-120s while vLLM drains a 38GB resident model on
+# GPU 1. The previous --max-time 10 was shorter than the docker-stop grace
+# itself, so curl always gave up before the router could respond, falling
+# through `|| echo "{}"` and triggering the ssh+systemctl fallback path
+# (which then re-ran the same stop and hit the same delay -- pure noise).
+unload_resp=$(curl -s --max-time 240 -X POST "$ROUTER_URL/admin/models/unload" \
     -H 'Content-Type: application/json' \
     -d '{"model_id":"qwen3-vl-32b"}' || echo "{}")
 echo "    -> $unload_resp"
-# kebab-rtx-router's admin/models/unload uses systemctl; tolerate a stale
-# "unknown model: qwen3-vl-32b" by falling back to systemctl on the host.
+# kebab-rtx-router's admin/models/unload returns one of:
+#   status: unloaded               -- clean stop, ready to re-load
+#   status: stopped_with_failure   -- stop succeeded, unit failed (e.g.
+#                                     docker SIGKILL); needs reset-failed
+#                                     before the next load. Reload path
+#                                     (`reload_vision`) already calls
+#                                     reset-failed in its ssh fallback so
+#                                     we don't have to here.
+#   status: error                  -- stop didn't even dispatch (sudo
+#                                     missing, unit name typo); we fall
+#                                     back to ssh+systemctl below
 # Set VISION_UNLOADED only once vision is actually down, so the EXIT trap knows
 # to restore it (and won't try to "restore" a vision we never took down).
-if echo "$unload_resp" | grep -q '"status"'; then
+if echo "$unload_resp" | grep -qE '"status":"(unloaded|stopped_with_failure)"'; then
     VISION_UNLOADED=1
+    if echo "$unload_resp" | grep -q '"status":"stopped_with_failure"'; then
+        log "router reports unit stopped_with_failure (docker likely SIGKILL'd vLLM); pre-clearing failed state"
+        ssh -o ConnectTimeout=10 -q "$RTX" \
+            "sudo systemctl reset-failed kebab-rtx-vision-cuda.service" 2>/dev/null || true
+    fi
 else
     log "router unload didn't respond cleanly; falling back to ssh+systemctl"
-    if ssh -o ConnectTimeout=10 -q "$RTX" "sudo systemctl stop kebab-rtx-vision-cuda.service"; then
-        VISION_UNLOADED=1
-    fi
+    # On the fallback path the unit may already be in `failed` state from a
+    # previous SIGKILL exit; reset-failed first so the eventual
+    # `systemctl start` (in reload_vision) isn't blocked. reset-failed is
+    # a no-op on a healthy unit, so it's safe to run unconditionally.
+    ssh -o ConnectTimeout=10 -q "$RTX" \
+        "sudo systemctl stop kebab-rtx-vision-cuda.service && \
+         sudo systemctl reset-failed kebab-rtx-vision-cuda.service" \
+        && VISION_UNLOADED=1
 fi
 
 # ---- 6. Run eval bundle on kebab-rtx6000 GPU 1 (per-eval pull-back) ----
