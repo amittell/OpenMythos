@@ -154,6 +154,14 @@ while true; do
                 # the next poll instead of skipping this step forever.
                 log "step=$step skipped (GPU 1 busy) -- will retry next tick"
                 unset 'SEEN[$step]'
+            elif [[ "$rc" -eq 4 ]]; then
+                # rc=4 = mid-eval watchdog detected a GPU fault (nvidia-smi
+                # failing on rtx6000). Don't blame this step, but also don't
+                # clear SEEN -- the next ticks' rtx_gpu_ok pre-flight will skip
+                # all dispatch until the node recovers (typically requires a
+                # reboot for a GSP-level wedge). Clearing SEEN here would just
+                # spin retries on a permanently-broken target.
+                log "step=$step ABORTED by GPU fault watchdog -- dispatch paused until rtx6000 recovers"
             else
                 log "step=$step FAILED (rc=$rc) -- continuing"
             fi

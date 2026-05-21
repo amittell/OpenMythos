@@ -112,11 +112,54 @@ release_gpu_lock() {
 }
 
 cleanup() {
+    # Stop the GPU watchdog first so it doesn't try to kill a non-existent eval
+    # after we've already moved past the eval phase.
+    if [[ -n "${WATCHDOG_PID:-}" ]] && kill -0 "$WATCHDOG_PID" 2>/dev/null; then
+        kill "$WATCHDOG_PID" 2>/dev/null
+        wait "$WATCHDOG_PID" 2>/dev/null
+    fi
     reload_vision
     release_gpu_lock
 }
 trap cleanup EXIT
 trap 'exit 143' INT TERM
+
+# ---- Mid-eval GPU-fault watchdog ----------------------------------------
+# Polls nvidia-smi on rtx6000 every $GPU_WATCHDOG_INTERVAL seconds while an
+# eval is running. Two consecutive failures (~120s total) -> mark the GPU
+# wedged and signal the parent eval-script to abort cleanly. The EXIT trap
+# then reloads vision and releases the lock as usual. Without this, a mid-
+# eval Xid / GSP fault leaves the script grinding into the same broken state
+# until the per-eval $REMOTE_EVAL_TIMEOUT (1200s) elapses. See 2026-05-20
+# postmortem in docs/first_cluster_training_run.md for the failure mode.
+GPU_WATCHDOG_INTERVAL=${GPU_WATCHDOG_INTERVAL:-60}
+GPU_FAULT_FILE=/tmp/r215_gpu_fault_${STEP}_$$
+WATCHDOG_PID=""
+
+start_gpu_watchdog() {
+    rm -f "$GPU_FAULT_FILE"
+    (
+        local fail_count=0
+        while sleep "$GPU_WATCHDOG_INTERVAL"; do
+            if ssh -o ConnectTimeout=5 -o BatchMode=yes -q "$RTX" \
+                    "nvidia-smi -L 2>/dev/null | grep -qc \"^GPU \" && exit 0 || exit 1" 2>/dev/null; then
+                fail_count=0
+            else
+                fail_count=$((fail_count + 1))
+                if (( fail_count >= 2 )); then
+                    echo "$(date '+%H:%M:%S')" > "$GPU_FAULT_FILE"
+                    # Kill any in-flight remote-eval SSH from THIS script's process
+                    # tree. The SSH wrapper's death cascades the remote `timeout`,
+                    # which TERMs the python eval (which may not respond if it's
+                    # blocked on a hung CUDA call; the kernel SIGKILLs it eventually).
+                    pkill -P $$ -f "ssh.*training/.*\.py" 2>/dev/null
+                    return
+                fi
+            fi
+        done
+    ) &
+    WATCHDOG_PID=$!
+}
 
 # ---- Idempotency: if all requested eval outputs exist AND are valid JSON, exit early ----
 # Bug we caught the hard way: `test -f` accepts 0-byte / corrupt JSON, so a
@@ -260,6 +303,8 @@ fi
 # depth_extrap KEEPS K=64 (extrapolation past trained depth is its whole point).
 PYTHON=/home/alexm/venvs/vllm-turboquant/bin/python3
 log "run eval bundle on rtx6000 GPU 1: $EVALS"
+start_gpu_watchdog
+log "GPU watchdog started (probe ${GPU_WATCHDOG_INTERVAL}s, abort on 2 consecutive failures)"
 eval_failures=0
 for evalname in $EVALS; do
     out="$REPO_RTX/docs/intermediate_r215_step${STEP}_${evalname}.json"
@@ -308,6 +353,16 @@ for evalname in $EVALS; do
     ssh -q alexm@kebab-spark.lan \
         "rsync -az alexm@kebab-rtx6000.lan:$out $REPO_SPARK/docs/ 2>/dev/null" || true
     log "  $evalname done -> pulled to spark"
+
+    # If the GPU watchdog flagged a mid-eval fault, abort the loop cleanly.
+    # The EXIT trap reloads vision + releases lock; the watcher recognises
+    # rc=4 as "GPU fault detected" and skips re-dispatch until pre-flight
+    # confirms the node is healthy again.
+    if [[ -f "$GPU_FAULT_FILE" ]]; then
+        log "ABORT: GPU watchdog signalled fault at $(cat "$GPU_FAULT_FILE"); skipping remaining evals"
+        rm -f "$GPU_FAULT_FILE"
+        exit 4
+    fi
 done
 
 # ---- 7. Restart vision-cuda + release the GPU-1 lock ----
