@@ -1,0 +1,48 @@
+# gpufarm supervisor manifests. Long-running processes the coordinator
+# auto-restarts on crash. Distinct from jobs.yaml (run-to-completion compute)
+# and reservations (inference deployments): supervisors hold no reservation,
+# polled via SSH log-staleness, restart-budgeted by a sliding 24h window.
+#
+# See docs/design_supervisor_kind.md (forthcoming) for the state machine.
+
+supervisors:
+  - id: train-r215
+    owner: alexm
+    resource_id: cluster-4node
+    command: bash training/launch_3b.sh
+    env:
+      SCRIPT: training/3b_varT_pondernet_joint.py
+      PORT: "29520"
+      EXTRA_ENV: "CKPT_DIR=checkpoints_3b_varT_pondernet_round215 TARGET_TOKENS=300000000 REINIT_HEAD=0"
+    liveness:
+      kind: log_staleness
+      host: kebab-spark-200g
+      log_path: /tmp/train_r0.log
+      stale_seconds: 480
+    restart_policy:
+      max_restarts_per_window: 10
+      window_hours: 24
+      backoff_seconds: 60
+      dead_after_grace_restarts: 10
+    preconditions:
+      - check: bond0_active_slave
+        hosts: all_members
+        on_fail: wait
+      - check: dns_resolve
+        name: huggingface.co
+        host: kebab-spark-200g
+        on_fail: wait
+      - check: roce_gid_present
+        host: kebab-spark-200g
+        iface: rocep1s0f1
+        subnet_prefix: "192.168.100."
+        on_fail: wait
+      - check: ssh_reachable
+        hosts: all_members
+        on_fail: wait
+    completion:
+      marker: "Training complete."
+    shutdown:
+      sigterm_grace_seconds: 30
+      kill_pattern: "python3 .*training/3b_varT"
+    notes: "r2.15 joint PonderNet training; 300M tokens target."

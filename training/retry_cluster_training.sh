@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# NOTE: This script is now subsumed by gpufarm supervisor train-r215
+# (see /Users/alex/git/OpenMythos/gpufarm/supervisors.yaml). Kept as a
+# manual fallback for ad-hoc reruns; do NOT run concurrently with the
+# coordinator's supervisor or both will race to relaunch on hang.
+#
 # retry_cluster_training.sh
 #
 # Generic retry wrapper for 4-node FSDP cluster training. Watches the
