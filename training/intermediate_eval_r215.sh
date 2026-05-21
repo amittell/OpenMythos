@@ -47,6 +47,77 @@ declare -A RANK_HOST=(
 
 log() { echo "[$(date '+%H:%M:%S')] [r215-eval step=$STEP] $*"; }
 
+RTX=alexm@kebab-rtx6000.lan
+
+# ---- GPU-1 mutex + guaranteed vision restore ----------------------------
+# The eval phase (unload vision -> run evals -> reload vision) has an exclusive
+# claim on rtx6000 GPU 1. Two eval invocations overlapping here is exactly the
+# dogpile we hit on 2026-05-20 (a stray cycle fighting the live one for the GPU,
+# vision flapping). Two guards:
+#   1. A cross-host advisory lock on rtx6000 (atomic `mkdir`, with stale
+#      takeover) so only one eval owns GPU 1 at a time -- even a manual run
+#      can't collide with the watcher.
+#   2. An EXIT trap that ALWAYS reloads vision (if we unloaded it) and releases
+#      the lock, so a timeout-killed or crashed cycle never leaves the GPU
+#      stranded unloaded (degraded router) or the lock held.
+GPU_LOCK_DIR=${GPU_LOCK_DIR:-/tmp/r215_gpu1.lock}   # on rtx6000
+GPU_LOCK_TTL=${GPU_LOCK_TTL:-3000}                  # steal if older than this (> cycle timeout)
+VISION_UNLOADED=0
+GPU_LOCK_HELD=0
+
+reload_vision() {
+    [[ "$VISION_UNLOADED" -eq 1 ]] || return 0
+    log "reload vision-cuda via $ROUTER_URL/admin/models/load..."
+    local resp
+    resp=$(curl -s --max-time 240 -X POST "$ROUTER_URL/admin/models/load" \
+        -H 'Content-Type: application/json' -d '{"model_id":"qwen3-vl-32b"}' || echo "{}")
+    if echo "$resp" | grep -qE '"status":"(loaded|already_loaded)"'; then
+        VISION_UNLOADED=0
+    else
+        log "router load didn't confirm; falling back to ssh+systemctl"
+        if ssh -o ConnectTimeout=10 -q "$RTX" "sudo systemctl start kebab-rtx-vision-cuda.service"; then
+            VISION_UNLOADED=0
+        fi
+    fi
+}
+
+acquire_gpu_lock() {
+    local owner now lockts age
+    owner="step=$STEP host=$(hostname -s) pid=$$ ts=$(date +%s)"
+    for _ in 1 2; do
+        if ssh -o ConnectTimeout=10 -q "$RTX" "mkdir '$GPU_LOCK_DIR' 2>/dev/null"; then
+            ssh -o ConnectTimeout=10 -q "$RTX" "printf '%s\n' '$owner' > '$GPU_LOCK_DIR/owner'" 2>/dev/null || true
+            GPU_LOCK_HELD=1
+            return 0
+        fi
+        # Lock is held -- check whether it's stale (holder crashed without the trap).
+        lockts=$(ssh -o ConnectTimeout=10 -q "$RTX" "stat -c %Y '$GPU_LOCK_DIR' 2>/dev/null" || echo 0)
+        now=$(ssh -o ConnectTimeout=10 -q "$RTX" "date +%s" 2>/dev/null || echo 0)
+        age=$(( now - lockts ))
+        if (( lockts > 0 && now > 0 && age > GPU_LOCK_TTL )); then
+            log "GPU-1 lock is stale (age ${age}s > ${GPU_LOCK_TTL}s); taking it over"
+            ssh -o ConnectTimeout=10 -q "$RTX" "rm -rf '$GPU_LOCK_DIR'" 2>/dev/null || true
+            continue
+        fi
+        log "GPU-1 busy (held by: $(ssh -o ConnectTimeout=10 -q "$RTX" "cat '$GPU_LOCK_DIR/owner' 2>/dev/null" || echo unknown), age ${age}s)"
+        return 1
+    done
+    return 1
+}
+
+release_gpu_lock() {
+    [[ "$GPU_LOCK_HELD" -eq 1 ]] || return 0
+    ssh -o ConnectTimeout=10 -q "$RTX" "rm -rf '$GPU_LOCK_DIR'" 2>/dev/null || true
+    GPU_LOCK_HELD=0
+}
+
+cleanup() {
+    reload_vision
+    release_gpu_lock
+}
+trap cleanup EXIT
+trap 'exit 143' INT TERM
+
 # ---- Idempotency: if all requested eval outputs exist AND are valid JSON, exit early ----
 # Bug we caught the hard way: `test -f` accepts 0-byte / corrupt JSON, so a
 # crashed eval that left a stub file would be silently treated as "already
@@ -149,7 +220,14 @@ ssh -q alexm@kebab-rtx6000.lan "mkdir -p $REPO_RTX/$CKPT_DIR"
 ssh -q alexm@kebab-spark.lan "rsync -avz --partial $REPO_SPARK/$FULL_PATH alexm@kebab-rtx6000.lan:$REPO_RTX/$FULL_PATH"
 log "consolidated ckpt at rtx6000:$REPO_RTX/$FULL_PATH"
 
-# ---- 5. Evict vision via the router we built (frees GPU 1 for the eval) ----
+# ---- 5. Acquire GPU-1 lock, THEN evict vision (frees GPU 1 for the eval) ----
+# Acquire before touching vision: if another eval owns GPU 1 we must not unload
+# vision out from under it. exit 3 is a distinct "GPU busy, retry later" signal
+# the watcher recognises (it clears SEEN so the step is retried next tick).
+if ! acquire_gpu_lock; then
+    log "ABORT step=$STEP: another eval owns GPU 1; will retry on a later tick"
+    exit 3
+fi
 log "unload vision-cuda via $ROUTER_URL/admin/models/unload..."
 unload_resp=$(curl -s --max-time 10 -X POST "$ROUTER_URL/admin/models/unload" \
     -H 'Content-Type: application/json' \
@@ -157,9 +235,15 @@ unload_resp=$(curl -s --max-time 10 -X POST "$ROUTER_URL/admin/models/unload" \
 echo "    -> $unload_resp"
 # kebab-rtx-router's admin/models/unload uses systemctl; tolerate a stale
 # "unknown model: qwen3-vl-32b" by falling back to systemctl on the host.
-if ! echo "$unload_resp" | grep -q '"status"'; then
+# Set VISION_UNLOADED only once vision is actually down, so the EXIT trap knows
+# to restore it (and won't try to "restore" a vision we never took down).
+if echo "$unload_resp" | grep -q '"status"'; then
+    VISION_UNLOADED=1
+else
     log "router unload didn't respond cleanly; falling back to ssh+systemctl"
-    ssh -q alexm@kebab-rtx6000.lan "sudo systemctl stop kebab-rtx-vision-cuda.service"
+    if ssh -o ConnectTimeout=10 -q "$RTX" "sudo systemctl stop kebab-rtx-vision-cuda.service"; then
+        VISION_UNLOADED=1
+    fi
 fi
 
 # ---- 6. Run eval bundle on kebab-rtx6000 GPU 1 (per-eval pull-back) ----
@@ -226,16 +310,11 @@ for evalname in $EVALS; do
     log "  $evalname done -> pulled to spark"
 done
 
-# ---- 7. Restart vision-cuda via the router ----
-log "reload vision-cuda via $ROUTER_URL/admin/models/load..."
-load_resp=$(curl -s --max-time 240 -X POST "$ROUTER_URL/admin/models/load" \
-    -H 'Content-Type: application/json' \
-    -d '{"model_id":"qwen3-vl-32b"}' || echo "{}")
-echo "    -> $(echo "$load_resp" | head -c 200)"
-if ! echo "$load_resp" | grep -qE '"status":"(loaded|already_loaded)"'; then
-    log "router load didn't confirm; falling back to ssh+systemctl"
-    ssh -q alexm@kebab-rtx6000.lan "sudo systemctl start kebab-rtx-vision-cuda.service"
-fi
+# ---- 7. Restart vision-cuda + release the GPU-1 lock ----
+# Done promptly on the happy path here; the EXIT trap repeats both idempotently
+# so a kill anywhere above still restores vision and frees the lock.
+reload_vision
+release_gpu_lock
 
 # ---- 9. Cleanup: free disk on spark + rtx6000 only if every eval succeeded ----
 # Bytes per evaluated step otherwise leak permanently:

@@ -1,0 +1,45 @@
+[Unit]
+Description=r215 intermediate-eval watcher (auto stream-consolidate + eval per 200-step save)
+Documentation=man:gpufarm
+After=network.target gpufarm-coordinator.service
+PartOf=default.target
+# Circuit breaker: if the watcher genuinely crashes (exits non-zero) 5 times
+# within 300s, systemd stops respawning it and parks the unit in `failed`
+# instead of hammering forever. This caps a runaway respawn loop -- the failure
+# mode behind the 2026-05-20 storm -- and surfaces it as a visible failed state.
+# Note the watcher's flock singleton guard exits 0 when it loses the race, so a
+# lost race does NOT count toward this limit; only real crashes do.
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+# Default eval bundle: cheap halt analysis + the two heavier evals. Each
+# checkpoint runs all three; the eval-script handles vision-cuda lifecycle
+# on rtx6000 GPU 1 around the eval phase. Override per-run by editing
+# this unit's drop-in (`systemctl --user edit r215-eval-watcher`).
+# systemd's Environment= splits on whitespace unless the entire assignment is
+# quoted. Without the quotes here, a multi-word EVALS would get truncated to
+# the first token (silently producing the "wait, only per_token_halt ran?"
+# bug we hit on first deploy).
+Environment="EVALS=per_token_halt_analysis depth_extrap reasoning_eval"
+Environment=START_STEP=8000
+Environment=POLL_SEC=60
+Environment=MIN_STEP_GAP=200
+Environment=CYCLE_TIMEOUT_SEC=2400
+
+ExecStart=/bin/bash %h/OpenMythos/training/intermediate_eval_r215_watcher.sh
+StandardOutput=append:%h/OpenMythos/intermediate_eval_r215_watcher.log
+StandardError=append:%h/OpenMythos/intermediate_eval_r215_watcher.log
+
+Restart=on-failure
+RestartSec=30
+
+# Long graceful shutdown -- a watcher mid-cycle may have an in-flight
+# rsync (10 GB shards over the storage net) or an in-flight eval (~5 min).
+# Don't SIGKILL a consolidator that's writing the .tmp output.
+KillSignal=SIGTERM
+TimeoutStopSec=600
+
+[Install]
+WantedBy=default.target
