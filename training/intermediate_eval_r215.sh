@@ -62,28 +62,97 @@ RTX=alexm@kebab-rtx6000.lan
 #      stranded unloaded (degraded router) or the lock held.
 GPU_LOCK_DIR=${GPU_LOCK_DIR:-/tmp/r215_gpu1.lock}   # on rtx6000
 GPU_LOCK_TTL=${GPU_LOCK_TTL:-3000}                  # steal if older than this (> cycle timeout)
-VISION_UNLOADED=0
 GPU_LOCK_HELD=0
 
-reload_vision() {
-    [[ "$VISION_UNLOADED" -eq 1 ]] || return 0
-    log "reload vision-cuda via $ROUTER_URL/admin/models/load..."
+# Names of router backends we evicted from GPU 1 so the cleanup trap can
+# restore them after the eval. Populated by `free_gpu1` from the router's
+# /admin/gpus/1/free response; consumed by `restore_gpu1_tenants`. Bash
+# arrays survive function scope as long as we don't `declare` them inside
+# the function.
+GPU1_RESTORE_LIST=()
+
+# Ask the router to free every backend currently loaded on cuda_device=1.
+# Replaces the older "unload qwen3-vl-32b" call which knew only about
+# vision. As of 2026-05-22 GPU 1 may also host the embedding service
+# (relocated 0->1) and a parallel coder backend (qwen3-coder-next-gpu1);
+# the GPU-level endpoint handles all of them atomically without the
+# eval-script needing to know the inventory. See kebab_rtx_router_fastapi.py
+# `admin_gpus_free` for response shape: {status, cuda_device, unloaded,
+# skipped, errors}.
+free_gpu1() {
+    log "free GPU 1 via $ROUTER_URL/admin/gpus/1/free..."
     local resp
-    resp=$(curl -s --max-time 240 -X POST "$ROUTER_URL/admin/models/load" \
-        -H 'Content-Type: application/json' -d '{"model_id":"qwen3-vl-32b"}' || echo "{}")
-    if echo "$resp" | grep -qE '"status":"(loaded|already_loaded)"'; then
-        VISION_UNLOADED=0
-    else
-        log "router load didn't confirm; falling back to ssh+systemctl"
-        # reset-failed first so a unit left in `failed` state by a prior
-        # SIGKILL-on-stop (Bug B) doesn't block the subsequent start.
-        # reset-failed is a no-op on a clean unit.
-        if ssh -o ConnectTimeout=10 -q "$RTX" \
-                "sudo systemctl reset-failed kebab-rtx-vision-cuda.service; \
-                 sudo systemctl start kebab-rtx-vision-cuda.service"; then
-            VISION_UNLOADED=0
-        fi
+    # --max-time 240 covers the worst case of vLLM drain (docker stop --time=120)
+    # plus router-side per-backend serialisation.
+    resp=$(curl -s --max-time 300 -X POST "$ROUTER_URL/admin/gpus/1/free" \
+        -H 'Content-Type: application/json' -d '{}' || echo "{}")
+    echo "    -> $resp"
+    if ! echo "$resp" | grep -qE '"status":"(free|partial)"'; then
+        log "WARN: /admin/gpus/1/free returned non-{free,partial} status; eval may OOM if GPU 1 still occupied"
+        return 1
     fi
+    # Parse the `unloaded` list so the EXIT trap can restore them.
+    local list_json
+    list_json=$(echo "$resp" | python3 -c \
+        "import json,sys; d=json.load(sys.stdin); print(' '.join(d.get('unloaded', [])))" 2>/dev/null)
+    GPU1_RESTORE_LIST=($list_json)
+    log "freed GPU 1, will restore: ${GPU1_RESTORE_LIST[*]:-(nothing to restore)}"
+    return 0
+}
+
+# Restore everything we evicted from GPU 1 via /admin/models/load. Iterates
+# GPU1_RESTORE_LIST. Idempotent: a model already loaded returns
+# already_loaded and we move on. Ordering: vision-cuda first (largest, most
+# user-visible) then embedding then anything else, so a partial recovery at
+# least gets the highest-impact backends back.
+restore_gpu1_tenants() {
+    (( ${#GPU1_RESTORE_LIST[@]} )) || return 0
+    local sorted=()
+    local m
+    # Stable priority ordering of known backends.
+    for m in qwen3-vl-32b embedding; do
+        for actual in "${GPU1_RESTORE_LIST[@]}"; do
+            [[ "$actual" == "$m" ]] && sorted+=("$m")
+        done
+    done
+    # Append any leftovers that weren't in the explicit priority list.
+    for actual in "${GPU1_RESTORE_LIST[@]}"; do
+        local found=0
+        for s in "${sorted[@]}"; do [[ "$s" == "$actual" ]] && found=1 && break; done
+        (( found )) || sorted+=("$actual")
+    done
+
+    log "restore GPU 1 tenants: ${sorted[*]}"
+    local m resp
+    local remaining=()
+    for m in "${sorted[@]}"; do
+        resp=$(curl -s --max-time 300 -X POST "$ROUTER_URL/admin/models/load" \
+            -H 'Content-Type: application/json' -d "{\"model_id\":\"$m\"}" || echo "{}")
+        if echo "$resp" | grep -qE '"status":"(loaded|already_loaded)"'; then
+            log "  $m: loaded"
+        else
+            log "  $m: router load did not confirm; falling back to ssh+systemctl"
+            # reset-failed defensively in case the backend's previous stop
+            # left the unit in `failed` (e.g. docker SIGKILL on slow drain).
+            local unit=""
+            case "$m" in
+                qwen3-vl-32b)         unit="kebab-rtx-vision-cuda.service" ;;
+                embedding)            unit="kebab-rtx-embedding.service" ;;
+                qwen3-coder-next-gpu1) unit="kebab-rtx-vllm-coder-gpu1.service" ;;
+                gpt-oss-120b)         unit="kebab-rtx-vllm.service" ;;
+                qwen3-coder-next)     unit="kebab-rtx-vllm-coder.service" ;;
+            esac
+            if [[ -n "$unit" ]]; then
+                ssh -o ConnectTimeout=10 -q "$RTX" \
+                    "sudo systemctl reset-failed $unit 2>/dev/null; sudo systemctl start $unit" \
+                    || remaining+=("$m")
+            else
+                log "  $m: no known systemd unit, cannot ssh-fallback"
+                remaining+=("$m")
+            fi
+        fi
+    done
+    GPU1_RESTORE_LIST=("${remaining[@]}")
 }
 
 acquire_gpu_lock() {
@@ -123,7 +192,7 @@ cleanup() {
         kill "$WATCHDOG_PID" 2>/dev/null
         wait "$WATCHDOG_PID" 2>/dev/null
     fi
-    reload_vision
+    restore_gpu1_tenants
     release_gpu_lock
 }
 trap cleanup EXIT
@@ -268,57 +337,24 @@ ssh -q alexm@kebab-rtx6000.lan "mkdir -p $REPO_RTX/$CKPT_DIR"
 ssh -q alexm@kebab-spark.lan "rsync -avz --partial $REPO_SPARK/$FULL_PATH alexm@kebab-rtx6000.lan:$REPO_RTX/$FULL_PATH"
 log "consolidated ckpt at rtx6000:$REPO_RTX/$FULL_PATH"
 
-# ---- 5. Acquire GPU-1 lock, THEN evict vision (frees GPU 1 for the eval) ----
-# Acquire before touching vision: if another eval owns GPU 1 we must not unload
-# vision out from under it. exit 3 is a distinct "GPU busy, retry later" signal
-# the watcher recognises (it clears SEEN so the step is retried next tick).
+# ---- 5. Acquire GPU-1 lock, THEN free GPU 1 of all tenants for the eval ----
+# Acquire before touching any tenants: if another eval owns GPU 1 we must
+# not yank tenants out from under it. exit 3 is a distinct "GPU busy, retry
+# later" signal the watcher recognises (it clears SEEN so the step is
+# retried next tick).
 if ! acquire_gpu_lock; then
     log "ABORT step=$STEP: another eval owns GPU 1; will retry on a later tick"
     exit 3
 fi
-log "unload vision-cuda via $ROUTER_URL/admin/models/unload..."
-# --max-time 240: the router's admin_unload synchronously waits on
-# `sudo systemctl stop` -> `docker stop --time=120 kebab-rtx-vision`, which
-# can legitimately take 60-120s while vLLM drains a 38GB resident model on
-# GPU 1. The previous --max-time 10 was shorter than the docker-stop grace
-# itself, so curl always gave up before the router could respond, falling
-# through `|| echo "{}"` and triggering the ssh+systemctl fallback path
-# (which then re-ran the same stop and hit the same delay -- pure noise).
-unload_resp=$(curl -s --max-time 240 -X POST "$ROUTER_URL/admin/models/unload" \
-    -H 'Content-Type: application/json' \
-    -d '{"model_id":"qwen3-vl-32b"}' || echo "{}")
-echo "    -> $unload_resp"
-# kebab-rtx-router's admin/models/unload returns one of:
-#   status: unloaded               -- clean stop, ready to re-load
-#   status: stopped_with_failure   -- stop succeeded, unit failed (e.g.
-#                                     docker SIGKILL); needs reset-failed
-#                                     before the next load. Reload path
-#                                     (`reload_vision`) already calls
-#                                     reset-failed in its ssh fallback so
-#                                     we don't have to here.
-#   status: error                  -- stop didn't even dispatch (sudo
-#                                     missing, unit name typo); we fall
-#                                     back to ssh+systemctl below
-# Set VISION_UNLOADED only once vision is actually down, so the EXIT trap knows
-# to restore it (and won't try to "restore" a vision we never took down).
-if echo "$unload_resp" | grep -qE '"status":"(unloaded|stopped_with_failure)"'; then
-    VISION_UNLOADED=1
-    if echo "$unload_resp" | grep -q '"status":"stopped_with_failure"'; then
-        log "router reports unit stopped_with_failure (docker likely SIGKILL'd vLLM); pre-clearing failed state"
-        ssh -o ConnectTimeout=10 -q "$RTX" \
-            "sudo systemctl reset-failed kebab-rtx-vision-cuda.service" 2>/dev/null || true
-    fi
-else
-    log "router unload didn't respond cleanly; falling back to ssh+systemctl"
-    # On the fallback path the unit may already be in `failed` state from a
-    # previous SIGKILL exit; reset-failed first so the eventual
-    # `systemctl start` (in reload_vision) isn't blocked. reset-failed is
-    # a no-op on a healthy unit, so it's safe to run unconditionally.
-    ssh -o ConnectTimeout=10 -q "$RTX" \
-        "sudo systemctl stop kebab-rtx-vision-cuda.service && \
-         sudo systemctl reset-failed kebab-rtx-vision-cuda.service" \
-        && VISION_UNLOADED=1
-fi
+# Use the GPU-level admin endpoint instead of unloading a single named
+# backend. GPU 1's tenant inventory has changed over time (vision only ->
+# vision + embedding after 2026-05-22 relocate -> possibly + parallel coder
+# during eval sweeps), and the eval-script should not need to know the
+# current list. The router walks `backends` for cuda_device==1 LOADED and
+# unloads them all; we cache the unloaded list in GPU1_RESTORE_LIST so the
+# EXIT trap can restore exactly what we evicted (and nothing we did not).
+# See kebab_rtx_router_fastapi.py admin_gpus_free for the endpoint impl.
+free_gpu1 || log "WARN: GPU 1 may not be fully free; proceeding anyway"
 
 # ---- 6. Run eval bundle on kebab-rtx6000 GPU 1 (per-eval pull-back) ----
 # Each eval's JSON is pulled back to spark IMMEDIATELY after it completes +
@@ -396,10 +432,14 @@ for evalname in $EVALS; do
     fi
 done
 
-# ---- 7. Restart vision-cuda + release the GPU-1 lock ----
-# Done promptly on the happy path here; the EXIT trap repeats both idempotently
-# so a kill anywhere above still restores vision and frees the lock.
-reload_vision
+# ---- 7. Restore GPU 1 tenants + release the GPU-1 lock ----
+# Done promptly on the happy path here; the EXIT trap repeats both
+# idempotently so a kill anywhere above still restores the GPU and frees
+# the lock. restore_gpu1_tenants consumes GPU1_RESTORE_LIST (populated by
+# free_gpu1 in step 5) and reloads exactly what we evicted -- in priority
+# order (vision first, then embedding, then anything else) so a partial
+# recovery still gets the highest-impact backends back.
+restore_gpu1_tenants
 release_gpu_lock
 
 # ---- 9. Cleanup: free disk on spark + rtx6000 only if every eval succeeded ----

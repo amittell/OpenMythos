@@ -120,6 +120,50 @@ checkpoint:         every 100 steps to ~/OpenMythos/checkpoints_3b_loops4_fast/,
                     ~42 GB per checkpoint (3B bf16 model + AdamW fp32 state)
 ```
 
+## Intermediate-eval pipeline (`training/intermediate_eval_r215*.sh`)
+
+Per-checkpoint evaluator that runs on kebab-rtx6000 GPU 1 against the
+4-node sharded checkpoint produced on the kebab-spark cluster:
+
+1. Watcher (`intermediate_eval_r215_watcher.sh`, systemd user unit
+   `r215-eval-watcher`) polls the rank-0 checkpoint dir on kebab-spark
+   newest-first.
+2. For each step where all 4 rank shards exist + the eval JSONs aren't yet
+   on disk, dispatches `intermediate_eval_r215.sh STEP`. Sequential — one
+   cycle at a time, gated by a flock at `/tmp/r215_eval_watcher.lock`.
+3. The eval-script (a) stages rank 1/2/3 shards from gx10 nodes to spark,
+   (b) runs the streaming consolidator (`consolidate_ckpt_streaming.py`),
+   (c) ships the full.pt to rtx6000, (d) **calls
+   `POST /admin/gpus/1/free`** on the kebab-rtx-router to evict whatever
+   is currently on GPU 1 (vision-cuda + embedding + any parallel coder),
+   (e) runs the eval bundle, (f) **restores exactly the backends it
+   evicted** via `/admin/models/load` for each name in the router's
+   `unloaded[]` response.
+
+The GPU-1-aware admin endpoint matters because GPU 1's tenant inventory
+has shifted (vision-only -> vision + embedding -> + parallel coder), and
+hard-coding "unload qwen3-vl-32b" would leave embedding + coder occupying
+GPU 1 during the eval (causing OOMs). See
+`/Users/alex/git/kebab-rtx6000/README.md` "Admin endpoints" for the
+router contract.
+
+Hardening layers (introduced 2026-05-20 / 21):
+
+- **flock singleton** at `/tmp/r215_eval_watcher.lock` — second instance
+  of the watcher exits 0 instead of dogpiling.
+- **GPU-1 cross-host mutex** at `/tmp/r215_gpu1.lock` (mkdir-based, with
+  stale takeover after `GPU_LOCK_TTL=3000s`) — prevents two concurrent
+  evals on GPU 1.
+- **EXIT trap** restores GPU 1 tenants + releases the lock on any exit
+  path, so a timeout-killed cycle does not leave the router degraded.
+- **Mid-eval GPU watchdog** — backgrounded SSH probe of `nvidia-smi -L`
+  every 60s; 2 consecutive failures triggers `pkill -P $$` of the in-
+  flight remote-eval SSH wrappers + `exit 4`. The watcher recognises
+  rc=4 as a GPU fault and stops dispatching until the node recovers.
+- **systemd StartLimit** — 5 crashes / 300s -> unit parks in `failed`
+  instead of respawning. The flock guard exits 0 (not non-zero) on a
+  lost race so it does not count toward this limit.
+
 ## Running / monitoring / recovery
 
 ### Check status
