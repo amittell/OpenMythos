@@ -753,6 +753,38 @@ Round 2.14 extends the compute-scaling curve to `T_FIXED = 16`, twice the depth 
 
 **[DRAFT verdict — polish before submission.]** Numbers above were auto-extracted from `docs/depth_extrap_round214.json`, `docs/act_halt_diagnostic_round214.json`, and `docs/act_halt_histogram_round214.json`. The auto-generated paper fragment is at `docs/paper/round214_results.md` for reference.
 
+### 7.24 Joint training to 300M tokens at cluster scale (round 2.15)
+
+Round 2.15 extends the joint PonderNet-KL token-scaling curve to 300M tokens, a 50% increase over round 2.13's 200M and the furthest-scaled joint run in the study. It is also the first round trained on the full four-node DGX Spark cluster rather than a single host, distributing the 3.1B-parameter model with FSDP across four GB10 nodes. The question is whether the collapsed halt depth observed at 50M-200M tokens is a finite-data artifact that further scale dissolves, or a stable fixed point of joint training.
+
+It is the latter. The mean halt step lands at 5.33 -- statistically indistinguishable from r2.3 (5.44 at 50M), r2.6 (5.29 at 100M), r2.10 (5.30 at 150M), and r2.13 (5.28 at 200M). Scaling joint training 6x over the curve moves the collapsed halt depth by less than 0.2 iterations. The halt-step histogram puts all probability mass on iterations 5 and 6 (22,082 and 10,686 of 32,768 tokens respectively; zero elsewhere), and the per-iteration halting probability holds near the 1/T = 0.20 prior at every step -- the head never learns a confident early-or-late halt.
+
+**FineWeb-Edu held-out cross-entropy at K iterations** (64 sequences x 1024 tokens):
+
+| K  | r2.15 ACT-on | r2.15 ACT-off | round 2.13 (200M) ACT-off | r2 ACT-off |
+|----|-------------|--------------|---------------------------|------------|
+|  4 | 2.8271      | 2.9179       | 3.1450                    | 4.2455     |
+|  8 | 2.8103      | 3.1811       | 3.1420                    | 4.2522     |
+| 16 | 2.8103      | 2.8482       | 3.1427                    | 4.2525     |
+| 32 | 2.8103      | 2.8472       | 3.1427                    | 4.2524     |
+
+With ACT on, held-out CE is flat from K=8 onward (2.8103 at K=8, 16, and 32 to four decimal places): the model halts at its learned ~5-step depth and the extra iteration budget is a no-op. The ACT-on loss improves modestly over r2.13's ACT-off baseline (2.81 vs 3.14), consistent with the additional 100M tokens, but the *shape* is unchanged -- more tokens lower the floor without unlocking depth use. The ACT-off column (forcing every token to the full K) is non-monotonic and never beats ACT-on, confirming the model has no usable computation past its halt point.
+
+**Per-token halt step by category** (K=32, threshold = 0.99):
+
+| category | n      | mean halt | next-token acc |
+|----------|--------|-----------|----------------|
+| punct    | 3,945  | 5.37      | 0.314          |
+| function | 9,349  | 5.28      | 0.381          |
+| content  | 17,373 | 5.34      | 0.551          |
+| rare     | 2,101  | 5.36      | 0.656          |
+
+Halt depth is flat across token categories (5.28--5.37, a 0.09-iteration spread) even though next-token accuracy ranges almost 2x (0.314--0.656). A non-collapsed head would spend more iterations on the harder, lower-accuracy categories; r2.15 spends the same ~5.3 everywhere, the signature of a degenerate allocation policy that scale does not repair.
+
+**Downstream multiple-choice probes** (log-likelihood, 200 items/task, by K): ARC-Easy holds at 0.420 across K = 4, 8, 16, 32 (identical); ARC-Challenge holds at 0.235 across K = 8, 16, 32. Accuracy is K-invariant, matching every prior round's depth-flat downstream behavior. (HellaSwag was not completed in this run -- the third task exceeded the 1200s remote-eval timeout; the two ARC tasks already establish the depth-flat pattern and HellaSwag is queued for a standalone re-run.)
+
+**[DRAFT verdict -- polish before submission.]** Numbers above were extracted from `docs/intermediate_r215_step18310_per_token_halt_analysis.json` and `docs/intermediate_r215_step18310_depth_extrap.json` at the final checkpoint (step 18,310; 300M tokens; consolidated from four-node sharded FSDP). The headline result is negative-by-design: cluster-scale joint training to 300M tokens reproduces the same ~5.3-iteration halt collapse seen across the entire 50M-200M curve, establishing that the collapse is a stable fixed point of the joint objective rather than a small-data artifact.
+
 ### 7.15 Depth-graded capability probes (ListOps and GSM8K full generation)
 
 Every accuracy probe we have run on this model so far has been depth-flat: synthetic_depth's five-task suite (§8.4 footnote), and the multiple-choice log-likelihood evals on ARC-Easy, ARC-Challenge, and HellaSwag, all yield K-invariant accuracy at every round. Two of these probes are arguably ill-suited to recurrent-depth scaling: synthetic_depth's tasks are mostly single-step, and multiple-choice log-likelihood scoring is dominated by argmax stability rather than per-token logit shifts. We add two further probes designed to be more directly responsive to additional iteration: ListOps (Nangia & Bowman 2018) where the tree-nesting depth maps onto the number of reduction steps required, and GSM8K with full chain-of-thought generation, where extra K could in principle let the model construct more accurate intermediate steps.
@@ -865,6 +897,7 @@ Where the round-level §7.13--§7.20 sections show the *aggregate* halt-step his
 | r2.12 |          1.01 |         1.0 |    0.9906 |                  0.000 |
 | r2.13 |          5.28 |         5.0 |    0.0000 |                  0.000 |
 | r2.14 |          1.00 |         1.0 |    1.0000 |                  0.000 |
+| r2.15 |          5.33 |         5.0 |    0.0000 |                  0.000 |
 | anti10 |          3.04 |         3.0 |    0.0004 |                  0.007 |
 
 **Halt step by token category:**
@@ -972,6 +1005,14 @@ Where the round-level §7.13--§7.20 sections show the *aggregate* halt-step his
 | function | 9,349 | 1.00 | 1.0000 |
 | content | 17,373 | 1.00 | 1.0000 |
 | rare | 2,101 | 1.00 | 1.0000 |
+
+*Round r2.15:* (300M joint tokens, cluster-scale)
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct | 3,945 | 5.37 | 0.0000 |
+| function | 9,349 | 5.28 | 0.0000 |
+| content | 17,373 | 5.34 | 0.0000 |
+| rare | 2,101 | 5.36 | 0.0000 |
 
 *Round anti10:*
 | category | n | mean halt | p(iter=1) |
