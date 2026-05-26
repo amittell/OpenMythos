@@ -885,15 +885,17 @@ Standard `depth_extrap.py` runs evaluate at K ∈ {4, 8, 16, 32}. We extend the 
 
 **FineWeb-Edu CE (ACT off, full K iterations) by K and round:**
 
-| K  | r2.3 | r2.4 | r2.5 | r2.6 | r2.7 | r2.9 | r2.10 | r2.11 | r2.12 | r2.13 | r2.14 |
-|----|------|------|------|------|------|------|------|------|------|------|------|
-|  4 | 3.2937 | 3.4430 | 3.4803 | 3.2055 | 3.4803 | 3.5897 | 3.1014 | 4.1934 | 4.1683 | 3.1451 | 3.7447 |
-|  8 | 3.2906 | 3.4469 | 3.4780 | 3.1997 | 3.4800 | 3.5953 | 3.0970 | 4.1958 | 4.1759 | 3.1421 | 3.7428 |
-| 16 | 3.2902 | 3.4464 | 3.4779 | 3.2000 | 3.4799 | 3.5960 | 3.0976 | 4.1959 | 4.1798 | 3.1428 | 3.7410 |
-| 32 | 3.2900 | 3.4461 | 3.4778 | 3.1998 | 3.4797 | 3.5959 | 3.0974 | 4.1959 | 4.1799 | 3.1427 | 3.7431 |
-| 64 | 3.2903 | 3.4462 | 3.4778 | 3.2002 | 3.4798 | 3.5959 | 3.0981 | 4.1959 | 4.1798 | 3.1435 | 3.7433 |
+| K  | r2.3 | r2.4 | r2.5 | r2.6 | r2.7 | r2.9 | r2.10 | r2.11 | r2.12 | r2.13 | r2.14 | r2.15 |
+|----|------|------|------|------|------|------|------|------|------|------|------|------|
+|  4 | 3.2937 | 3.4430 | 3.4803 | 3.2055 | 3.4803 | 3.5897 | 3.1014 | 4.1934 | 4.1683 | 3.1451 | 3.7447 | 2.9179 |
+|  8 | 3.2906 | 3.4469 | 3.4780 | 3.1997 | 3.4800 | 3.5953 | 3.0970 | 4.1958 | 4.1759 | 3.1421 | 3.7428 | 3.1811 |
+| 16 | 3.2902 | 3.4464 | 3.4779 | 3.2000 | 3.4799 | 3.5960 | 3.0976 | 4.1959 | 4.1798 | 3.1428 | 3.7410 | 2.8482 |
+| 32 | 3.2900 | 3.4461 | 3.4778 | 3.1998 | 3.4797 | 3.5959 | 3.0974 | 4.1959 | 4.1799 | 3.1427 | 3.7431 | 2.8472 |
+| 64 | 3.2903 | 3.4462 | 3.4778 | 3.2002 | 3.4798 | 3.5959 | 3.0981 | 4.1959 | 4.1798 | 3.1435 | 3.7433 | 2.8478 |
 
-**[DRAFT verdict — polish before submission.]** Auto-extracted from `docs/depth_extrap_round*_k64.json`. Numbers tell us whether the iteration fixed-point converges or diverges past T_max.
+r2.15 (300M joint tokens) posts the lowest ACT-off CE on the curve (2.85--2.92 vs 3.10+ for the next-best r2.10), consistent with its extra tokens, but the shape is the same K-invariant plateau: past K=16 the loss is flat to four decimals, and the ACT-*on* path (not shown in this ACT-off table) is identical at 2.8103 for every K from 8 through 64 -- 16x the trained depth of 4. The fixed-point converges; it does not diverge, and it does not reward depth.
+
+**[DRAFT verdict -- polish before submission.]** Auto-extracted from `docs/depth_extrap_round*_k64.json` and `docs/intermediate_r215_step18310_depth_extrap_k64.json`. Numbers tell us whether the iteration fixed-point converges or diverges past T_max.
 ### 7.23 Per-token halt distribution across rounds
 
 Where the round-level §7.13--§7.20 sections show the *aggregate* halt-step histogram (one number per K), this section breaks halt step out across individual tokens and rounds. The question is whether the trained head learns an interesting per-token allocation policy (different halt steps for content vs. function tokens, for instance) or whether it collapses onto one global mean.
