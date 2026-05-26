@@ -823,6 +823,16 @@ Every accuracy probe we have run on this model so far has been depth-flat: synth
 | 16 | 0.100 | 0.120 | 0.080 | 0.124 | 0.106   |
 | 32 | 0.100 | 0.110 | 0.100 | 0.134 | 0.111   |
 
+*Round r2.15:* (300M joint tokens, cluster-scale)
+| K  | d3 | d5 | d7 | d10 | overall |
+|----|------|------|------|------|---------|
+|  4 | 0.080 | 0.110 | 0.170 | 0.144 | 0.126   |
+|  8 | 0.070 | 0.110 | 0.170 | 0.134 | 0.121   |
+| 16 | 0.070 | 0.110 | 0.160 | 0.144 | 0.121   |
+| 32 | 0.070 | 0.110 | 0.160 | 0.144 | 0.121   |
+
+r2.15 ListOps is K-invariant (overall 0.126 -> 0.121 -> 0.121 -> 0.121) and within noise of the 50M-200M rounds, the same depth-flat signature seen in held-out CE and the multiple-choice probes: the extra recurrence budget that 300M-token joint training leaves unused buys nothing on a task whose nesting depth should reward it.
+
 
 **GSM8K full-CoT generation accuracy by K (4-shot prompting, exact-match on extracted final answer):**
 
