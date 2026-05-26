@@ -781,9 +781,17 @@ With ACT on, held-out CE is flat from K=8 onward (2.8103 at K=8, 16, and 32 to f
 
 Halt depth is flat across token categories (5.28--5.37, a 0.09-iteration spread) even though next-token accuracy ranges almost 2x (0.314--0.656). A non-collapsed head would spend more iterations on the harder, lower-accuracy categories; r2.15 spends the same ~5.3 everywhere, the signature of a degenerate allocation policy that scale does not repair.
 
-**Downstream multiple-choice probes** (log-likelihood, 200 items/task, by K): ARC-Easy holds at 0.420 across K = 4, 8, 16, 32 (identical); ARC-Challenge holds at 0.235 across K = 8, 16, 32. Accuracy is K-invariant, matching every prior round's depth-flat downstream behavior. (HellaSwag was not completed in this run -- the third task exceeded the 1200s remote-eval timeout; the two ARC tasks already establish the depth-flat pattern and HellaSwag is queued for a standalone re-run.)
+**Downstream multiple-choice probes** (log-likelihood, 200 items/task, by K):
 
-**[DRAFT verdict -- polish before submission.]** Numbers above were extracted from `docs/intermediate_r215_step18310_per_token_halt_analysis.json` and `docs/intermediate_r215_step18310_depth_extrap.json` at the final checkpoint (step 18,310; 300M tokens; consolidated from four-node sharded FSDP). The headline result is negative-by-design: cluster-scale joint training to 300M tokens reproduces the same ~5.3-iteration halt collapse seen across the entire 50M-200M curve, establishing that the collapse is a stable fixed point of the joint objective rather than a small-data artifact.
+| task          | K=4   | K=8   | K=16  | K=32  |
+|---------------|-------|-------|-------|-------|
+| ARC-Easy      | 0.420 | 0.420 | 0.420 | 0.420 |
+| ARC-Challenge | 0.240 | 0.235 | 0.235 | 0.235 |
+| HellaSwag     | 0.310 | 0.315 | 0.315 | 0.315 |
+
+All three are K-invariant (a single sub-percent jump from K=4 to K=8 on the harder two tasks, then flat), matching every prior round's depth-flat downstream behavior. Extra recurrence iterations do not change a single argmax once past the collapsed halt depth.
+
+**[DRAFT verdict -- polish before submission.]** Numbers above were extracted from `docs/intermediate_r215_step18310_per_token_halt_analysis.json`, `docs/intermediate_r215_step18310_depth_extrap.json`, and `docs/intermediate_r215_step18310_reasoning_eval.json` at the final checkpoint (step 18,310; 300M tokens; consolidated from four-node sharded FSDP). The headline result is negative-by-design: cluster-scale joint training to 300M tokens reproduces the same ~5.3-iteration halt collapse and depth-flat downstream accuracy seen across the entire 50M-200M curve, establishing that the collapse is a stable fixed point of the joint objective rather than a small-data artifact.
 
 ### 7.15 Depth-graded capability probes (ListOps and GSM8K full generation)
 
