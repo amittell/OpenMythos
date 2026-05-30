@@ -793,6 +793,48 @@ All three are K-invariant (a single sub-percent jump from K=4 to K=8 on the hard
 
 **[DRAFT verdict -- polish before submission.]** Numbers above were extracted from `docs/intermediate_r215_step18310_per_token_halt_analysis.json`, `docs/intermediate_r215_step18310_depth_extrap.json`, and `docs/intermediate_r215_step18310_reasoning_eval.json` at the final checkpoint (step 18,310; 300M tokens; consolidated from four-node sharded FSDP). The headline result is negative-by-design: cluster-scale joint training to 300M tokens reproduces the same ~5.3-iteration halt collapse and depth-flat downstream accuracy seen across the entire 50M-200M curve, establishing that the collapse is a stable fixed point of the joint objective rather than a small-data artifact.
 
+### 7.25 Halt-prior sweep: a third point and a possible floor (round 2.17, lambda_p = 0.5)
+
+Round 2.17 fits a third point onto the lambda_p axis already populated by round 2.7 (lambda_p = 0.1, target halt 1/lambda_p = 10) and the joint-training default lambda_p = 0.2 family (target halt = 5). It resumes from r2.16's step-18,800 checkpoint -- r2.15's distribution plus 490 further joint-training steps -- and continues with `LAMBDA_P=0.5` (target halt = 2) for 50M additional tokens to step 21,362. The same script, the same 4-node FSDP setup, the same FineWeb-Edu data; only the halt prior changes.
+
+**The halt distribution collapses to a delta at step 3.** Of 32,768 evaluated tokens, 32,636 (99.6%) halt at iteration 3 and 132 (0.4%) at iteration 2; zero tokens halt at any other step. Mean halt step is 2.996; median is 3.0; halt depth is uniform across token categories (punct 3.00, function 3.00, content 2.99, rare 2.99). The discrete-iteration nature of halting makes "mean halt step 2.996" effectively a degenerate distribution at iteration 3.
+
+**The three-point lambda_p sweep:**
+
+| Round | lambda_p | Prior target (1/lambda_p) | Observed halt step | Observed - target |
+|-------|----------|--------------------------|--------------------|-------------------|
+| r2.7  | 0.1      | 10.0                     | 10.09              | +0.09             |
+| r2.15 | 0.2      | 5.0                      | 5.33               | +0.33             |
+| r2.17 | 0.5      | 2.0                      | 3.00               | **+1.00**         |
+
+The halt depth tracks the prior at low prior-strength but flattens onto step 3 at lambda_p = 0.5, where the prior asks for 2 iterations and the model insists on 3. The simplest model consistent with all three points is `halt = max(round(1/lambda_p), floor)` with floor = 3; this fits r2.7 and r2.17 exactly and is consistent with r2.15 modulo a small overshoot from the iteration discretization.
+
+This is, however, three points. **We treat the floor-at-3 hypothesis as falsifiable, not confirmed.** Two further ablations decide it cleanly: r2.18 at `lambda_p = 1.0` (target halt = 1) and r2.19 at `lambda_p = 0.33` (target halt = 3, exactly at the proposed floor). The floor-at-3 model predicts halt = 3 for both. A halt of 1 or 2 in r2.18 falsifies it; a halt above 3 in r2.19 demands a different fit. r2.18 is queued to run as soon as the cluster is at full strength (one node was down for an unrelated weather-related power event when this section was written).
+
+**FineWeb-Edu held-out cross-entropy at K iterations** (ACT on and ACT off, 64 sequences x 1024 tokens):
+
+| K  | r2.17 ACT-on | r2.17 ACT-off | r2.15 ACT-on (lambda_p=0.2) |
+|----|--------------|---------------|------------------------------|
+|  4 | 2.4469       | 3.3106        | 2.8271                       |
+|  8 | 2.4469       | 8.3409        | 2.8103                       |
+| 16 | 2.4469       | 6.6073        | 2.8103                       |
+| 32 | 2.4469       | 6.2754        | 2.8103                       |
+
+The ACT-on column is identical to four decimal places across K = 4, 8, 16, 32: the model halts at iteration 3 and the extra budget is a no-op, exactly as in r2.15's ACT-on column at iteration 5. The ACT-on loss at 2.4469 is, however, notably lower than r2.15's 2.8103 -- the strongest halt prior produced the strongest backbone, not a weaker one. The ACT-off column is dramatic: forced to run all K iterations on a head that has converged to halting at 3, the model's loss explodes (8.34 at K=8, ppl above 4,000) before partially recovering at K=16,32. The recurrent block past the halt point appears to drift the representation away from the embedding manifold the head was reading from. This is a stronger ACT-off divergence signature than any prior round.
+
+**ListOps accuracy by K and tree depth (100 problems per (K, tree-depth)):**
+
+| K  | d3 | d5 | d7 | d10 | overall |
+|----|------|------|------|------|---------|
+|  4 | 0.080 | 0.070 | 0.180 | 0.093 | 0.106   |
+|  8 | 0.080 | 0.050 | 0.190 | 0.093 | 0.103   |
+| 16 | 0.080 | 0.070 | 0.180 | 0.093 | 0.106   |
+| 32 | 0.080 | 0.050 | 0.180 | 0.093 | 0.101   |
+
+ListOps overall accuracy hovers at 0.10 across K, indistinguishable from the other joint rounds (r2.3 = 0.118, r2.15 = 0.121). Halting at iteration 3 rather than 5 costs essentially nothing on this probe, consistent with the ACT-on loss improvement: depth past the halt point was never being used productively.
+
+**[DRAFT verdict -- polish before submission.]** Numbers from `docs/intermediate_r215_step21362_{per_token_halt_analysis,depth_extrap,eval_listops}.json` (filename retains the `r215_` prefix because the eval script was sed-cloned from the r2.15 orchestrator; ckpt path inside each JSON correctly references `checkpoints_3b_varT_pondernet_round217/step_0021362_full.pt`). The headline finding is that **a stronger halt prior measurably lowers the collapsed halt depth and improves the backbone loss**, but the halt depth does not fall below 3 even when the prior pushes for 2. The floor-at-3 reading is the simplest model consistent with the three-point curve; r2.18 (lambda_p = 1.0) is the discriminator, currently queued.
+
 ### 7.15 Depth-graded capability probes (ListOps and GSM8K full generation)
 
 Every accuracy probe we have run on this model so far has been depth-flat: synthetic_depth's five-task suite (§8.4 footnote), and the multiple-choice log-likelihood evals on ARC-Easy, ARC-Challenge, and HellaSwag, all yield K-invariant accuracy at every round. Two of these probes are arguably ill-suited to recurrent-depth scaling: synthetic_depth's tasks are mostly single-step, and multiple-choice log-likelihood scoring is dominated by argmax stability rather than per-token logit shifts. We add two further probes designed to be more directly responsive to additional iteration: ListOps (Nangia & Bowman 2018) where the tree-nesting depth maps onto the number of reduction steps required, and GSM8K with full chain-of-thought generation, where extra K could in principle let the model construct more accurate intermediate steps.
@@ -918,6 +960,7 @@ Where the round-level §7.13--§7.20 sections show the *aggregate* halt-step his
 | r2.13 |          5.28 |         5.0 |    0.0000 |                  0.000 |
 | r2.14 |          1.00 |         1.0 |    1.0000 |                  0.000 |
 | r2.15 |          5.33 |         5.0 |    0.0000 |                  0.000 |
+| r2.17 |          3.00 |         3.0 |    0.0000 |                  0.000 |
 | anti10 |          3.04 |         3.0 |    0.0004 |                  0.007 |
 
 **Halt step by token category:**
@@ -1033,6 +1076,14 @@ Where the round-level §7.13--§7.20 sections show the *aggregate* halt-step his
 | function | 9,349 | 5.28 | 0.0000 |
 | content | 17,373 | 5.34 | 0.0000 |
 | rare | 2,101 | 5.36 | 0.0000 |
+
+*Round r2.17:* (lambda_p = 0.5, halt-prior sweep)
+| category | n | mean halt | p(iter=1) |
+|----------|---|-----------|-----------|
+| punct | 3,945 | 3.00 | 0.0000 |
+| function | 9,349 | 3.00 | 0.0000 |
+| content | 17,373 | 2.99 | 0.0000 |
+| rare | 2,101 | 2.99 | 0.0000 |
 
 *Round anti10:*
 | category | n | mean halt | p(iter=1) |
