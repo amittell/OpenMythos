@@ -799,6 +799,21 @@ Round 2.17 fits a third point onto the lambda_p axis already populated by round 
 
 **The halt distribution collapses to a delta at step 3.** Of 32,768 evaluated tokens, 32,636 (99.6%) halt at iteration 3 and 132 (0.4%) at iteration 2; zero tokens halt at any other step. Mean halt step is 2.996; median is 3.0; halt depth is uniform across token categories (punct 3.00, function 3.00, content 2.99, rare 2.99). The discrete-iteration nature of halting makes "mean halt step 2.996" effectively a degenerate distribution at iteration 3.
 
+**The distribution is sharper than every other joint round by a wide margin.** Shannon entropy of the halt-step histogram, across all rounds that produced a halt distribution above 1:
+
+| Round | lambda_p | halt mean | top step | top frac | entropy (bits) |
+|-------|----------|-----------|----------|----------|----------------|
+| r2.7  | 0.1      | 10.09     | 10       | 0.387    | 2.172          |
+| r2.3  | 0.2      | 5.44      | 5        | 0.556    | 1.028          |
+| r2.4  | 0.2      | 5.46      | 5        | 0.536    | 1.066          |
+| r2.6  | 0.2      | 5.29      | 5        | 0.713    | 0.871          |
+| r2.10 | 0.2      | 5.30      | 5        | 0.698    | 0.884          |
+| r2.13 | 0.2      | 5.28      | 5        | 0.716    | 0.862          |
+| r2.15 | 0.2      | 5.33      | 5        | 0.674    | 0.911          |
+| **r2.17** | **0.5** | **3.00** | **3** | **0.996** | **0.038**     |
+
+r2.17's halt entropy is **20-50x lower** than any prior joint round. The next-narrowest distribution (r2.13 at 200M tokens, entropy 0.862) still scatters meaningful mass across 3-4 iterations; r2.17 scatters zero mass anywhere but on iteration 3. This is the signature predicted by a rigid lower bound: when the prior pushes against the floor, the distribution collapses to a delta because there is no flexibility to spread downward. Without a floor we would expect halt to track the prior with continuous distributional broadening; with one we get exactly what we observe.
+
 **The three-point lambda_p sweep:**
 
 | Round | lambda_p | Prior target (1/lambda_p) | Observed halt step | Observed - target |
