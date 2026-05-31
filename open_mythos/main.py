@@ -852,7 +852,18 @@ class RecurrentBlock(nn.Module):
         B, T, D = h.shape
 
         halted = torch.zeros(B, T, device=h.device, dtype=torch.bool)
-        cumulative_p = torch.zeros(B, T, device=h.device)
+        # cumulative_p is the ACT halting-probability accumulator. Kept in
+        # fp32 regardless of h.dtype because:
+        #   * sums of up to n_loops sigmoid values need precision headroom to
+        #     compare reliably against act_threshold (typically ~0.99)
+        #   * p comes from sigmoid(Linear(h)) and is promoted to fp32 here
+        #     anyway via the addition; making the storage fp32 keeps that
+        #     explicit and stable across loop iterations
+        # The fp32 weight is cast back to h.dtype right before scaling h on
+        # line 881 so h_out preserves h's dtype (was a bug: with h in bf16,
+        # weight stayed fp32 and the bf16*fp32 promote made h_out fp32,
+        # which then failed in the coda's bf16 attention weights).
+        cumulative_p = torch.zeros(B, T, device=h.device, dtype=torch.float32)
         h_out = torch.zeros_like(h)
 
         for t in range(n_loops):
@@ -863,7 +874,7 @@ class RecurrentBlock(nn.Module):
             trans_out = trans_out + self.lora(trans_out, t)
             h = self.injection(h, e, trans_out)
 
-            p = self.act(h)  # (B, T)
+            p = self.act(h).float()  # (B, T) -- accumulate in fp32 regardless of h.dtype
             still_running = ~halted
 
             # ACT remainder trick: once cumulative_p + p crosses threshold,
@@ -878,7 +889,11 @@ class RecurrentBlock(nn.Module):
                 p,
             )
             weight = weight * still_running.float()
-            h_out = h_out + weight.unsqueeze(-1) * h
+            # Cast weight back to h.dtype before scaling h so the accumulator
+            # stays in h's dtype. Without this cast, bf16/fp16 forwards
+            # silently upcast h_out to fp32 and break downstream coda layers
+            # that expect bf16 inputs against bf16 weights.
+            h_out = h_out + weight.unsqueeze(-1).to(h.dtype) * h
 
             cumulative_p = cumulative_p + p * still_running.float()
             halted = halted | (cumulative_p >= self.cfg.act_threshold)
