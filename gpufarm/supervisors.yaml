@@ -13,7 +13,7 @@ supervisors:
     env:
       SCRIPT: training/3b_varT_pondernet_joint.py
       PORT: "29520"
-      EXTRA_ENV: "CKPT_DIR=checkpoints_3b_varT_pondernet_round217 TARGET_TOKENS=350000000 REINIT_HEAD=0 LAMBDA_P=0.5"
+      EXTRA_ENV: "CKPT_DIR=checkpoints_3b_varT_pondernet_round218 TARGET_TOKENS=400000000 REINIT_HEAD=0 LAMBDA_P=0.99"
     liveness:
       kind: log_staleness
       host: kebab-spark-200g

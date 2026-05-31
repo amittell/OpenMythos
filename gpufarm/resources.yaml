@@ -89,6 +89,7 @@ resources:
       - gen_samples_multidepth
       - eval_listops
       - eval_gsm8k
+      - toy_depth_task         # paper Tier 2.4, pinned here via requires_resource
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
     # vllm-120b / embedding / ocr pin to GPU 0; GPU 1 hosts kebab-rtx-vision-cuda
     # (Qwen3-VL-32B-FP8, system-scope service, ~85 GB VRAM resident). Any job
@@ -150,3 +151,67 @@ resources:
       Consumer card -- nvidia-smi --gpu-reset is "Not Supported". Avoid
       SIGKILL on hung CUDA processes (left GPU in error state 2026-05-11,
       required host reboot to clear).
+
+  - id: mini-beast-8060s
+    host: mini-beast.lan
+    ssh_user: alex                  # same uid as rtx5090; sibling GPU in same box
+    repo_root: /home/alex/OpenMythos
+    cuda_device: null               # AMD APU, no CUDA index. Backend selected by job (ROCm or Vulkan).
+    class: strix_halo                # AMD Radeon 8060S (Strix Halo gfx1151)
+    vram_gb: 128                    # Unified-memory ceiling, NOT what rocm-smi/gpu-metrics-exporter report.
+                                    # rocm-smi exposes only the 512 MB dedicated framebuffer carveout
+                                    # (`VRAM Total = 536870912` -- intentional, not a bug). The usable
+                                    # pool for compute is the GTT/system-RAM share, capped by the
+                                    # `amd_iommu=pt` boot setting and effectively bounded by physical
+                                    # RAM. 128 GB is the practical ceiling for inference workloads here.
+    priority_tier: 3                # below rtx5090; serves the Vulkan/ROCm side of mini-beast
+    recovery_hook: |
+      # Same recovery posture as rtx5090: consumer-grade silicon, no reliable
+      # in-band reset. amdgpu kernel module is more forgiving than nvidia.ko
+      # under SIGKILL but the gfx1151 ROCm stack is young; treat hangs as
+      # host-reboot territory until proven otherwise.
+      ssh -q alex@mini-beast.lan "sudo reboot"
+    can_run: []                     # No jobs in the manifest currently target ROCm/Vulkan.
+                                    # Reserved for future llama.cpp-Vulkan benchmarks, Qwen-VL ports, etc.
+    avoid:                          # Every standard CUDA job in jobs.yaml -- the toolchain
+      - sft_lora                    # mismatch makes them either fail-fast (CUDA-only kernels)
+      - train_round                 # or run silently on CPU. Explicit avoid keeps the
+      - train_round_joint           # dispatcher from ever surprising a job onto it.
+      - toy_depth_task
+      - per_token_halt
+      - depth_extrap
+      - depth_extrap_k64
+      - reasoning_eval
+      - inference_benchmark
+      - act_halt_diagnostic
+      - act_halt_histogram
+      - gen_samples_multidepth
+      - eval_listops
+      - eval_gsm8k
+    # Active Vulkan/ROCm services that gpufarm should evict before
+    # claiming the GPU. The mini-beast router lists them with
+    # cuda_device=None so the standard router-conflict-refresh path
+    # (which keys by cuda_device) won't auto-populate -- we name them
+    # explicitly here.
+    conflicts_with:
+      - {service: qwen-vision.service,  scope: user}    # Qwen3-VL-32B Vulkan RADV
+      - {service: qwen3-coder.service,  scope: user}    # Qwen3-Coder-30B-A3B Vulkan Q6_K
+      - {service: flux.service,         scope: user}    # FLUX.1-schnell Vulkan
+      - {service: embedding.service,    scope: user}    # Qwen3-Embedding-8B Vulkan
+      - {service: qwen3-tts.service,    scope: user}    # Qwen3-TTS ROCm
+      - {service: colpali.service,      scope: user}    # ColQwen2 doc retrieval
+    # Shares the mini-beast router with rtx5090 (port 8080). The router
+    # reports cuda_device=None for AMD-backed services so the standard
+    # _refresh_router_conflicts path won't bind them here. health/stats
+    # are still useful surfaces for liveness checks. metrics exporter is
+    # separate at :9835 (Prometheus, exposes both NVIDIA + AMD).
+    router:
+      url: http://mini-beast.lan:8080
+      capabilities: [health, stats, admin_models_status]
+    notes: |
+      Strix Halo APU: 128 GB unified memory, gfx1151 ROCm target. Useful
+      for Vulkan-backed llama.cpp inference and (eventually) ROCm-built
+      PyTorch workloads. Not currently a target for any gpufarm job --
+      visibility-only entry until ROCm-compatible job variants are added.
+      Prometheus exporter on :9835 reports both `nvidia_0` and `radeon_0`
+      labels under standard gpu_* metric names.
