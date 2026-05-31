@@ -32,7 +32,7 @@ from typing import Optional
 import torch
 import torch.nn as nn
 
-from open_mythos import MythosConfig, OpenMythos, mythos_1b
+from open_mythos import MythosConfig, OpenMythos, mythos_1b, mythos_3b
 from open_mythos.main import (
     RMSNorm,
     TransformerBlock,
@@ -268,7 +268,19 @@ def get_cfg(size: str) -> MythosConfig:
         # GQA for apples-to-apples; MLA changes KV shape semantics.
         cfg.attn_type = "gqa"
         return cfg
-    raise ValueError(f"unknown size: {size!r} (use 'small' or '1b')")
+    if size == "3b":
+        # Paper model. mythos_3b() defaults to MLA per the published config; the
+        # bench needs both arms on the same attention to isolate recurrent-depth
+        # cost vs. non-recurrent cost (BaselineTransformer uses the same
+        # TransformerBlock and would otherwise be MLA too -- still a fair
+        # comparison but you lose the flash-attn-2 cherry-pick path, which only
+        # applies to GQAttention.forward). Force GQA so the bench actually
+        # exercises the flash-attn path and matches the n_loops semantics
+        # the 1b bench uses.
+        cfg = mythos_3b()
+        cfg.attn_type = "gqa"
+        return cfg
+    raise ValueError(f"unknown size: {size!r} (use 'small', '1b', or '3b')")
 
 
 # ---------------------------------------------------------------------------
@@ -296,7 +308,7 @@ def print_header(title: str) -> None:
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--size", default="small", choices=["small", "1b"])
+    p.add_argument("--size", default="small", choices=["small", "1b", "3b"])
     p.add_argument(
         "--device",
         default="cuda" if torch.cuda.is_available() else "cpu",
