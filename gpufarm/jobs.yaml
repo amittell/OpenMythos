@@ -224,3 +224,35 @@ jobs:
     timeout_minutes: 90
     priority: 5
     preemptible: true
+
+  # -------- Toy depth-required task (paper Tier 2.4) --------
+  # Trains a ~50M-param recurrent-depth toy model on nested-XOR expressions
+  # of variable depth d in {1..8}, sweeping LAMBDA_P to discriminate the
+  # architectural-floor / depth-adaptive / prior-only hypotheses.
+  # Pinned to blackwell-gpu1 because blackwell-gpu0 holds the coder model.
+  - id: toy_depth_task
+    script: training/toy_depth_task.py
+    resource_class: [blackwell]
+    requires_resource: blackwell-gpu1
+    env_required: [LAMBDA_P, OUT]
+    env_defaults:
+      LAMBDA_KL: "1.0"
+      T_MAX: "16"
+      TARGET_TOKENS: "5000000"
+      D_MAX: "8"
+      D_MIN: "1"
+      LR: "3e-4"
+      D_MODEL: "384"
+      N_HEADS: "6"
+      D_FF: "1536"
+      BATCH: "32"
+      SEQ_LEN: "512"
+      LOG_EVERY: "50"
+    output_pattern: "{OUT}/toy_results_lp{LAMBDA_P}.json"
+    estimated_minutes: 240
+    timeout_minutes: 480
+    priority: 5
+    preemptible: false             # 4h training, no resume support
+    python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
+    max_retries: 1
+    requires_exclusive: true       # one toy run at a time on gpu1
