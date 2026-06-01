@@ -941,8 +941,31 @@ def main():
     raw_act = model.module.recurrent.act if ddp else model.recurrent.act
     raw_act.register_forward_hook(lambda m, i, o: captured_p.append(o))
 
-    log_lambda_p = math.log(lambda_p)
-    log_one_minus_lambda_p = math.log(1.0 - lambda_p)
+    # Edge case: lambda_p == 1.0 means "halt with probability 1 on every step"
+    # (a degenerate geometric prior with mean halt step exactly 1). The KL term
+    # uses log(1 - lambda_p), which is -inf at lambda_p=1.0 and raises
+    # ValueError: math domain error. Skipping the (1-p)*log(1-lp) summand is
+    # NOT a valid limit here: p_stack is clamped to [1e-6, 1-1e-6], so (1-p)
+    # is strictly positive at evaluation time, and the term carries the
+    # gradient signal that pushes p_t -> 1. Instead we clamp lambda_p to the
+    # same upper bound as p_stack (1 - 1e-6). The resulting KL is finite and
+    # numerically equivalent to the limit policy "Bern(lp) with lp at the
+    # clamp boundary", which is the intended geometric prior at its
+    # degenerate end. Log a one-time warning when the clamp engages so
+    # operators see why lambda_p in logs differs from the env value.
+    _LP_CLAMP_UPPER = 1.0 - 1e-6
+    if lambda_p >= 1.0:
+        if master:
+            logger.warning(
+                f"LAMBDA_P={lambda_p} clamped to {_LP_CLAMP_UPPER} to avoid "
+                "math.log(0) in the PonderNet KL term. Geometric prior is "
+                "effectively 'halt on step 1' (target mean halt step ~= 1.0)."
+            )
+        lp_safe = _LP_CLAMP_UPPER
+    else:
+        lp_safe = lambda_p
+    log_lambda_p = math.log(lp_safe)
+    log_one_minus_lambda_p = math.log(1.0 - lp_safe)
 
     while step < total_steps:
         cur_lr = get_lr(step, warmup_steps, total_steps, lr, lr * 0.1)

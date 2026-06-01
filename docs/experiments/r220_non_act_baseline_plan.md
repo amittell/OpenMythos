@@ -29,8 +29,7 @@ same architecture and same continuation budget.
     would be vacuous anyway, but explicit zeroing prevents any residual
     contribution.
   - `LAMBDA_P=0.5`: value is unused at T_MAX=1 but is set to the r2.17
-    value for cosmetic parity in logs. **WARNING:** do not set LAMBDA_P
-    to 1.0, the training script will raise math domain error (task #106).
+    value for cosmetic parity in logs.
   - `REINIT_HEAD=1`: head is meaningless at T_MAX=1; reinit avoids carrying
     over the r2.17 lambda_p=0.5 head.
 
@@ -78,9 +77,13 @@ useful.
 
 ## Open question
 
-The training script currently raises `math.log(0)` at `lambda_p=1.0`
-(task #106). We are using `lambda_p=0.5` here to sidestep, but should
-verify before launch that `lambda_p=0.5` with `T_MAX=1` does not trigger
-any other edge case in the loss code (e.g., zero iterations of the
-inner loop). A 5-minute dry-run on rtx6000 GPU 1 before the full cluster
+Verify before launch that `lambda_p=0.5` with `T_MAX=1` does not trigger
+any edge case in the loss code (e.g., zero iterations of the inner
+loop). A 5-minute dry-run on rtx6000 GPU 1 before the full cluster
 launch is recommended.
+
+The earlier `lambda_p=1.0` `math.log(0)` crash (task #106) has been
+fixed: lambda_p is now clamped to `1 - 1e-6` (matching the p_stack
+clamp) with a one-time warning. The clamp is unreachable for r2.20's
+`lambda_p=0.5`, but the fix means future rounds can use `lambda_p=1.0`
+without crashing if a degenerate "halt on step 1" prior is wanted.
