@@ -258,20 +258,35 @@ class GQAttention(nn.Module):
             )
             out = out.to(orig_dtype).contiguous().view(B, T, -1)
         else:
-            # Fallback: manual scaled dot-product with explicit KV head expansion.
+            # Fallback: torch's built-in scaled_dot_product_attention. On
+            # sm_80+ with bf16/fp16 this auto-dispatches to PyTorch's bundled
+            # FlashAttention-2 backend (same kernels as the standalone
+            # flash-attn package, just compiled into torch itself). On other
+            # configurations it picks between the memory-efficient and math
+            # backends.
+            #
+            # Two semantic differences from the standalone flash_attn_func
+            # path above:
+            #   (1) GQA: torch SDPA needs K/V at the same head count as Q,
+            #       so we have to repeat_interleave first. flash_attn_func
+            #       takes the n_kv_heads tensors directly.
+            #   (2) Mask: we pass is_causal=(mask is not None) instead of an
+            #       additive mask, which lets the flash backend skip the
+            #       upper triangle entirely. The caller only ever produces
+            #       a causal mask in OpenMythos.forward (T>1 prefill) or
+            #       None (T=1 decode), so this is exact.
             k = k.repeat_interleave(self.groups, dim=2)
             v = v.repeat_interleave(self.groups, dim=2)
             q = q.transpose(1, 2)  # (B, H, T, head_dim)
             k = k.transpose(1, 2)
             v = v.transpose(1, 2)
-            scale = self.head_dim**-0.5
-            attn = torch.matmul(q, k.transpose(-2, -1)) * scale
-            if mask is not None:
-                attn = attn + mask
-            attn = F.dropout(
-                F.softmax(attn, dim=-1), p=self.dropout_p, training=self.training
+            dropout_p = self.dropout_p if self.training else 0.0
+            out = F.scaled_dot_product_attention(
+                q, k, v,
+                attn_mask=None,
+                dropout_p=dropout_p,
+                is_causal=(mask is not None),
             )
-            out = torch.matmul(attn, v)
             out = out.transpose(1, 2).contiguous().view(B, T, -1)
 
         return self.wo(out)
