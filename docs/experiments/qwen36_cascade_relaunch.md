@@ -6,15 +6,18 @@ consecutive failed attempts.
 
 ## Background
 
-We run three legs sequentially through `lcb_runner`, with vLLM serving the
-model on GPU 1 (`device=1`, the second RTX 6000 Pro Blackwell) on TCP
-port 8002:
+We run three legs sequentially through `lcb_runner`. Legs 1 and 3 are
+served by a vLLM instance on `kebab-rtx6000.lan` GPU 1
+(`device=1`, the second RTX 6000 Pro Blackwell) on TCP port 8002.
+Leg 2 was split onto `mini-beast.lan`'s AMD Radeon 8060S (Strix Halo)
+on port 8003 -- see "Cascade leg 2 split to mini-beast Radeon 8060S"
+below for the rationale and details.
 
-| Leg | Model path                          | Served name                | Save name                          |
-| --- | ------------------------------------ | -------------------------- | ---------------------------------- |
-| 1   | `/models/Qwen3.6-27B`                | `qwen3.6-27b`              | `Qwen3.6-27B-bench-run2`           |
-| 2   | `/models/Qwen3.6-35B-A3B`            | `qwen3.6-35b-a3b`          | `Qwen3.6-35B-A3B-bench-run2`       |
-| 3   | `/models/Qwen3-Coder-Next-FP8`       | `qwen3-coder-next-bench`   | `Qwen3-Coder-Next-FP8-bench-run2`  |
+| Leg | Model path                          | Served name                | Save name                          | Backend / endpoint                                   |
+| --- | ------------------------------------ | -------------------------- | ---------------------------------- | ---------------------------------------------------- |
+| 1   | `/models/Qwen3.6-27B`                | `qwen3.6-27b`              | `Qwen3.6-27B-bench-run2`           | vLLM on `kebab-rtx6000.lan:8002`                     |
+| 2   | `/models/Qwen3.6-35B-A3B` (-> GGUF)  | `qwen3.6-35b-a3b`          | `Qwen3.6-35B-A3B-bench-run2`       | llama.cpp Vulkan on `mini-beast.lan:8003`            |
+| 3   | `/models/Qwen3-Coder-Next-FP8`       | `qwen3-coder-next-bench`   | `Qwen3-Coder-Next-FP8-bench-run2`  | vLLM on `kebab-rtx6000.lan:8002`                     |
 
 The driver script is `/tmp/qwen36_bench_cascade.sh` on
 `kebab-rtx6000.lan`. The standing baseline to compare against is
@@ -294,9 +297,13 @@ deltas vs an apples-to-apples vLLM-only cascade:
   `transformers` have shown up historically as 1-3 token differences on
   long prompts. For LCB code-generation tasks this is usually
   immaterial but it is not zero.
-- Sampler: llama.cpp's `--jinja --temperature 0.0` is deterministic
-  greedy. vLLM at `temperature=0.0 top_p=1.0` is also greedy but the
-  argmax tie-breaking on equal logits may differ.
+- Sampler: `lcb_runner` sets `temperature=0.0` per request in the
+  OpenAI-compatible payload (the llama-server systemd unit does not set
+  a CLI temperature flag, and for the OpenAI endpoint sampling is
+  controlled per-request anyway). Both backends therefore run greedy
+  argmax. Tie-breaking on equal logits may differ between llama.cpp and
+  vLLM, which can produce small token-level deltas on prompts that
+  happen to hit ties.
 
 When comparing leg 2's pass@1 against future vLLM-on-Blackwell runs of
 the same model, treat the result as a backend-mixed baseline and footnote
@@ -304,7 +311,18 @@ accordingly.
 
 ### Manual smoke test (when ready, before launching the full cascade)
 
-To validate the service end-to-end without burning the full LCB run:
+To validate the service end-to-end without burning the full LCB run. The
+smoke test goes **directly** to `llama-server` on port 8003 rather than
+through `mini-beast.lan:8080` (the model-router); llama-server does not
+validate the `model` field and we want to exercise the exact path the
+cascade uses (`lcb_runner` -> direct llama-server). The model id in the
+payload below matches `qwen3.6-35b-a3b` because that's the id LCB
+`lm_styles.py` registers and what `lcb_runner --model ...` will send
+during the actual cascade run. **Note**: the model-router on mini-beast
+registers this backend under a different id (`qwen36-35b-a3b`, no period)
+to mirror how `qwen3-coder` is registered there; the cascade bypasses
+the router so the id mismatch is intentional and does not cause a
+mis-route.
 
 ```
 ssh alex@mini-beast.lan "systemctl --user start qwen36-35b-a3b.service"
