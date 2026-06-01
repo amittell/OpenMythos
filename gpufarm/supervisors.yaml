@@ -13,7 +13,17 @@ supervisors:
     env:
       SCRIPT: training/3b_varT_pondernet_joint.py
       PORT: "29520"
-      EXTRA_ENV: "CKPT_DIR=checkpoints_3b_varT_pondernet_round218 TARGET_TOKENS=400000000 REINIT_HEAD=0 LAMBDA_P=0.99"
+      # r2.20 -- matched-compute non-ACT baseline. See
+      # docs/experiments/r220_non_act_baseline_plan.md. T_MAX=1 makes the
+      # recurrent block run exactly one iteration (no depth, no halt
+      # selection); LAMBDA_KL=0 zeroes the KL prior since it's vacuous at
+      # T=1 anyway; REINIT_HEAD=1 reinitialises the (now-meaningless) halt
+      # head so it does not carry over r2.17's lp=0.5 state; LAMBDA_P=0.5
+      # is set for cosmetic parity in logs (unused at T_MAX=1). Bootstrap
+      # shards expected at CKPT_DIR/step_0021362_rank{0..3}.pt -- copy from
+      # round217 before launch (round218's final shards would also work
+      # but the plan calls for the shared r2.17 ending init).
+      EXTRA_ENV: "CKPT_DIR=checkpoints_3b_varT_pondernet_round220 TARGET_TOKENS=400000000 REINIT_HEAD=1 T_MAX=1 LAMBDA_KL=0.0 LAMBDA_P=0.5"
     liveness:
       kind: log_staleness
       host: kebab-spark-200g
@@ -45,4 +55,4 @@ supervisors:
     shutdown:
       sigterm_grace_seconds: 30
       kill_pattern: "python3 .*training/3b_varT"
-    notes: "r2.15 joint PonderNet training; 300M tokens target."
+    notes: "r2.20 non-ACT baseline (T_MAX=1); 50M-token continuation budget. Supervisor id `train-r215` is historical and reused across rounds."
