@@ -58,17 +58,25 @@ jobs:
     requires_exclusive: true
 
   # -------- Cluster consolidation --------
+  # The 4 rank shards live on each cluster member's own local disk (FSDP
+  # writes per-rank), not all on rank 0's host. The previous spec listed
+  # rank0..rank3 as four hard-coded paths and the input_files precondition
+  # checked them all on rank 0 -- which failed for ranks 1-3 because the
+  # files only exist on the matching gx10. gpufarm bug-5 (PR #16 b1a8175,
+  # squash 019da94, deployed 2026-05-31) adds the input_cluster_resource
+  # field: when set and an input path templates {rank}, the dispatcher
+  # iterates each member of that cluster and probes the path on the
+  # matching member's host. cluster-4node here matches the run's
+  # requires_resource so each rank-N shard is checked on rank-N's host.
   - id: consolidate
     script: training/consolidate_ckpt.py
     parallel: 4_rank_fsdp
     resource_class: [gb10]
     requires_resource: cluster-4node
+    input_cluster_resource: cluster-4node
     env_required: [SRC_PATTERN, DST_PATH]
     input_files:
-      - "{SRC_PATTERN}_rank0.pt"
-      - "{SRC_PATTERN}_rank1.pt"
-      - "{SRC_PATTERN}_rank2.pt"
-      - "{SRC_PATTERN}_rank3.pt"
+      - "{SRC_PATTERN}_rank{rank}.pt"
     output_pattern: "{DST_PATH}"
     estimated_minutes: 20
     timeout_minutes: 60
