@@ -361,7 +361,7 @@ class MLAttention(nn.Module):
         )
 
         self.wo = nn.Linear(cfg.n_heads * cfg.v_head_dim, cfg.dim, bias=False)
-        self.attn_drop = nn.Dropout(cfg.dropout)
+        self.dropout_p = cfg.dropout
 
     def forward(
         self,
@@ -424,12 +424,26 @@ class MLAttention(nn.Module):
         k = k.transpose(1, 2)  # (B, H, S, q_head_dim)
         v = v.transpose(1, 2)  # (B, H, S, v_dim)
 
-        scale = self.q_head_dim**-0.5
-        attn = torch.matmul(q, k.transpose(-2, -1)) * scale
-        if mask is not None:
-            attn = attn + mask.to(attn.dtype)
-        attn = self.attn_drop(F.softmax(attn, dim=-1)).to(v.dtype)
-        out = torch.matmul(attn, v)  # (B, H, T, v_dim)
+        # MLA's compression/decompression of c_kv is the architectural win;
+        # the inner attention step over the reconstructed (Q, K, V) is just
+        # standard scaled-dot-product. Route it through F.scaled_dot_product_
+        # attention so it picks up the same flash backend dispatch that
+        # accelerated GQAttention. Two MLA-specific details to preserve:
+        #   * head_dim differs between (Q, K) and V: q_head_dim = nope+rope,
+        #     v_head_dim = v_dim. F.SDPA supports this but requires `scale`
+        #     explicit since it would otherwise infer from V's last dim.
+        #   * Original code applied mask additively (-inf above diagonal).
+        #     OpenMythos.forward only passes a causal mask or None, so
+        #     is_causal=(mask is not None) is exact and lets the flash
+        #     kernel skip the upper triangle entirely.
+        dropout_p = self.dropout_p if self.training else 0.0
+        out = F.scaled_dot_product_attention(
+            q, k, v,
+            attn_mask=None,
+            dropout_p=dropout_p,
+            is_causal=(mask is not None),
+            scale=self.q_head_dim**-0.5,
+        )
         out = out.transpose(1, 2).contiguous().view(B, T, -1)
         return self.wo(out)
 

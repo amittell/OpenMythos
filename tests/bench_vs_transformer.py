@@ -64,7 +64,14 @@ class BaselineTransformer(nn.Module):
         self.norm = RMSNorm(cfg.dim)
         self.head = nn.Linear(cfg.dim, cfg.vocab_size, bias=False)
 
-        head_dim = cfg.dim // cfg.n_heads
+        # RoPE head dim differs by attn_type. GQA rotates the entire per-head
+        # vector (dim/n_heads). MLA only rotates the RoPE-half of Q (and the
+        # shared K_rope), which has dim cfg.qk_rope_head_dim. OpenMythos.forward
+        # carries two freqs_cis buffers for exactly this reason; mirror that
+        # here so BaselineTransformer doesn't blow up on MLA configs.
+        head_dim = (
+            cfg.qk_rope_head_dim if cfg.attn_type == "mla" else cfg.dim // cfg.n_heads
+        )
         self.register_buffer(
             "freqs_cis",
             precompute_rope_freqs(head_dim, cfg.max_seq_len, cfg.rope_theta),
@@ -269,18 +276,27 @@ def get_cfg(size: str) -> MythosConfig:
         cfg.attn_type = "gqa"
         return cfg
     if size == "3b":
-        # Paper model. mythos_3b() defaults to MLA per the published config; the
-        # bench needs both arms on the same attention to isolate recurrent-depth
-        # cost vs. non-recurrent cost (BaselineTransformer uses the same
-        # TransformerBlock and would otherwise be MLA too -- still a fair
-        # comparison but you lose the flash-attn-2 cherry-pick path, which only
-        # applies to GQAttention.forward). Force GQA so the bench actually
-        # exercises the flash-attn path and matches the n_loops semantics
-        # the 1b bench uses.
+        # Paper model. mythos_3b() defaults to MLA per the published config;
+        # see paper §8.1.1 for why -- compressed kv_lora_rank cache. The
+        # bench needs both arms (OpenMythos recurrent vs. BaselineTransformer
+        # non-recurrent) on the same attention to isolate recurrent-depth
+        # cost from kernel cost. We default to GQA here so the bench
+        # exercises the F.SDPA flash path (which applies to both
+        # GQAttention.forward and MLAttention.forward as of the 6de6fd2
+        # + this commit). Pass --attn mla from the command line to keep
+        # the paper config; the bench is fair either way as long as both
+        # arms use the same attn_type.
         cfg = mythos_3b()
         cfg.attn_type = "gqa"
         return cfg
-    raise ValueError(f"unknown size: {size!r} (use 'small', '1b', or '3b')")
+    if size == "3b-mla":
+        # mythos_3b paper config kept exactly: MLA with kv_lora_rank=384,
+        # q_lora_rank=768, head dims as published. Use to measure the
+        # speedup from the F.SDPA reroute in MLAttention.forward.
+        return mythos_3b()
+    raise ValueError(
+        f"unknown size: {size!r} (use 'small', '1b', '3b', or '3b-mla')"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -308,7 +324,11 @@ def print_header(title: str) -> None:
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--size", default="small", choices=["small", "1b", "3b"])
+    p.add_argument(
+        "--size",
+        default="small",
+        choices=["small", "1b", "3b", "3b-mla"],
+    )
     p.add_argument(
         "--device",
         default="cuda" if torch.cuda.is_available() else "cpu",
