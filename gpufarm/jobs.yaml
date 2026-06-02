@@ -85,6 +85,58 @@ jobs:
     max_retries: 2
     requires_exclusive: true        # cluster consolidation needs all 4 ranks
 
+  # -------- Single-host consolidation (fallback when cluster is busy) --------
+  # Drives the same FSDP-shards-to-full-state-dict collapse as ``consolidate``
+  # above but on a SINGLE multi-GPU host instead of the 4-node cluster. Use
+  # when the cluster ``consolidate`` job can't run -- typically because the
+  # gpufarm cluster supervisor is holding cluster-4node for an in-flight
+  # training run on a different round (the situation that drove gpufarm
+  # task #116: r2.18's consolidate was blocked by r2.20's supervisor).
+  #
+  # Wraps ``training/consolidate_ckpt_single_host.py`` under
+  # ``torch.distributed.run --standalone --nnodes=1 --nproc_per_node=4``
+  # via gpufarm's ``torchrun_nproc_per_node`` field (added in PR #18 there).
+  # The 4 ranks colocate on the host's GPUs via the modulo mapping
+  # ``LOCAL_RANK % torch.cuda.device_count()`` inside the script -- so on
+  # the 2-GPU kebab-rtx6000 box ranks 0+2 share cuda:0 and ranks 1+3 share
+  # cuda:1 (each shard ~11 GB; 22 GB per card; fits in 96 GB headroom).
+  #
+  # input_files are 4 explicit per-rank paths (NOT templated with {rank})
+  # because all 4 shards must live on the SAME host before this job can
+  # run -- the operator pre-rsyncs them off the cluster. That's the
+  # opposite of the cluster ``consolidate`` job above, which uses
+  # ``input_cluster_resource`` to probe each shard on its matching rank.
+  #
+  # Resource class is ``blackwell`` (96 GB cards). 2-GPU host preferred
+  # over 1-GPU because 4 shards on one 96 GB card peaks at ~95 GB during
+  # FSDP wrap (tight). ``requires_exclusive: true`` evicts vllm /
+  # embedding / vision services so the consolidator has full VRAM access.
+  - id: consolidate_single_host
+    script: training/consolidate_ckpt_single_host.py
+    resource_class: [blackwell]
+    # Pin to the whole-host view of kebab-rtx6000 so all 4 torchrun ranks
+    # see BOTH GPUs (the per-GPU views ``blackwell-gpu0`` /
+    # ``blackwell-gpu1`` set ``cuda_device`` -> ``CUDA_VISIBLE_DEVICES``
+    # gets injected -> only 1 GPU visible -> ranks pile on cuda:0 ->
+    # OOM). The host view also stops vision-cuda on gpu1 in addition to
+    # vllm/embedding on gpu0 so torchrun has the full 2x96=192 GB of
+    # VRAM available. (Copilot OpenMythos PR#2 review.)
+    requires_resource: blackwell-host
+    torchrun_nproc_per_node: 4
+    env_required: [SRC_PATTERN, DST_PATH]
+    input_files:
+      - "{SRC_PATTERN}_rank0.pt"
+      - "{SRC_PATTERN}_rank1.pt"
+      - "{SRC_PATTERN}_rank2.pt"
+      - "{SRC_PATTERN}_rank3.pt"
+    output_pattern: "{DST_PATH}"
+    estimated_minutes: 30
+    timeout_minutes: 90
+    priority: 1
+    preemptible: false
+    max_retries: 1
+    requires_exclusive: true        # 4 ranks on one host; need full VRAM + no other gpufarm work
+
   # -------- Per-ckpt evals --------
   - id: inference_benchmark
     script: training/inference_throughput_benchmark.py
