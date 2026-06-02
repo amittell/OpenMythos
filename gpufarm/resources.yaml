@@ -163,6 +163,19 @@ resources:
     class: rtx5090
     vram_gb: 32
     priority_tier: 2                # best-effort, flaky on heavy CUDA work
+    # vllm-20b.service holds this GPU continuously serving gpt-oss-20b with
+    # an Eagle3 speculator at 131K context, 96 max sequences (~30 GB). The
+    # service is a day-to-day inference target outside the eval pipeline;
+    # gpufarm does not dispatch eval work here while it is held. Operator
+    # flips state to released when the service is intentionally stopped
+    # (e.g. during driver upgrades, host reboots, or to free the card for
+    # a one-off CUDA job). Phase 2 live-probe (task to be filed) will flip
+    # this automatically from the systemctl state.
+    external_lease:
+      service: vllm-20b
+      description: "gpt-oss-20b + Eagle3 speculator on port 8000 (vllm-20b.service)"
+      held_vram_gb: 30
+      state: held
     recovery_hook: |
       # Consumer card; gpu-reset is "Not Supported". Last resort: host reboot.
       # Only execute on explicit operator confirmation -- this kicks all
@@ -214,6 +227,21 @@ resources:
                                     # `amd_iommu=pt` boot setting and effectively bounded by physical
                                     # RAM. 128 GB is the practical ceiling for inference workloads here.
     priority_tier: 3                # below rtx5090; serves the Vulkan/ROCm side of mini-beast
+    # Strix Halo runs a bundle of persistent Vulkan/ROCm inference services
+    # (qwen3-coder, qwen-vision, embedding, flux, qwen3-tts, colpali,
+    # whisper-cpp, plus the on-demand qwen36-35b-a3b cascade leg 2 backend).
+    # Together they hold most of the 128 GB unified pool at any moment
+    # (rocm-smi --showmemuse typically reports 90-95% allocated). One
+    # external_lease can only name a single canonical service so we point
+    # at qwen3-coder, which is the dominant day-to-day surface, and document
+    # the rest in the conflicts_with block below. Phase 2 live-probe will
+    # surface the full unit roster + actual GTT usage; until then the held
+    # state here is the operational truth: do not dispatch eval work here.
+    external_lease:
+      service: strixhalo-inference-bundle
+      description: "Vulkan/ROCm bundle: qwen3-coder + qwen-vision + embedding + flux + qwen3-tts + colpali + whisper-cpp (port 8080 router); ~95% GTT held"
+      held_vram_gb: 110
+      state: held
     recovery_hook: |
       # Same recovery posture as rtx5090: consumer-grade silicon, no reliable
       # in-band reset. amdgpu kernel module is more forgiving than nvidia.ko
