@@ -35,6 +35,55 @@ resources:
       works in practice). Use [p]ython3 regex trick for any pgrep/pkill
       to avoid matching own shell command line.
 
+  # Whole-host kebab-rtx6000 view -- exists for jobs that need BOTH GPUs
+  # visible simultaneously (single-host multi-rank torchrun, e.g.
+  # ``consolidate_single_host``). Without this, a job pinned to
+  # ``blackwell-gpu0`` or ``blackwell-gpu1`` would either (a) get
+  # ``CUDA_VISIBLE_DEVICES=N`` injected and only see 1 GPU -> all
+  # torchrun ranks pile onto cuda:0 -> OOM, or (b) only stop conflicts_with
+  # services on its own card and the OTHER card's vision/vllm services
+  # keep eating VRAM. (Copilot OpenMythos PR#2 review.)
+  #
+  # cuda_device is intentionally null: ``render_command`` skips CVD
+  # injection when ``resource.cuda_device is None``, so all GPUs on the
+  # host stay visible.
+  #
+  # conflicts_with is the UNION of blackwell-gpu0 and blackwell-gpu1
+  # entries -- jobs that take this resource need the whole host empty
+  # of out-of-band services (vllm-language on gpu0; vision-cuda on gpu1;
+  # embedding wherever). ``requires_exclusive: true`` on the job is the
+  # trigger that actually evicts them.
+  #
+  # Scheduler note: this resource overlaps blackwell-gpu0 and
+  # blackwell-gpu1 on hardware -- the lease store currently has no
+  # resource-mutex feature, so it is the OPERATOR's responsibility
+  # to verify the host is free before submitting a job pinned here.
+  # In practice ``consolidate_single_host`` only runs once per round,
+  # after the cluster training step finishes, so there is no concurrent
+  # demand for blackwell-gpu0/1.
+  - id: blackwell-host
+    host: kebab-rtx6000.lan
+    ssh_user: alexm
+    cuda_device: null               # no CVD pin -- both GPUs visible to the job
+    class: blackwell
+    vram_gb: 192                    # 96 + 96 = whole host
+    priority_tier: 1                # same tier as the per-GPU views
+    can_run:
+      - consolidate_single_host
+    python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
+    conflicts_with:
+      - {service: kebab-rtx-vllm.service, scope: system}        # gpu0
+      - {service: kebab-rtx-embedding.service, scope: system}   # gpu0
+      - {service: kebab-rtx-vision-cuda.service, scope: system} # gpu1
+    router:
+      url: http://kebab-rtx6000.lan:8080
+      capabilities: [health, admin_models_load, admin_models_unload, admin_models_status]
+    notes: |
+      Whole-host view of kebab-rtx6000. Overlaps blackwell-gpu0 and
+      blackwell-gpu1 -- operator must ensure no concurrent jobs on
+      those before submitting. Only ``consolidate_single_host`` should
+      ``requires_resource: blackwell-host`` today.
+
   - id: blackwell-gpu0
     host: kebab-rtx6000.lan
     ssh_user: alexm

@@ -114,6 +114,14 @@ jobs:
   - id: consolidate_single_host
     script: training/consolidate_ckpt_single_host.py
     resource_class: [blackwell]
+    # Pin to the whole-host view of kebab-rtx6000 so all 4 torchrun ranks
+    # see BOTH GPUs (the per-GPU views ``blackwell-gpu0`` /
+    # ``blackwell-gpu1`` set ``cuda_device`` -> ``CUDA_VISIBLE_DEVICES``
+    # gets injected -> only 1 GPU visible -> ranks pile on cuda:0 ->
+    # OOM). The host view also stops vision-cuda on gpu1 in addition to
+    # vllm/embedding on gpu0 so torchrun has the full 2x96=192 GB of
+    # VRAM available. (Copilot OpenMythos PR#2 review.)
+    requires_resource: blackwell-host
     torchrun_nproc_per_node: 4
     env_required: [SRC_PATTERN, DST_PATH]
     input_files:
