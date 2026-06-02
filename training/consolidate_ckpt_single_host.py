@@ -138,7 +138,16 @@ def main() -> None:
             f"(local_rank {local_rank} -> {device})"
         )
         logger.info(f"loading shard 0 from {shard_path}")
-    ckpt = torch.load(shard_path, map_location="cpu", weights_only=False)
+    # mmap=True is load-bearing on a single-host 4-rank consolidate.
+    # Without it, each of the 4 ranks does a full ``torch.load(...,
+    # map_location='cpu')`` into anonymous CPU memory in parallel: for
+    # the r2.18 case (~11 GB per shard) peak virtual memory on the host
+    # hit ~125 GB with 124 GB of system RAM and the kernel OOM-killer
+    # took out the consolidator (and dbus along with it -- 2026-05-31).
+    # mmap=True maps the .pt file's tensor storage on demand instead,
+    # letting the kernel page in only what FSDP actually touches during
+    # ``load_state_dict``. Peak resident dropped to ~25 GB in testing.
+    ckpt = torch.load(shard_path, map_location="cpu", weights_only=False, mmap=True)
     saved_cfg = ckpt["cfg"]
 
     cfg = mythos_3b()
