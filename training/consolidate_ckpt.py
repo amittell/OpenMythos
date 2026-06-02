@@ -59,7 +59,17 @@ def main() -> None:
     local_rank = int(os.environ.get("LOCAL_RANK", 0))
     world = int(os.environ["WORLD_SIZE"])
 
-    dist.init_process_group("nccl")
+    # Per-collective NCCL watchdog timeout. Default 600s is too tight
+    # for a 4-node bf16 ALLGATHER of ~1.15 GB through cold-start RoCE
+    # handshake; bump to 30 min via env (CLUSTER_NCCL_TIMEOUT_SEC) when
+    # called from training/cluster_consolidate.sh.
+    from datetime import timedelta
+    _nccl_timeout_sec = int(os.environ.get("CLUSTER_NCCL_TIMEOUT_SEC", "1800"))
+    dist.init_process_group(
+        "nccl", timeout=timedelta(seconds=_nccl_timeout_sec)
+    )
+    if rank == 0:
+        logger.info(f"NCCL collective timeout = {_nccl_timeout_sec}s")
     torch.cuda.set_device(local_rank)
     device = f"cuda:{local_rank}"
 
