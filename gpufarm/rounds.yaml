@@ -142,8 +142,48 @@ rounds:
     # bypass training. Tests whether the depth-extrap CE plateau observed
     # at the 200M point (r2.13) lifts with another 300M tokens under the
     # same recipe.
+    #
+    # ckpt_step note: original placeholder was 18306 (6x r2.13's 3051,
+    # linear extrapolation pre-training). Actual final consolidated step
+    # is 18310 -- the consolidated full.pt that produced the paper's r2.15
+    # results lives on kebab-rtx6000 at
+    # checkpoints_3b_varT_pondernet_round215/step_0018310_full.pt
+    # (May 26). Cluster training did continue past that point to step
+    # 18800 (rank shards still on kebab-spark, 4 ranks present) but those
+    # later shards were never consolidated and are not the source of any
+    # published number. Treat 18310 as the canonical r215 endpoint.
     ckpt_dir: checkpoints_3b_varT_pondernet_round215
-    ckpt_step: 18306  # 6x r2.13's 3051 (linear extrapolation; will be set
-                      # to the actual final step on consolidation)
+    ckpt_step: 18310
     bootstrap: r213
     eval_bundle: *eval_defaults
+
+  r218:
+    description: "Round 2.18: lambda_p=1.0 cluster ablation -- discriminating test for the depth-3 floor (task #105)"
+    # Lambda_p=1.0 means the halt-prior KL term is maximally weighted, pushing
+    # the model toward the geometric-1 (always halt at depth 1) prior. The
+    # interesting question is whether the model collapses to depth 1 or
+    # stays at depth 3 (where r2.13 plateaued), which would imply the depth
+    # floor is a property of the data, not the halt prior.
+    ckpt_dir: checkpoints_3b_varT_pondernet_round218
+    ckpt_step: 24414
+    bootstrap: r213
+    eval_bundle: *eval_defaults
+
+  r220:
+    description: "Round 2.20: matched-compute non-ACT baseline (task #112)"
+    # Same training token count as r2.18 (24414 steps) but with ACT disabled.
+    # The model has no halt logic; each forward pass uses a fixed depth set
+    # at training time. Provides the matched-compute control point that the
+    # depth-extrap and reasoning_eval comparisons need to attribute gains to
+    # the recurrent-depth ACT mechanism vs more compute alone.
+    ckpt_dir: checkpoints_3b_varT_pondernet_round220
+    ckpt_step: 24414
+    bootstrap: r213
+    # Non-ACT model -- the ACT-specific evals (per_token_halt, act_halt_*)
+    # do not apply because there is no halt distribution to measure. We
+    # run the architecture-agnostic evals only.
+    eval_bundle:
+      - inference_benchmark
+      - depth_extrap_k64
+      - reasoning_eval
+      - gen_samples_multidepth
