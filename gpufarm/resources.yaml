@@ -234,12 +234,15 @@ resources:
     # (rocm-smi --showmemuse typically reports 90-95% allocated). One
     # external_lease can only name a single canonical service so we point
     # at qwen3-coder, which is the dominant day-to-day surface, and document
-    # the rest in the conflicts_with block below. Phase 2 live-probe will
-    # surface the full unit roster + actual GTT usage; until then the held
-    # state here is the operational truth: do not dispatch eval work here.
+    # the rest in the conflicts_with block below. The Phase 2 live-probe
+    # (PR amittell/gpufarm#25) asks systemctl --user is-active for this
+    # service name on every tick. The earlier placeholder name
+    # "strixhalo-inference-bundle" was not a real systemd unit so the probe
+    # always reported "inactive"; the resolved state stayed HELD because
+    # of state: held below, but the probe column was misleading.
     external_lease:
-      service: strixhalo-inference-bundle
-      description: "Vulkan/ROCm bundle: qwen3-coder + qwen-vision + embedding + flux + qwen3-tts + colpali + whisper-cpp (port 8080 router); ~95% GTT held"
+      service: qwen3-coder
+      description: "Vulkan/ROCm bundle canonical: qwen3-coder.service (+ qwen-vision, embedding, flux, qwen3-tts, colpali, whisper-cpp; port 8080 router); ~95% GTT held"
       held_vram_gb: 110
       state: held
     recovery_hook: |
