@@ -203,8 +203,31 @@ def main():
     if not ckpt_path or not os.path.exists(ckpt_path):
         logger.error(f"CKPT must point to existing checkpoint (got: {ckpt_path})")
         sys.exit(1)
-    out_dir = Path(os.environ.get("OUT_DIR", "checkpoints_3b_sft_lora"))
+    # ROUND env var (e.g. "r215") if present makes the script gpufarm-friendly:
+    # the checkpoint dir gets round-tagged AND the training_curve.json is
+    # also written to docs/sft_lora_{round}_training_curve.json (the path
+    # gpufarm's sft_lora job spec's output_pattern expects). When ROUND is
+    # absent, the legacy behaviour is preserved: OUT_DIR override (or the
+    # checkpoints_3b_sft_lora default) is used for everything.
+    round_id = os.environ.get("ROUND", "").strip()
+    if round_id and not os.environ.get("OUT_DIR"):
+        # Auto-derive a round-tagged output dir so concurrent runs across
+        # rounds don't overwrite each other's adapters.
+        out_dir = Path(f"checkpoints_3b_sft_lora_{round_id}")
+    else:
+        out_dir = Path(os.environ.get("OUT_DIR", "checkpoints_3b_sft_lora"))
     out_dir.mkdir(parents=True, exist_ok=True)
+    # The gpufarm-visible curve path. Written once at the end with the full
+    # config + history; also written incrementally throughout training (see
+    # the training loop) so a job killed by SIGTERM (e.g. gpufarm timeout)
+    # still leaves a usable partial curve. None when ROUND is unset --
+    # the in-out_dir training_curve.json is the only artifact in that case.
+    curve_external_path = (
+        Path(f"docs/sft_lora_{round_id}_training_curve.json")
+        if round_id else None
+    )
+    if curve_external_path is not None:
+        curve_external_path.parent.mkdir(parents=True, exist_ok=True)
 
     dataset_id = os.environ.get("DATASET", "HuggingFaceH4/ultrachat_200k")
     split = os.environ.get("SPLIT", "train_sft")
@@ -336,7 +359,36 @@ def main():
             dt = time.perf_counter() - t0
             tok_s = micro_batch * grad_accum * seq_len * log_every / max(1e-9, dt)
             logger.info(f"step {step}/{target_steps} | loss {avg_loss:.4f} | lr {cur_lr:.2e} | {tok_s/1e3:.1f}k tok/s")
-            history.append({"step": step, "loss": avg_loss, "lr": cur_lr})
+            history.append({"step": step, "loss": avg_loss, "lr": cur_lr, "tok_s": tok_s})
+            # Incremental curve write: rewrites the JSON every save_every
+            # steps so a job killed by gpufarm timeout / power event leaves
+            # a usable partial artifact. Keeps the same shape as the
+            # end-of-training write below; the "complete" flag tells
+            # downstream consumers whether the run finished cleanly.
+            if step % save_every == 0:
+                _curve_payload = {
+                    "history": history,
+                    "complete": False,
+                    "current_step": step,
+                    "target_steps": target_steps,
+                    "config": {
+                        "ckpt": str(ckpt_path),
+                        "round": round_id or None,
+                        "dataset": dataset_id,
+                        "split": split,
+                        "max_samples": max_samples,
+                        "seq_len": seq_len,
+                        "lora_rank": lora_rank,
+                        "lora_alpha": lora_alpha,
+                        "lr": lr,
+                        "epochs": epochs,
+                    },
+                }
+                with open(out_dir / "training_curve.json", "w") as f:
+                    json.dump(_curve_payload, f, indent=2)
+                if curve_external_path is not None:
+                    with open(curve_external_path, "w") as f:
+                        json.dump(_curve_payload, f, indent=2)
             t0 = time.perf_counter()
 
         if step % save_every == 0:
@@ -352,21 +404,31 @@ def main():
     final_path = out_dir / "lora_adapter_final.pt"
     torch.save(sd_lora, final_path)
     logger.success(f"saved final LoRA adapter: {final_path}")
+    _curve_final_payload = {
+        "history": history,
+        "complete": True,
+        "current_step": step,
+        "target_steps": target_steps,
+        "config": {
+            "ckpt": str(ckpt_path),
+            "round": round_id or None,
+            "dataset": dataset_id,
+            "split": split,
+            "max_samples": max_samples,
+            "seq_len": seq_len,
+            "lora_rank": lora_rank,
+            "lora_alpha": lora_alpha,
+            "lr": lr,
+            "epochs": epochs,
+        },
+    }
     with open(out_dir / "training_curve.json", "w") as f:
-        json.dump({
-            "history": history,
-            "config": {
-                "ckpt": str(ckpt_path),
-                "dataset": dataset_id,
-                "split": split,
-                "max_samples": max_samples,
-                "seq_len": seq_len,
-                "lora_rank": lora_rank,
-                "lora_alpha": lora_alpha,
-                "lr": lr,
-                "epochs": epochs,
-            },
-        }, f, indent=2)
+        json.dump(_curve_final_payload, f, indent=2)
+    logger.success(f"saved training curve: {out_dir / 'training_curve.json'}")
+    if curve_external_path is not None:
+        with open(curve_external_path, "w") as f:
+            json.dump(_curve_final_payload, f, indent=2)
+        logger.success(f"saved gpufarm-visible curve: {curve_external_path}")
 
     if save_merged:
         logger.info("merging LoRA into base weights for export")

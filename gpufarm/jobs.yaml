@@ -246,7 +246,15 @@ jobs:
     input_files: ["{CKPT}"]
     output_pattern: docs/sft_lora_r{round_num}_training_curve.json
     estimated_minutes: 120
-    timeout_minutes: 240
+    # Bumped 240 -> 600 on 2026-06-04. Run #210 (r215) ran at 5.9k tok/s
+    # while #211 (r218) ran at 12.8k tok/s -- the difference was that
+    # cascade leg 1 vLLM on GPU 1 was sharing the host's PCIe bandwidth
+    # for #210, roughly halving sft_lora throughput. The 240 min budget
+    # was too tight to absorb that. 600 gives headroom for similar
+    # contention scenarios. Pair with the script's incremental
+    # training_curve.json writes (2026-06-04 patch) so even a job that
+    # eats the new ceiling leaves a usable partial curve.
+    timeout_minutes: 600
     priority: 7                    # lower than evals -- big time investment
     preemptible: false             # losing 2h of SFT progress is expensive
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
