@@ -71,10 +71,13 @@ resources:
     can_run:
       - consolidate_single_host
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
+    # Verified 2026-06-03: actual UNION of per-GPU services on kebab-rtx6000.
+    # GPU 0 hosts vllm (gpt-oss-120b). GPU 1 hosts vllm-coder-gpu1
+    # (Qwen3-Coder-Next-FP8) and embedding (Qwen3-Embedding-8B).
     conflicts_with:
-      - {service: kebab-rtx-vllm.service, scope: system}        # gpu0
-      - {service: kebab-rtx-embedding.service, scope: system}   # gpu0
-      - {service: kebab-rtx-vision-cuda.service, scope: system} # gpu1
+      - {service: kebab-rtx-vllm.service, scope: system}              # gpu0
+      - {service: kebab-rtx-vllm-coder-gpu1.service, scope: system}   # gpu1
+      - {service: kebab-rtx-embedding.service, scope: system}         # gpu1
     router:
       url: http://kebab-rtx6000.lan:8080
       capabilities: [health, admin_models_load, admin_models_unload, admin_models_status]
@@ -104,9 +107,20 @@ resources:
       - eval_listops
       - eval_gsm8k
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
+    # Verified 2026-06-03 against actual running units. The previous list
+    # claimed embedding lived on GPU 0; in reality kebab-rtx-embedding
+    # runs on GPU 1 alongside coder-next (the embedding service is small,
+    # ~10 GB, and shares GPU 1 with the dominant coder model). The only
+    # GPU-0-resident production service is kebab-rtx-vllm (gpt-oss-120b
+    # via docker run --gpus device=0, holds ~85 GB at steady state).
     conflicts_with:
       - {service: kebab-rtx-vllm.service, scope: system}
-      - {service: kebab-rtx-embedding.service, scope: system}
+    external_lease:
+      service: kebab-rtx-vllm
+      description: "gpt-oss-120b vLLM (system-scope, docker --gpus device=0, ~85 GB held)"
+      held_vram_gb: 85
+      state: held
+      scope: system
     # kebab-rtx6000 FastAPI router (sibling_repos_survey.md:412-481).
     # admin_models_* applies to TTS backends only (orpheus/qwen3-tts/
     # omnivoice/csm); vLLM language + vision are out-of-band systemd units
@@ -140,15 +154,22 @@ resources:
       - eval_gsm8k
       - toy_depth_task         # paper Tier 2.4, pinned here via requires_resource
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
-    # vllm-120b / embedding / ocr pin to GPU 0; GPU 1 hosts kebab-rtx-vision-cuda
-    # (Qwen3-VL-32B-FP8, system-scope service, ~85 GB VRAM resident). Any job
-    # scheduled on blackwell-gpu1 must evict vision-cuda first; the executor
-    # can do that via SSH+systemctl OR via the router admin endpoint at
-    # /admin/models/unload {"model_id":"qwen3-vl-32b"} (preferred, since it
-    # also returns a structured status payload). Reload via /admin/models/load
-    # after the job exits.
+    # Verified 2026-06-03 against actual running units. GPU 1 now hosts
+    # kebab-rtx-vllm-coder-gpu1 (Qwen3-Coder-Next FP8 80B MoE, ~75 GB
+    # holdings, system-scope, docker --gpus device=1) AND kebab-rtx-embedding
+    # (Qwen3-Embedding-8B, ~10 GB, also system-scope on device=1). The
+    # previous declaration named kebab-rtx-vision-cuda.service which does
+    # NOT exist as a unit on the host. Any job dispatched here will trigger
+    # requires_exclusive eviction of both units.
     conflicts_with:
-      - {service: kebab-rtx-vision-cuda.service, scope: system}
+      - {service: kebab-rtx-vllm-coder-gpu1.service, scope: system}
+      - {service: kebab-rtx-embedding.service, scope: system}
+    external_lease:
+      service: kebab-rtx-vllm-coder-gpu1
+      description: "Qwen3-Coder-Next-FP8 vLLM (docker --gpus device=1, ~75 GB) + co-tenant kebab-rtx-embedding ~10 GB"
+      held_vram_gb: 85
+      state: held
+      scope: system
     # Same kebab-rtx6000 FastAPI router as gpu0 (host-level surface, not per-GPU).
     router:
       url: http://kebab-rtx6000.lan:8080
