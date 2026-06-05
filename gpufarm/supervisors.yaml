@@ -26,7 +26,7 @@ supervisors:
       EXTRA_ENV: "CKPT_DIR=checkpoints_3b_varT_pondernet_round220 TARGET_TOKENS=400000000 REINIT_HEAD=1 T_MAX=1 LAMBDA_KL=0.0 LAMBDA_P=0.5"
     liveness:
       kind: log_staleness
-      host: kebab-spark-200g
+      host: kebab-spark.lan
       log_path: /tmp/train_r0.log
       stale_seconds: 480
     restart_policy:
@@ -40,10 +40,10 @@ supervisors:
         on_fail: wait
       - check: dns_resolve
         name: huggingface.co
-        host: kebab-spark-200g
+        host: kebab-spark.lan
         on_fail: wait
       - check: roce_gid_present
-        host: kebab-spark-200g
+        host: kebab-spark.lan
         iface: rocep1s0f1
         subnet_prefix: "192.168.100."
         on_fail: wait
