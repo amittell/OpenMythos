@@ -9,27 +9,39 @@ EvalPlus HumanEval+ + EvalPlus MBPP+ + BigCodeBench across:
 - `Qwen/Qwen3.6-35B-A3B` (BF16)
 - `Qwen/Qwen3-Coder-Next-FP8`
 
-Runs on `kebab-cruelist.lan` (driver) against vLLM endpoints on
-`kebab-rtx6000.lan` GPU 0 + GPU 1.
+Runs on `kebab-cruelist.lan` (driver) against vLLM endpoints distributed
+across the DGX Spark cluster + `kebab-rtx6000.lan` GPU 1.
 
 ## Layout
 
-| Script                  | Where it runs          | Purpose                                             |
-| ----------------------- | ---------------------- | --------------------------------------------------- |
-| `start_endpoint.sh`     | rtx6000                | Boot one vLLM container with multi-name aliases     |
-| `bench_driver.sh`       | cruelist               | Run 6 benches against one endpoint                  |
-| `orchestrator.sh`       | cruelist               | Cycle through 3 phases, manage endpoint swaps       |
-| `monitor.sh`            | cruelist               | One-shot status snapshot                            |
+| Script                       | Where it runs          | Purpose                                             |
+| ---------------------------- | ---------------------- | --------------------------------------------------- |
+| `start_endpoint.sh`          | rtx6000                | Boot one vLLM container (rtx6000 only; legacy)      |
+| `bench_driver.sh`            | cruelist               | Run 6 benches against one endpoint                  |
+| `orchestrator.sh`            | cruelist               | Original 3-phase rtx6000-only orchestrator (unused) |
+| `cluster_orchestrator.sh`    | cruelist               | **Active**: single-phase 5-endpoint parallel        |
+| `monitor.sh`                 | cruelist               | One-shot status snapshot                            |
 
-## Phase layout (parallelised on 2 GPUs)
+## Endpoint layout (5 endpoints in parallel)
 
-| Phase | GPU 0                  | GPU 1                  | Walltime budget |
-| ----- | ---------------------- | ---------------------- | --------------- |
-| 1     | Qwen3.6-27B-FP8        | Qwen3.6-35B-A3B-FP8    | ~30 h           |
-| 2     | Qwen3-Coder-Next-FP8   | Qwen3.6-27B-BF16       | ~30 h           |
-| 3     | Qwen3.6-35B-A3B-BF16   | (idle)                 | ~25 h           |
+| Endpoint host         | GPU        | Model                  | Image                     |
+| --------------------- | ---------- | ---------------------- | ------------------------- |
+| `kebab-rtx6000.lan`   | GPU 1      | Qwen3.6-35B-A3B-BF16   | vllm/vllm-openai:v0.21.0  |
+| `kebab-spark.lan`     | GB10       | Qwen3-Coder-Next-FP8   | vllm/vllm-openai:v0.21.0  |
+| `kebab-gx10.lan`      | GB10       | Qwen3.6-27B-FP8        | vllm/vllm-openai:v0.21.0  |
+| `kebab-gx10-2.lan`    | GB10       | Qwen3.6-35B-A3B-FP8    | vllm/vllm-openai:v0.21.0  |
+| `kebab-gx10-3.lan`    | GB10       | Qwen3.6-27B-BF16       | vllm/vllm-openai:v0.21.0  |
 
-Total wall: ~85 hours = ~3.5 days.
+vLLM v0.21.0 is multi-arch (amd64 + arm64). The DGX Spark nodes are aarch64
+GB10 (Blackwell SM 12); image pulled successfully and verified to boot.
+
+Cluster nodes received their model weights via rsync from `rtx6000:/models`
+into `/home/alexm/models/` on each node (over 10GbE mgmt link, ~280 MB/s
+aggregate). rtx6000 keeps `Qwen3.6-35B-A3B` (the largest BF16) on its
+local /models since it has the only existing copy.
+
+Total wall: ~25-40 hours (bottleneck = slowest single model's bench
+suite, not summed across models).
 
 ## Sampling parameters (per Qwen recommendations)
 
