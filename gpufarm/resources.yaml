@@ -8,11 +8,23 @@ resources:
   # cluster_4node job; never individually.
   - id: cluster-4node
     ssh_user: alexm
+    # ``host`` is the SSH endpoint the coordinator uses for nvidia-smi
+    # health probes + supervisor liveness + dispatch. Use the management-
+    # network .lan name (192.168.210.x) so the probe works from any
+    # coordinator host on the .210 network, including mac-mini.lan which
+    # has no route to the 200G fabric (192.168.100.x). The 200G hostname
+    # is preserved as ``roce_host`` for components (NCCL launch wrappers,
+    # ``cluster_consolidate.sh`` etc.) that need to talk on the storage
+    # fabric directly. NCCL/torchrun itself uses ``master_addr`` below
+    # so it always rendezvous over the 200G IP regardless of the SSH
+    # endpoint here. Migrated 2026-06-05 -- pre-migration this field
+    # held the 200G hostnames which failed to resolve from mac-mini and
+    # generated ~16 warning lines per minute in the coordinator log.
     members:
-      - {rank: 0, host: kebab-spark-200g, jump_host: kebab-spark.lan, gid: 3}
-      - {rank: 1, host: kebab-gx10-200g, jump_host: kebab-spark.lan, gid: 3}
-      - {rank: 2, host: kebab-gx10-2-200g, jump_host: kebab-spark.lan, gid: 3}
-      - {rank: 3, host: kebab-gx10-3-200g, jump_host: kebab-spark.lan, gid: 3}
+      - {rank: 0, host: kebab-spark.lan,   roce_host: kebab-spark-200g,   jump_host: kebab-spark.lan, gid: 3}
+      - {rank: 1, host: kebab-gx10.lan,    roce_host: kebab-gx10-200g,    jump_host: kebab-spark.lan, gid: 3}
+      - {rank: 2, host: kebab-gx10-2.lan,  roce_host: kebab-gx10-2-200g,  jump_host: kebab-spark.lan, gid: 3}
+      - {rank: 3, host: kebab-gx10-3.lan,  roce_host: kebab-gx10-3-200g,  jump_host: kebab-spark.lan, gid: 3}
     class: gb10
     vram_gb: 128                    # GB10 unified memory per node
     priority_tier: 0                # most precious (training only)
