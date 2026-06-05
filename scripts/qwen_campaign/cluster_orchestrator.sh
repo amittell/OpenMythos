@@ -1,14 +1,9 @@
 #!/bin/bash
-# Cluster-augmented campaign orchestrator (v2 clean structure).
-# 5 endpoints, 5 models in parallel:
-#   rtx6000 GPU1  : Qwen3.6-35B-A3B-BF16
-#   kebab-spark   : Qwen3-Coder-Next-FP8
-#   kebab-gx10    : Qwen3.6-27B-FP8
-#   kebab-gx10-2  : Qwen3.6-35B-A3B-FP8
-#   kebab-gx10-3  : Qwen3.6-27B-BF16
+# Cluster-augmented campaign orchestrator (v3 — fixes PID-wait subshell bug).
+# 5 endpoints, 5 models in parallel.
 set -uo pipefail
 
-CAMPAIGN_ROOT=/home/alexm/qwen_campaign_v2
+CAMPAIGN_ROOT=/home/alexm/qwen_campaign
 mkdir -p "$CAMPAIGN_ROOT"
 MASTER_LOG="$CAMPAIGN_ROOT/campaign.log"
 log(){ echo "[$(date '+%F %T')] $*" | tee -a "$MASTER_LOG"; }
@@ -47,23 +42,10 @@ wait_ready(){
     sleep 10
   done
   log "  [FAIL]  $tag never ready"
-  ssh -o ConnectTimeout=5 alexm@$host "docker logs --tail 40 kebab-vllm-eval-gpu0 2>&1; docker logs --tail 40 kebab-vllm-eval-gpu1 2>&1" >> "$MASTER_LOG" 2>&1
   return 1
 }
 
-spawn_driver(){
-  local tag=$1 lcb_name=$2 served_primary=$3 base_url=$4 family=$5
-  mkdir -p "$CAMPAIGN_ROOT/$tag"
-  nohup /home/alexm/qwen_bench_driver.sh \
-    "$tag" "$lcb_name" "$served_primary" "$base_url" "$family" \
-    >> "$CAMPAIGN_ROOT/${tag}/driver.out" 2>&1 &
-  log "  [driver] $tag pid=$! url=$base_url"
-  echo $!
-}
-
 # ---------- Endpoint definitions ----------
-declare -a TAGS HOSTS PORTS MODEL_PATHS SERVED LCB_NAMES FAMILIES GPUS MNS
-
 T0=Qwen3.6-35B-A3B-BF16; H0=kebab-rtx6000.lan; P0=8002
 M0=/models/Qwen3.6-35B-A3B; S0="qwen3.6-35b-a3b qwen3.6-35b-a3b-bf16"
 L0=qwen3.6-35b-a3b; F0=qwen3.6; G0=1; N0=2
@@ -101,14 +83,38 @@ wait_ready "$T3" "$H3" "$P3" &
 wait_ready "$T4" "$H4" "$P4" &
 wait
 
-log "==== All endpoints ready. Spawning 5 bench drivers ===="
-PID0=$(spawn_driver "$T0" "$L0" "${S0%% *}" "http://${H0}:${P0}/v1" "$F0")
-PID1=$(spawn_driver "$T1" "$L1" "${S1%% *}" "http://${H1}:${P1}/v1" "$F1")
-PID2=$(spawn_driver "$T2" "$L2" "${S2%% *}" "http://${H2}:${P2}/v1" "$F2")
-PID3=$(spawn_driver "$T3" "$L3" "${S3%% *}" "http://${H3}:${P3}/v1" "$F3")
-PID4=$(spawn_driver "$T4" "$L4" "${S4%% *}" "http://${H4}:${P4}/v1" "$F4")
+log "==== All endpoints ready. Spawning 5 bench drivers in current shell ===="
 
-log "==== Drivers running. Waiting for all to complete (campaign in progress) ===="
+# Critical fix: background bench drivers DIRECTLY in this shell (not via subshell)
+# so that $! returns a PID that is a direct child of this shell, and `wait` works.
+mkdir -p "$CAMPAIGN_ROOT/$T0" "$CAMPAIGN_ROOT/$T1" "$CAMPAIGN_ROOT/$T2" "$CAMPAIGN_ROOT/$T3" "$CAMPAIGN_ROOT/$T4"
+
+/home/alexm/qwen_bench_driver.sh "$T0" "$L0" "${S0%% *}" "http://${H0}:${P0}/v1" "$F0" \
+  >> "$CAMPAIGN_ROOT/${T0}/driver.out" 2>&1 &
+PID0=$!
+log "  [driver] $T0 pid=$PID0 url=http://${H0}:${P0}/v1"
+
+/home/alexm/qwen_bench_driver.sh "$T1" "$L1" "${S1%% *}" "http://${H1}:${P1}/v1" "$F1" \
+  >> "$CAMPAIGN_ROOT/${T1}/driver.out" 2>&1 &
+PID1=$!
+log "  [driver] $T1 pid=$PID1 url=http://${H1}:${P1}/v1"
+
+/home/alexm/qwen_bench_driver.sh "$T2" "$L2" "${S2%% *}" "http://${H2}:${P2}/v1" "$F2" \
+  >> "$CAMPAIGN_ROOT/${T2}/driver.out" 2>&1 &
+PID2=$!
+log "  [driver] $T2 pid=$PID2 url=http://${H2}:${P2}/v1"
+
+/home/alexm/qwen_bench_driver.sh "$T3" "$L3" "${S3%% *}" "http://${H3}:${P3}/v1" "$F3" \
+  >> "$CAMPAIGN_ROOT/${T3}/driver.out" 2>&1 &
+PID3=$!
+log "  [driver] $T3 pid=$PID3 url=http://${H3}:${P3}/v1"
+
+/home/alexm/qwen_bench_driver.sh "$T4" "$L4" "${S4%% *}" "http://${H4}:${P4}/v1" "$F4" \
+  >> "$CAMPAIGN_ROOT/${T4}/driver.out" 2>&1 &
+PID4=$!
+log "  [driver] $T4 pid=$PID4 url=http://${H4}:${P4}/v1"
+
+log "==== Drivers running as direct children. Waiting (campaign in progress) ===="
 wait $PID0; log "  $T0 driver join rc=$?"
 wait $PID1; log "  $T1 driver join rc=$?"
 wait $PID2; log "  $T2 driver join rc=$?"
