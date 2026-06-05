@@ -1,0 +1,246 @@
+# Multi-depth generation samples (step 18310, depths=[2, 6, 12, 24])
+
+
+## Sample 1
+
+Prompt: `Once upon a time in a small village nestled between two mountains,`
+
+
+**K=2:** Once upon a time in a small village nestled between two mountains, was the scene of a violent, bloody massacre that took place in the early 1900s, at which time it was possible to kill some of its inhabitants by the local people. In fact, the massacre was carried out under the command of the Governor of the Government in a former house of justice in the presence of an old Indian boy, the Governor. The Governor was not aware of the fact that the first 15 Indian tribes had been attacked. He was taken prisoner and his body was burned
+
+
+**K=6:** Once upon a time in a small village nestled between two mountains, is the oldest evidence of human occupation in the history of mankind. The oldest known human settlement in the world is found in the Kainil Desert of South America. The earliest humans were found in 1,400 BC. The first humans arrived in North America in 350 BCE.
+Archaeologists believe the first human settlements (in the 1st century BC) were there: in the first millennium BC, 2000 BC. They found an entire culture of people living in the region.
+
+
+**K=12:** Once upon a time in a small village nestled between two mountains, is the oldest evidence of human occupation in the history of mankind. The oldest known human settlement in the world is found in the Kainil Desert of South America. The earliest humans were found in 1,400 BC. The first humans arrived in North America in 350 BCE.
+Archaeologists believe the first human settlements (in the 1st century BC) were there: in the first millennium BC, 2000 BC. They found an entire culture of people living in the region.
+
+
+**K=24:** Once upon a time in a small village nestled between two mountains, is the oldest evidence of human occupation in the history of mankind. The oldest known human settlement in the world is found in the Kainil Desert of South America. The earliest humans were found in 1,400 BC. The first humans arrived in North America in 350 BCE.
+Archaeologists believe the first human settlements (in the 1st century BC) were there: in the first millennium BC, 2000 BC. They found an entire culture of people living in the region.
+
+
+## Sample 2
+
+Prompt: `The key difference between mitosis and meiosis is that`
+
+
+**K=2:** The key difference between mitosis and meiosis is that the amount of unmineralized vasculitis is greater than that of normal (the higher the rate is, the less it will be). This is because the term ‘endothelial function’ is not a true measure of clinical disease progression since those with normal body temperatures were considered to be ‘normal’. The term ‘endothelial function’ means the body’s own immune system (the immune system as a whole). The term ‘endothelial function’ is a fairly straightforward concept to describe
+
+
+**K=6:** The key difference between mitosis and meiosis is that the amount of uncoordinated vasculitis is greater than the amount of uncoordinated vasculitis. In an attempt to understand the mechanism of the natural tendency of the disease, we first must understand the mechanism of mitosis and the role of other factors such as inflammation and cellular dysfunction. In the first place, this would be a major contribution to the work of the disease.
+The idea of a tumor suppressor as an individual is difficult to understand. The tumor suppressor will be
+
+
+**K=12:** The key difference between mitosis and meiosis is that the amount of uncoordinated vasculitis is greater than the amount of uncoordinated vasculitis. In an attempt to understand the mechanism of the natural tendency of the disease, we first must understand the mechanism of mitosis and the role of other factors such as inflammation and cellular dysfunction. In the first place, this would be a major contribution to the work of the disease.
+The idea of a tumor suppressor as an individual is difficult to understand. The tumor suppressor will be
+
+
+**K=24:** The key difference between mitosis and meiosis is that the amount of uncoordinated vasculitis is greater than the amount of uncoordinated vasculitis. In an attempt to understand the mechanism of the natural tendency of the disease, we first must understand the mechanism of mitosis and the role of other factors such as inflammation and cellular dysfunction. In the first place, this would be a major contribution to the work of the disease.
+The idea of a tumor suppressor as an individual is difficult to understand. The tumor suppressor will be
+
+
+## Sample 3
+
+Prompt: `To compute the area of a triangle, you`
+
+
+**K=2:** To compute the area of a triangle, you can calculate the area of the circle using the equation
+The equation of the line function is:
+A line function is represented by:
+The slope (L) is the slope of the line.
+A line has a slope of 1.3 cm. The slope is the slope of the line.
+A line’s radius is the slope of the line.
+A line’s radius is calculated by the slope of the line.
+A line can be calculated from the slope, or the slope, of a line.
+
+
+
+**K=6:** To compute the area of a triangle, you can calculate the area of the circle using the equation. It can be assumed that we have a circle of radius length. To calculate the radius of the circle, we just use the formula A = B2 / (C2 = A3). By subtracting the radius from the radius we get
+The area is the area of the rectangle. This is simply the area of the rectangle. To find the circumference of circle the triangle is the area of the rectangle.
+A circle is defined as the radius
+
+
+**K=12:** To compute the area of a triangle, you can calculate the area of the circle using the equation. It can be assumed that we have a circle of radius length. To calculate the radius of the circle, we just use the formula A = B2 / (C2 = A3). By subtracting the radius from the radius we get
+The area is the area of the rectangle. This is simply the area of the rectangle. To find the circumference of circle the triangle is the area of the rectangle.
+A circle is defined as the radius
+
+
+**K=24:** To compute the area of a triangle, you can calculate the area of the circle using the equation. It can be assumed that we have a circle of radius length. To calculate the radius of the circle, we just use the formula A = B2 / (C2 = A3). By subtracting the radius from the radius we get
+The area is the area of the rectangle. This is simply the area of the rectangle. To find the circumference of circle the triangle is the area of the rectangle.
+A circle is defined as the radius
+
+
+## Sample 4
+
+Prompt: `Q: What is the capital of France?
+A:`
+
+
+**K=2:** Q: What is the capital of France?
+A: First of all, the name of the country is derived from the title of the state to the Roman province of the Roman Republic; the place where it is located is in the northern part of France. Also, it has the second largest land area in Europe. The first capital is Rome. The second capital is the capital of the Roman Republic. The Roman Republic was created in the year 2006, and is now a part of the United Kingdom. Many of these countries have a part of their
+
+
+**K=6:** Q: What is the capital of France?
+A: First of all, the capital of France is the main commercial and industrial centre of France, and the most populous of the six largest cities of the country. The main economic and population center of France is the capital of France.
+The capital of France is the city of Saint-Cyril. It is the major commercial and industrial center of the country. The city of Saint-Cyril is a major industrial center and is also the largest city of the European Union.
+The capital of France is the National
+
+
+**K=12:** Q: What is the capital of France?
+A: First of all, the capital of France is the main commercial and industrial centre of France, and the most populous of the six largest cities of the country. The main economic and population center of France is the capital of France.
+The capital of France is the city of Saint-Cyril. It is the major commercial and industrial center of the country. The city of Saint-Cyril is a major industrial center and is also the largest city of the European Union.
+The capital of France is the National
+
+
+**K=24:** Q: What is the capital of France?
+A: First of all, the capital of France is the main commercial and industrial centre of France, and the most populous of the six largest cities of the country. The main economic and population center of France is the capital of France.
+The capital of France is the city of Saint-Cyril. It is the major commercial and industrial center of the country. The city of Saint-Cyril is a major industrial center and is also the largest city of the European Union.
+The capital of France is the National
+
+
+## Sample 5
+
+Prompt: `In Python, a list comprehension is written as`
+
+
+**K=2:** In Python, a list comprehension is written as
+- (W) the first letter of the
+is printed as the first
+- (W) the letter is printed as the letter
+- (W) the letter is printed as the letter because it is the second letter of the
+- (W) the letter is printed as the letter of the letter
+- (W) the letter is printed as the letter of the letter
+- (W) the letter is printed as the letter of the letter and
+- (W) the
+
+
+**K=6:** In Python, a list comprehension is written as a list of all the
+information contained in the list.
+- For the collection
+of multiple data files
+- For the collection with
+For the collection
+of data files, the list
+of data files is based on the list:
+- for the collection
+of data files, this list contains all the information
+of the collection
+and a list of all the data files
+- for the collection
+- for the collection
+- for the collection
+of the data files
+- for the
+
+
+**K=12:** In Python, a list comprehension is written as a list of all the
+information contained in the list.
+- For the collection
+of multiple data files
+- For the collection with
+For the collection
+of data files, the list
+of data files is based on the list:
+- for the collection
+of data files, this list contains all the information
+of the collection
+and a list of all the data files
+- for the collection
+- for the collection
+- for the collection
+of the data files
+- for the
+
+
+**K=24:** In Python, a list comprehension is written as a list of all the
+information contained in the list.
+- For the collection
+of multiple data files
+- For the collection with
+For the collection
+of data files, the list
+of data files is based on the list:
+- for the collection
+of data files, this list contains all the information
+of the collection
+and a list of all the data files
+- for the collection
+- for the collection
+- for the collection
+of the data files
+- for the
+
+
+## Sample 6
+
+Prompt: `The Roman Empire fell primarily because`
+
+
+**K=2:** The Roman Empire fell primarily because of a lack of political power.
+It was in the 4th century AD that the Romans began to separate from Britain. The Romans were a reaction to the Roman Catholic church and the Roman Catholic church. The most famous of these was the Holy Office. The Holy Roman Catholic Church was built on a foundation and dedicated to the Virgin Mary. The first Pope was Pope, he was the Holy Roman Emperor, and he was called Pope.
+In 1 Corinthians 2:1-4 you will find
+
+
+**K=6:** The Roman Empire fell primarily because of a lack of Romanesque culture in the Western world and because of the absence of Romanesque traditions in Romanesque art. Some of the most familiar of these cultures are the classical Romanesque sites in the East, and the Romanesque sites in the West. By the late 11th century, some of the best examples of Romanesque art were found from the West, including the Romanesque buildings.
+The Romans and the Romans dominated the Roman world for at least
+
+
+**K=12:** The Roman Empire fell primarily because of a lack of Romanesque culture in the Western world and because of the absence of Romanesque traditions in Romanesque art. Some of the most familiar of these cultures are the classical Romanesque sites in the East, and the Romanesque sites in the West. By the late 11th century, some of the best examples of Romanesque art were found from the West, including the Romanesque buildings.
+The Romans and the Romans dominated the Roman world for at least
+
+
+**K=24:** The Roman Empire fell primarily because of a lack of Romanesque culture in the Western world and because of the absence of Romanesque traditions in Romanesque art. Some of the most familiar of these cultures are the classical Romanesque sites in the East, and the Romanesque sites in the West. By the late 11th century, some of the best examples of Romanesque art were found from the West, including the Romanesque buildings.
+The Romans and the Romans dominated the Roman world for at least
+
+
+## Sample 7
+
+Prompt: `Dear Claude,
+
+I wanted to write to you because`
+
+
+**K=2:** Dear Claude,
+
+I wanted to write to you because it was the best tool you have ever seen. I liked it and it is amazing to read it all over the Internet so I can use it to create my web pages. I’m so excited and excited about it. Thank you for sharing it!1. A lot of people see a little green in the morning, because the sun is rising in the sky. This phenomenon has hit every corner of my eyes. It’s the first time anyone has heard this word before, which has had a long
+
+
+**K=6:** Dear Claude,
+
+I wanted to write to you because of it's title I am going to focus on this issue from the original post on how to read a text (e.g., 1994-1996). I was interested to know how to do this problem, and I wanted to do this very well.
+And then I started by reading all of these pieces to make sure everything I needed to do was understand the context. So when I read this, I got to try to explain my point that I am not making this stuff to be done by
+
+
+**K=12:** Dear Claude,
+
+I wanted to write to you because of it's title I am going to focus on this issue from the original post on how to read a text (e.g., 1994-1996). I was interested to know how to do this problem, and I wanted to do this very well.
+And then I started by reading all of these pieces to make sure everything I needed to do was understand the context. So when I read this, I got to try to explain my point that I am not making this stuff to be done by
+
+
+**K=24:** Dear Claude,
+
+I wanted to write to you because of it's title I am going to focus on this issue from the original post on how to read a text (e.g., 1994-1996). I was interested to know how to do this problem, and I wanted to do this very well.
+And then I started by reading all of these pieces to make sure everything I needed to do was understand the context. So when I read this, I got to try to explain my point that I am not making this stuff to be done by
+
+
+## Sample 8
+
+Prompt: `Photosynthesis is the process by which plants`
+
+
+**K=2:** Photosynthesis is the process by which plants use the light and energy to produce new growth. The process of photosynthesis or photosynthesis is called photosynthesis. It is a process by which plants give off sunlight. Plants do not need sunlight, but there is light available to make use of sunlight. Light is the most important of the vital elements of a flower. Photosynthesis is the process by which plants make use of light energy to make use of light energy. Photosynthesis is what plants use. Photosynthesis is the process by which plants use
+
+
+**K=6:** Photosynthesis is the process by which plants use the sunlight and energy to produce energy.
+Our plant needs the sun to produce energy. The photosynthesis process is a very important aspect of photosynthesis. The photosynthesis process takes place in a very thin layer, about the size of a typical plant, and consists of a layer of a layer of cells, called the flagella. The flagella of a yellow flower is a large, thin layer of a larger flower, which contains large, dark, shiny, milky, and dark dots.
+
+
+**K=12:** Photosynthesis is the process by which plants use the sunlight and energy to produce energy.
+Our plant needs the sun to produce energy. The photosynthesis process is a very important aspect of photosynthesis. The photosynthesis process takes place in a very thin layer, about the size of a typical plant, and consists of a layer of a layer of cells, called the flagella. The flagella of a yellow flower is a large, thin layer of a larger flower, which contains large, dark, shiny, milky, and dark dots.
+
+
+**K=24:** Photosynthesis is the process by which plants use the sunlight and energy to produce energy.
+Our plant needs the sun to produce energy. The photosynthesis process is a very important aspect of photosynthesis. The photosynthesis process takes place in a very thin layer, about the size of a typical plant, and consists of a layer of a layer of cells, called the flagella. The flagella of a yellow flower is a large, thin layer of a larger flower, which contains large, dark, shiny, milky, and dark dots.
+

@@ -1,0 +1,66 @@
+{
+  "ckpt": "checkpoints_3b_varT_pondernet_round218/step_0024414_full.pt",
+  "device": "cuda:0",
+  "device_name": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "n_params_b": 3.55781501,
+  "prompt_len": 512,
+  "gen_len": 128,
+  "batch": 1,
+  "by_T": [
+    {
+      "T": 1,
+      "prefill_tokens_per_sec": 9206.3719030852,
+      "decode_tokens_per_sec": 17.335176597891742,
+      "decode_per_token_ms": 57.68617321854208,
+      "prefill_time_sec": 0.05561365599714918,
+      "decode_total_sec": 7.383830171973386,
+      "memory_allocated_gb": 7.162854912,
+      "memory_reserved_gb": 15.506341888,
+      "sample_text": "The recurrent depth transformer iterates the same block multiple times tows are the three times. Theorem time of the time and are the time of the time of the time unit of the system. Theorem of the time of the time unit of the time. Theorem of the time unit of theoremselves. The time and time unit of the time unit of the time"
+    },
+    {
+      "T": 2,
+      "prefill_tokens_per_sec": 5079.422777311225,
+      "decode_tokens_per_sec": 9.319176303340193,
+      "decode_per_token_ms": 107.30562095295682,
+      "prefill_time_sec": 0.10079885499726515,
+      "decode_total_sec": 13.735119481978472,
+      "memory_allocated_gb": 7.162854912,
+      "memory_reserved_gb": 15.506341888,
+      "sample_text": "The recurrent depth transformer iterates the same block multiple times tows are the three times. Theorem time of the time. Theorem time of time. Theorem of time period of the time interval time interval of the time interval between. The time interval between. The time interval time interval time interval time interval time interval time interval time interval time interval time interval time interval time interval"
+    },
+    {
+      "T": 4,
+      "prefill_tokens_per_sec": 5071.548304015376,
+      "decode_tokens_per_sec": 9.328149158344887,
+      "decode_per_token_ms": 107.2024024300049,
+      "prefill_time_sec": 0.10095536299922969,
+      "decode_total_sec": 13.721907511040627,
+      "memory_allocated_gb": 7.162854912,
+      "memory_reserved_gb": 15.506341888,
+      "sample_text": "The recurrent depth transformer iterates the same block multiple times tows are the three times. Theorem time of the time. Theorem time of time. Theorem of time period of the time interval time interval of the time interval between. The time interval between. The time interval time interval time interval time interval time interval time interval time interval time interval time interval time interval time interval"
+    },
+    {
+      "T": 8,
+      "prefill_tokens_per_sec": 5076.382402697612,
+      "decode_tokens_per_sec": 9.323329986810734,
+      "decode_per_token_ms": 107.25781468795503,
+      "prefill_time_sec": 0.10085922599682817,
+      "decode_total_sec": 13.729000280058244,
+      "memory_allocated_gb": 7.162854912,
+      "memory_reserved_gb": 15.506341888,
+      "sample_text": "The recurrent depth transformer iterates the same block multiple times tows are the three times. Theorem time of the time. Theorem time of time. Theorem of time period of the time interval time interval of the time interval between. The time interval between. The time interval time interval time interval time interval time interval time interval time interval time interval time interval time interval time interval"
+    },
+    {
+      "T": 16,
+      "prefill_tokens_per_sec": 5123.680185949447,
+      "decode_tokens_per_sec": 9.42890618832507,
+      "decode_per_token_ms": 106.05684053132336,
+      "prefill_time_sec": 0.0999281729964423,
+      "decode_total_sec": 13.57527558800939,
+      "memory_allocated_gb": 7.162854912,
+      "memory_reserved_gb": 15.506341888,
+      "sample_text": "The recurrent depth transformer iterates the same block multiple times tows are the three times. Theorem time of the time. Theorem time of time. Theorem of time period of the time interval time interval of the time interval between. The time interval between. The time interval time interval time interval time interval time interval time interval time interval time interval time interval time interval time interval"
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "ckpt_path": "checkpoints_3b_varT_pondernet_round218/step_0024414_full.pt",
+  "step": 24414,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32,
+    64
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 2.424648880958557,
+      "ppl": 11.298261687933493,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.52,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 2.424648880958557,
+      "ppl": 11.298261687933493,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.51,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 2.424648880958557,
+      "ppl": 11.298261687933493,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.5,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 2.424648880958557,
+      "ppl": 11.298261687933493,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.5,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 2.424648880958557,
+      "ppl": 11.298261687933493,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.5,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 7.238236606121063,
+      "ppl": 1391.6378003260832,
+      "tokens_measured": 65536,
+      "elapsed_s": 6.23,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 11.228944063186646,
+      "ppl": 75278.06449533555,
+      "tokens_measured": 65536,
+      "elapsed_s": 10.12,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 10.687714278697968,
+      "ppl": 43814.24530223902,
+      "tokens_measured": 65536,
+      "elapsed_s": 17.48,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 10.672195196151733,
+      "ppl": 43139.537378118934,
+      "tokens_measured": 65536,
+      "elapsed_s": 32.3,
+      "act": "off"
+    },
+    {
+      "n_loops": 64,
+      "loss": 10.691727936267853,
+      "ppl": 43990.454063827994,
+      "tokens_measured": 65536,
+      "elapsed_s": 63.04,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.523552525071146,
+      "ppl": 92.16242643180931,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 5.46,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.523552525071146,
+      "ppl": 92.16242643180931,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 5.42,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.523552525071146,
+      "ppl": 92.16242643180931,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 5.43,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.523552525071146,
+      "ppl": 92.16242643180931,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 5.44,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 4.523552525071146,
+      "ppl": 92.16242643180931,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 5.43,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.9062213003635406,
+      "ppl": 49.710754616301074,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.41,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.9062213003635406,
+      "ppl": 49.710754616301074,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.41,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.9062213003635406,
+      "ppl": 49.710754616301074,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.41,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.9062213003635406,
+      "ppl": 49.710754616301074,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.42,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.9062213003635406,
+      "ppl": 49.710754616301074,
+      "tokens_measured": 65536,
+      "elapsed_s": 3.41,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture and a comprehensive reference library provides a comprehensive and up-to-date set of data that can be used in different contexts and within different domains. As a result, maps and visualizations of climate data are often",
+    "8": "The recurrent-depth transformer architecture and a comprehensive reference library provides a comprehensive and up-to-date set of data that can be used in different contexts and within different domains. As a result, maps and visualizations of climate data are often",
+    "16": "The recurrent-depth transformer architecture and a comprehensive reference library provides a comprehensive and up-to-date set of data that can be used in different contexts and within different domains. As a result, maps and visualizations of climate data are often",
+    "32": "The recurrent-depth transformer architecture and a comprehensive reference library provides a comprehensive and up-to-date set of data that can be used in different contexts and within different domains. As a result, maps and visualizations of climate data are often",
+    "64": "The recurrent-depth transformer architecture and a comprehensive reference library provides a comprehensive and up-to-date set of data that can be used in different contexts and within different domains. As a result, maps and visualizations of climate data are often"
+  }
+}

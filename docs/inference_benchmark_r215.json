@@ -1,0 +1,66 @@
+{
+  "ckpt": "/home/alexm/OpenMythos/checkpoints_3b_varT_pondernet_round215/step_0018310_full.pt",
+  "device": "cuda:0",
+  "device_name": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "n_params_b": 3.55781501,
+  "prompt_len": 512,
+  "gen_len": 128,
+  "batch": 1,
+  "by_T": [
+    {
+      "T": 1,
+      "prefill_tokens_per_sec": 9820.63210131269,
+      "decode_tokens_per_sec": 18.584830311647114,
+      "decode_per_token_ms": 53.80732474986871,
+      "prefill_time_sec": 0.05213513699709438,
+      "decode_total_sec": 6.887337567983195,
+      "memory_allocated_gb": 7.162134016,
+      "memory_reserved_gb": 15.506341888,
+      "sample_text": "The recurrent depth transformer iterates the same block multiple times to represent a and the two and the two and the two and the two and the two and the two and the two and the two and the two and the two and the two and the two and the two and the two and the two and the two and the two and the two and the two and the two and the"
+    },
+    {
+      "T": 2,
+      "prefill_tokens_per_sec": 5375.676868669413,
+      "decode_tokens_per_sec": 10.096672983969015,
+      "decode_per_token_ms": 99.04252634385102,
+      "prefill_time_sec": 0.09524381998926401,
+      "decode_total_sec": 12.677443372012931,
+      "memory_allocated_gb": 7.162134016,
+      "memory_reserved_gb": 15.506341888,
+      "sample_text": "The recurrent depth transformer iterates the same block multiple times to the 1. The 2. The distance of the 2. The distance of the 2. The distance of the distance of the distance of the distance of the distance of the distance of the distance of the distance of the distance of the distance of the distance of the distance of the distance of the distance of"
+    },
+    {
+      "T": 4,
+      "prefill_tokens_per_sec": 2927.3489340414576,
+      "decode_tokens_per_sec": 5.45541194995894,
+      "decode_per_token_ms": 183.3042140855241,
+      "prefill_time_sec": 0.17490227900270838,
+      "decode_total_sec": 23.462939402947086,
+      "memory_allocated_gb": 7.162134016,
+      "memory_reserved_gb": 15.506341888,
+      "sample_text": "The recurrent depth transformer iterates the same block multiple times to the 2D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D"
+    },
+    {
+      "T": 8,
+      "prefill_tokens_per_sec": 1931.644452617534,
+      "decode_tokens_per_sec": 3.676315845170827,
+      "decode_per_token_ms": 272.01144899277097,
+      "prefill_time_sec": 0.26505913099390455,
+      "decode_total_sec": 34.817465471074684,
+      "memory_allocated_gb": 7.162134016,
+      "memory_reserved_gb": 15.506341888,
+      "sample_text": "The recurrent depth transformer iterates the same block multiple times to the 2D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D"
+    },
+    {
+      "T": 16,
+      "prefill_tokens_per_sec": 1966.8044359976254,
+      "decode_tokens_per_sec": 3.6865395193976305,
+      "decode_per_token_ms": 271.25709482788807,
+      "prefill_time_sec": 0.2603207470092457,
+      "decode_total_sec": 34.72090813796967,
+      "memory_allocated_gb": 7.162134016,
+      "memory_reserved_gb": 15.506341888,
+      "sample_text": "The recurrent depth transformer iterates the same block multiple times to the 2D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D. The D"
+    }
+  ]
+}

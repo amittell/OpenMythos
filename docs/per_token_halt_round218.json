@@ -1,0 +1,469 @@
+{
+  "ckpt_path": "/models/openmythos_ckpts/checkpoints_3b_varT_pondernet_round218/step_0024414_full.pt",
+  "step": 24414,
+  "K": 32,
+  "act_threshold": 0.99,
+  "n_tokens": 32768,
+  "halt_step_histogram": [
+    0,
+    896,
+    31872,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "halt_step_mean": 1.97265625,
+  "halt_step_median": 2.0,
+  "p_first_mean": 0.9774966239929199,
+  "frac_halt_at_1": 0.02734375,
+  "frac_halt_at_K": 0.0,
+  "by_category": {
+    "punct": {
+      "n_tokens": 3945,
+      "halt_step_mean": 1.9632446134347274,
+      "halt_step_median": 2.0,
+      "p_first_mean": 0.9783468246459961,
+      "frac_halt_at_1": 0.036755386565272496,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.3485424588086185
+    },
+    "function": {
+      "n_tokens": 9349,
+      "halt_step_mean": 1.9894106321531715,
+      "halt_step_median": 2.0,
+      "p_first_mean": 0.9764049649238586,
+      "frac_halt_at_1": 0.010589367846828538,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.4457161193710557
+    },
+    "content": {
+      "n_tokens": 17373,
+      "halt_step_mean": 1.9682841190352847,
+      "halt_step_median": 2.0,
+      "p_first_mean": 0.9780057668685913,
+      "frac_halt_at_1": 0.031715880964715365,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.6286191216255108
+    },
+    "rare": {
+      "n_tokens": 2101,
+      "halt_step_mean": 1.951927653498334,
+      "halt_step_median": 2.0,
+      "p_first_mean": 0.9765475988388062,
+      "frac_halt_at_1": 0.04807234650166587,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.7110899571632556
+    }
+  },
+  "by_correctness": {
+    "correct": {
+      "n_tokens": 17957,
+      "halt_step_mean": 1.9672551094280781,
+      "halt_step_median": 2.0,
+      "p_first_mean": 0.977505087852478,
+      "frac_halt_at_1": 0.032744890571921814,
+      "frac_halt_at_K": 0.0
+    },
+    "incorrect": {
+      "n_tokens": 14811,
+      "halt_step_mean": 1.979204645196138,
+      "halt_step_median": 2.0,
+      "p_first_mean": 0.9774863719940186,
+      "frac_halt_at_1": 0.020795354803861993,
+      "frac_halt_at_K": 0.0
+    }
+  },
+  "examples": {
+    "early_halters": [
+      {
+        "token": " referring",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " to",
+        "pred": " to",
+        "correct": true
+      },
+      {
+        "token": " such",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " as",
+        "pred": " as",
+        "correct": true
+      },
+      {
+        "token": " animals",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " with",
+        "pred": " such",
+        "correct": false
+      },
+      {
+        "token": " spiders",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      },
+      {
+        "token": " belonging",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " to",
+        "pred": " to",
+        "correct": true
+      },
+      {
+        "token": " discovered",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " alongside",
+        "pred": " in",
+        "correct": false
+      },
+      {
+        "token": " Pat",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": "erson",
+        "pred": "erson",
+        "correct": true
+      },
+      {
+        "token": "\"It",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " would",
+        "pred": " is",
+        "correct": false
+      },
+      {
+        "token": " picks",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " up",
+        "pred": " up",
+        "correct": true
+      },
+      {
+        "token": " for",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": ".",
+        "pred": ".",
+        "correct": true
+      },
+      {
+        "token": " used",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " for",
+        "pred": " for",
+        "correct": true
+      },
+      {
+        "token": " they're",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " used",
+        "pred": " used",
+        "correct": true
+      },
+      {
+        "token": " what",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " they're",
+        "pred": " they",
+        "correct": false
+      },
+      {
+        "token": " and",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " what",
+        "pred": " how",
+        "correct": false
+      },
+      {
+        "token": " want",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " to",
+        "pred": " to",
+        "correct": true
+      },
+      {
+        "token": "G",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": "ives",
+        "pred": "ives",
+        "correct": true
+      },
+      {
+        "token": " need",
+        "category": "content",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " for",
+        "pred": " for",
+        "correct": true
+      },
+      {
+        "token": " This",
+        "category": "function",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " standard",
+        "pred": " standard",
+        "correct": true
+      },
+      {
+        "token": ".",
+        "category": "punct",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": " It",
+        "pred": " The",
+        "correct": false
+      },
+      {
+        "token": "/E",
+        "category": "rare",
+        "halt_step": 1,
+        "p_first": 0.9921875,
+        "target": "IA",
+        "pred": "IA",
+        "correct": true
+      }
+    ],
+    "late_halters": [
+      {
+        "token": "c",
+        "category": "rare",
+        "halt_step": 2,
+        "p_first": 0.98046875,
+        "target": "ans",
+        "pred": "ans",
+        "correct": true
+      },
+      {
+        "token": "ans",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.9765625,
+        "target": "\n",
+        "pred": " (",
+        "correct": false
+      },
+      {
+        "token": "\n",
+        "category": "punct",
+        "halt_step": 2,
+        "p_first": 0.96484375,
+        "target": "(G",
+        "pred": "-",
+        "correct": false
+      },
+      {
+        "token": "(G",
+        "category": "rare",
+        "halt_step": 2,
+        "p_first": 0.984375,
+        "target": "AG",
+        "pred": "H",
+        "correct": false
+      },
+      {
+        "token": "AG",
+        "category": "rare",
+        "halt_step": 2,
+        "p_first": 0.96484375,
+        "target": "s",
+        "pred": "s",
+        "correct": true
+      },
+      {
+        "token": "s",
+        "category": "rare",
+        "halt_step": 2,
+        "p_first": 0.96875,
+        "target": ").",
+        "pred": ")",
+        "correct": false
+      },
+      {
+        "token": ").",
+        "category": "punct",
+        "halt_step": 2,
+        "p_first": 0.98046875,
+        "target": " Ch",
+        "pred": " The",
+        "correct": false
+      },
+      {
+        "token": " Ch",
+        "category": "rare",
+        "halt_step": 2,
+        "p_first": 0.98046875,
+        "target": "ond",
+        "pred": "ond",
+        "correct": true
+      },
+      {
+        "token": "ond",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.9765625,
+        "target": "roit",
+        "pred": "roit",
+        "correct": true
+      },
+      {
+        "token": "roit",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.98828125,
+        "target": "in",
+        "pred": "in",
+        "correct": true
+      },
+      {
+        "token": "in",
+        "category": "function",
+        "halt_step": 2,
+        "p_first": 0.9765625,
+        "target": " sulfate",
+        "pred": " sulfate",
+        "correct": true
+      },
+      {
+        "token": " sulfate",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.96875,
+        "target": " is",
+        "pred": " is",
+        "correct": true
+      },
+      {
+        "token": " is",
+        "category": "function",
+        "halt_step": 2,
+        "p_first": 0.98828125,
+        "target": " a",
+        "pred": " a",
+        "correct": true
+      },
+      {
+        "token": " a",
+        "category": "function",
+        "halt_step": 2,
+        "p_first": 0.98828125,
+        "target": " major",
+        "pred": "\n",
+        "correct": false
+      },
+      {
+        "token": " major",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.98828125,
+        "target": " constituent",
+        "pred": " component",
+        "correct": false
+      },
+      {
+        "token": " constituent",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.984375,
+        "target": " of",
+        "pred": " of",
+        "correct": true
+      },
+      {
+        "token": " and",
+        "category": "function",
+        "halt_step": 2,
+        "p_first": 0.98046875,
+        "target": " is",
+        "pred": " it",
+        "correct": false
+      },
+      {
+        "token": " is",
+        "category": "function",
+        "halt_step": 2,
+        "p_first": 0.9765625,
+        "target": " already",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": " already",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.98046875,
+        "target": " developing",
+        "pred": " in",
+        "correct": false
+      },
+      {
+        "token": " developing",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.96484375,
+        "target": " an",
+        "pred": " a",
+        "correct": false
+      }
+    ]
+  }
+}

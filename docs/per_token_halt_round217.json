@@ -1,0 +1,469 @@
+{
+  "ckpt_path": "checkpoints_3b_varT_pondernet_round217/step_0021362_full.pt",
+  "step": 21362,
+  "K": 32,
+  "act_threshold": 0.99,
+  "n_tokens": 32768,
+  "halt_step_histogram": [
+    0,
+    0,
+    133,
+    32635,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "halt_step_mean": 2.995941162109375,
+  "halt_step_median": 3.0,
+  "p_first_mean": 0.44360488653182983,
+  "frac_halt_at_1": 0.0,
+  "frac_halt_at_K": 0.0,
+  "by_category": {
+    "punct": {
+      "n_tokens": 3945,
+      "halt_step_mean": 2.996451204055767,
+      "halt_step_median": 3.0,
+      "p_first_mean": 0.44882962107658386,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.34955640050697084
+    },
+    "function": {
+      "n_tokens": 9349,
+      "halt_step_mean": 2.9994651834420796,
+      "halt_step_median": 3.0,
+      "p_first_mean": 0.44080856442451477,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.4496737618996684
+    },
+    "content": {
+      "n_tokens": 17373,
+      "halt_step_mean": 2.994646865826282,
+      "halt_step_median": 3.0,
+      "p_first_mean": 0.4443454444408417,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.6242445173545156
+    },
+    "rare": {
+      "n_tokens": 2101,
+      "halt_step_mean": 2.9900047596382673,
+      "halt_step_median": 3.0,
+      "p_first_mean": 0.4401140809059143,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.7225130890052356
+    }
+  },
+  "by_correctness": {
+    "correct": {
+      "n_tokens": 17946,
+      "halt_step_mean": 2.9946506185222335,
+      "halt_step_median": 3.0,
+      "p_first_mean": 0.44321757555007935,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    },
+    "incorrect": {
+      "n_tokens": 14822,
+      "halt_step_mean": 2.99750371070031,
+      "halt_step_median": 3.0,
+      "p_first_mean": 0.4440738558769226,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    }
+  },
+  "examples": {
+    "early_halters": [
+      {
+        "token": "201",
+        "category": "rare",
+        "halt_step": 2,
+        "p_first": 0.49609375,
+        "target": "1",
+        "pred": "0",
+        "correct": false
+      },
+      {
+        "token": " ",
+        "category": "punct",
+        "halt_step": 2,
+        "p_first": 0.478515625,
+        "target": "199",
+        "pred": "199",
+        "correct": true
+      },
+      {
+        "token": " However",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.494140625,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      },
+      {
+        "token": ".",
+        "category": "punct",
+        "halt_step": 2,
+        "p_first": 0.490234375,
+        "target": " This",
+        "pred": " In",
+        "correct": false
+      },
+      {
+        "token": " However",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.494140625,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      },
+      {
+        "token": "s",
+        "category": "rare",
+        "halt_step": 2,
+        "p_first": 0.46875,
+        "target": ",",
+        "pred": "F",
+        "correct": false
+      },
+      {
+        "token": " institutions",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.474609375,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      },
+      {
+        "token": " However",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.486328125,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      },
+      {
+        "token": " areas",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.470703125,
+        "target": ".",
+        "pred": " of",
+        "correct": false
+      },
+      {
+        "token": " depend",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.486328125,
+        "target": " on",
+        "pred": " on",
+        "correct": true
+      },
+      {
+        "token": " absence",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.490234375,
+        "target": " of",
+        "pred": " of",
+        "correct": true
+      },
+      {
+        "token": " It",
+        "category": "function",
+        "halt_step": 2,
+        "p_first": 0.484375,
+        "target": " is",
+        "pred": " is",
+        "correct": true
+      },
+      {
+        "token": " importance",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.484375,
+        "target": " of",
+        "pred": " of",
+        "correct": true
+      },
+      {
+        "token": " methods",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.48828125,
+        "target": " of",
+        "pred": " for",
+        "correct": false
+      },
+      {
+        "token": " unwilling",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.48828125,
+        "target": " to",
+        "pred": " to",
+        "correct": true
+      },
+      {
+        "token": " focus",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.478515625,
+        "target": " instead",
+        "pred": " on",
+        "correct": false
+      },
+      {
+        "token": " willing",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.478515625,
+        "target": " to",
+        "pred": " to",
+        "correct": true
+      },
+      {
+        "token": " However",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.484375,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      },
+      {
+        "token": " there",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.486328125,
+        "target": " should",
+        "pred": " is",
+        "correct": false
+      },
+      {
+        "token": " however",
+        "category": "content",
+        "halt_step": 2,
+        "p_first": 0.5,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      }
+    ],
+    "late_halters": [
+      {
+        "token": "c",
+        "category": "rare",
+        "halt_step": 3,
+        "p_first": 0.43359375,
+        "target": "ans",
+        "pred": "ans",
+        "correct": true
+      },
+      {
+        "token": "ans",
+        "category": "content",
+        "halt_step": 3,
+        "p_first": 0.4453125,
+        "target": "\n",
+        "pred": ",",
+        "correct": false
+      },
+      {
+        "token": "\n",
+        "category": "punct",
+        "halt_step": 3,
+        "p_first": 0.4296875,
+        "target": "(G",
+        "pred": "-",
+        "correct": false
+      },
+      {
+        "token": "(G",
+        "category": "rare",
+        "halt_step": 3,
+        "p_first": 0.44140625,
+        "target": "AG",
+        "pred": "PC",
+        "correct": false
+      },
+      {
+        "token": "AG",
+        "category": "rare",
+        "halt_step": 3,
+        "p_first": 0.431640625,
+        "target": "s",
+        "pred": "s",
+        "correct": true
+      },
+      {
+        "token": "s",
+        "category": "rare",
+        "halt_step": 3,
+        "p_first": 0.4296875,
+        "target": ").",
+        "pred": ").",
+        "correct": true
+      },
+      {
+        "token": ").",
+        "category": "punct",
+        "halt_step": 3,
+        "p_first": 0.453125,
+        "target": " Ch",
+        "pred": " The",
+        "correct": false
+      },
+      {
+        "token": " Ch",
+        "category": "rare",
+        "halt_step": 3,
+        "p_first": 0.42578125,
+        "target": "ond",
+        "pred": "ond",
+        "correct": true
+      },
+      {
+        "token": "ond",
+        "category": "content",
+        "halt_step": 3,
+        "p_first": 0.439453125,
+        "target": "roit",
+        "pred": "roit",
+        "correct": true
+      },
+      {
+        "token": "roit",
+        "category": "content",
+        "halt_step": 3,
+        "p_first": 0.45703125,
+        "target": "in",
+        "pred": "in",
+        "correct": true
+      },
+      {
+        "token": "in",
+        "category": "function",
+        "halt_step": 3,
+        "p_first": 0.44140625,
+        "target": " sulfate",
+        "pred": " is",
+        "correct": false
+      },
+      {
+        "token": " sulfate",
+        "category": "content",
+        "halt_step": 3,
+        "p_first": 0.42578125,
+        "target": " is",
+        "pred": " is",
+        "correct": true
+      },
+      {
+        "token": " is",
+        "category": "function",
+        "halt_step": 3,
+        "p_first": 0.458984375,
+        "target": " a",
+        "pred": " a",
+        "correct": true
+      },
+      {
+        "token": " a",
+        "category": "function",
+        "halt_step": 3,
+        "p_first": 0.451171875,
+        "target": " major",
+        "pred": " chemical",
+        "correct": false
+      },
+      {
+        "token": " major",
+        "category": "content",
+        "halt_step": 3,
+        "p_first": 0.45703125,
+        "target": " constituent",
+        "pred": " component",
+        "correct": false
+      },
+      {
+        "token": " constituent",
+        "category": "content",
+        "halt_step": 3,
+        "p_first": 0.443359375,
+        "target": " of",
+        "pred": " of",
+        "correct": true
+      },
+      {
+        "token": " and",
+        "category": "function",
+        "halt_step": 3,
+        "p_first": 0.4375,
+        "target": " is",
+        "pred": " it",
+        "correct": false
+      },
+      {
+        "token": " is",
+        "category": "function",
+        "halt_step": 3,
+        "p_first": 0.4375,
+        "target": " already",
+        "pred": " currently",
+        "correct": false
+      },
+      {
+        "token": " already",
+        "category": "content",
+        "halt_step": 3,
+        "p_first": 0.4375,
+        "target": " developing",
+        "pred": " considering",
+        "correct": false
+      },
+      {
+        "token": " developing",
+        "category": "content",
+        "halt_step": 3,
+        "p_first": 0.431640625,
+        "target": " an",
+        "pred": " a",
+        "correct": false
+      }
+    ]
+  }
+}

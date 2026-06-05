@@ -1,0 +1,191 @@
+{
+  "ckpt_path": "/models/openmythos_ckpts/checkpoints_3b_varT_pondernet_round220/step_0024414_full.pt",
+  "step": 24414,
+  "vocab_size": 199998,
+  "seq_len": 1024,
+  "batch_size": 4,
+  "n_batches": 16,
+  "n_sequences_measured": 64,
+  "trained_max_loop_iters": 4,
+  "depths": [
+    4,
+    8,
+    16,
+    32,
+    64
+  ],
+  "results_fineweb": [
+    {
+      "n_loops": 4,
+      "loss": 2.2573004066944122,
+      "ppl": 9.557253611838862,
+      "tokens_measured": 65536,
+      "elapsed_s": 5.9,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 2.255519278347492,
+      "ppl": 9.540246067318193,
+      "tokens_measured": 65536,
+      "elapsed_s": 7.74,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 2.255519278347492,
+      "ppl": 9.540246067318193,
+      "tokens_measured": 65536,
+      "elapsed_s": 7.74,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 2.255519278347492,
+      "ppl": 9.540246067318193,
+      "tokens_measured": 65536,
+      "elapsed_s": 7.76,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 2.255519278347492,
+      "ppl": 9.540246067318193,
+      "tokens_measured": 65536,
+      "elapsed_s": 7.74,
+      "act": "on"
+    },
+    {
+      "n_loops": 4,
+      "loss": 2.3838513493537903,
+      "ppl": 10.84659655654559,
+      "tokens_measured": 65536,
+      "elapsed_s": 5.96,
+      "act": "off"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.197865456342697,
+      "ppl": 24.480220289132195,
+      "tokens_measured": 65536,
+      "elapsed_s": 11.19,
+      "act": "off"
+    },
+    {
+      "n_loops": 16,
+      "loss": 2.419611304998398,
+      "ppl": 11.241488955000975,
+      "tokens_measured": 65536,
+      "elapsed_s": 21.71,
+      "act": "off"
+    },
+    {
+      "n_loops": 32,
+      "loss": 2.4119102209806442,
+      "ppl": 11.155249797784398,
+      "tokens_measured": 65536,
+      "elapsed_s": 42.62,
+      "act": "off"
+    },
+    {
+      "n_loops": 64,
+      "loss": 2.4122743755578995,
+      "ppl": 11.15931277278926,
+      "tokens_measured": 65536,
+      "elapsed_s": 84.74,
+      "act": "off"
+    }
+  ],
+  "results_gsm8k": [
+    {
+      "n_loops": 4,
+      "loss": 4.3447183814052455,
+      "ppl": 77.07032998480096,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 9.37,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 4.344612611326615,
+      "ppl": 77.062178681028,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 11.46,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 4.344612611326615,
+      "ppl": 77.062178681028,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 11.47,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 4.344612611326615,
+      "ppl": 77.062178681028,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 11.42,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 4.344612611326615,
+      "ppl": 77.062178681028,
+      "answer_tokens_measured": 5172,
+      "elapsed_s": 11.24,
+      "act": "on"
+    }
+  ],
+  "results_tinystories": [
+    {
+      "n_loops": 4,
+      "loss": 3.78692127764225,
+      "ppl": 44.120356634737945,
+      "tokens_measured": 65536,
+      "elapsed_s": 5.78,
+      "act": "on"
+    },
+    {
+      "n_loops": 8,
+      "loss": 3.7866969257593155,
+      "ppl": 44.11045925994004,
+      "tokens_measured": 65536,
+      "elapsed_s": 7.16,
+      "act": "on"
+    },
+    {
+      "n_loops": 16,
+      "loss": 3.7866969257593155,
+      "ppl": 44.11045925994004,
+      "tokens_measured": 65536,
+      "elapsed_s": 7.15,
+      "act": "on"
+    },
+    {
+      "n_loops": 32,
+      "loss": 3.7866969257593155,
+      "ppl": 44.11045925994004,
+      "tokens_measured": 65536,
+      "elapsed_s": 7.16,
+      "act": "on"
+    },
+    {
+      "n_loops": 64,
+      "loss": 3.7866969257593155,
+      "ppl": 44.11045925994004,
+      "tokens_measured": 65536,
+      "elapsed_s": 7.2,
+      "act": "on"
+    }
+  ],
+  "prompt": "The recurrent-depth transformer architecture",
+  "generations": {
+    "4": "The recurrent-depth transformer architecture provides a comprehensive reference point for understanding these structures. It includes the basic geometric and geometric relations of the building, the interconnections between various structures, and the architectural and structural principles of construction. It is",
+    "8": "The recurrent-depth transformer architecture provides a comprehensive reference point for understanding these structures. The architecture and architecture of the complex interface between the building and the administrative boundaries are considered to be critical for ensuring that the development of a new functional region",
+    "16": "The recurrent-depth transformer architecture provides a comprehensive reference point for understanding these structures. The architecture and architecture of the complex interface between the building and the administrative boundaries are considered to be critical for ensuring that the development of a new functional region",
+    "32": "The recurrent-depth transformer architecture provides a comprehensive reference point for understanding these structures. The architecture and architecture of the complex interface between the building and the administrative boundaries are considered to be critical for ensuring that the development of a new functional region",
+    "64": "The recurrent-depth transformer architecture provides a comprehensive reference point for understanding these structures. The architecture and architecture of the complex interface between the building and the administrative boundaries are considered to be critical for ensuring that the development of a new functional region"
+  }
+}

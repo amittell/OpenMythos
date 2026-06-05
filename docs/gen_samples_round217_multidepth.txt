@@ -1,0 +1,231 @@
+# Multi-depth generation samples (step 21362, depths=[2, 6, 12, 24])
+
+
+## Sample 1
+
+Prompt: `Once upon a time in a small village nestled between two mountains,`
+
+
+**K=2:** Once upon a time in a small village nestled between two mountains, was the scene of a violent death and the death of the father of the family. He was called to meet with the young men in the village by leading them here and to offer them food of sufficient meat and medicine to them as well, when their strength was great.
+The village was then sent with some soldiers to take an old Indian boy, the girl with his dog. It was well that she was not his real name, but rather a very intelligent boy, and he was his companion. The
+
+
+**K=6:** Once upon a time in a small village nestled between two mountains, was the scene of a violent death and the death of the father of the family. He was called to meet with the young men in the village by leading them here and to offer them food of sufficient meat and medicine to them as well, when their strength was great.
+The village was then sent with some soldiers to take an oath before the chief of the village. He was there to offer a messenger of charity for the first time; but he was to be a prisoner in this village by his friends
+
+
+**K=12:** Once upon a time in a small village nestled between two mountains, was the scene of a violent death and the death of the father of the family. He was called to meet with the young men in the village by leading them here and to offer them food of sufficient meat and medicine to them as well, when their strength was great.
+The village was then sent with some soldiers to take an oath before the chief of the village. He was there to offer a messenger of charity for the first time; but he was to be a prisoner in this village by his friends
+
+
+**K=24:** Once upon a time in a small village nestled between two mountains, was the scene of a violent death and the death of the father of the family. He was called to meet with the young men in the village by leading them here and to offer them food of sufficient meat and medicine to them as well, when their strength was great.
+The village was then sent with some soldiers to take an oath before the chief of the village. He was there to offer a messenger of charity for the first time; but he was to be a prisoner in this village by his friends
+
+
+## Sample 2
+
+Prompt: `The key difference between mitosis and meiosis is that`
+
+
+**K=2:** The key difference between mitosis and meiosis is that the mitosis is not a single cell disease, but a single cell disease.
+The mitosis is usually asymptomatic and is not caused by an autoimmune disease.
+At the same time as the development of the disease, the development of the disease is a major health problem leading to the development of the disease.
+The disease is caused by a single cell disease that is caused by a single cell disease.
+The disease can be caused by a single cell disease, or by a single cell disease.
+In this situation
+
+
+**K=6:** The key difference between mitosis and meiosis is that the mitral root is a very specialized nerve root that runs directly out of the membrane and enters the bloodstream and reaches the body via the blood vessels.
+Now, scientists have found that the mitral root is not a single cell that helps the stem cells in your body to grow and multiply normally.
+This means that mitosis is a very different process than mitosis that occurs in your body and in every other area of your body, for example, up to 75% of the adult men and over
+
+
+**K=12:** The key difference between mitosis and meiosis is that the mitral root is a very specialized nerve root that runs directly out of the membrane and enters the bloodstream and reaches the body via the blood vessels.
+Now, scientists have found that the mitral root is not a single cell that helps the stem cells in your body to grow and multiply normally.
+This means that mitosis is a very different process than mitosis that occurs in your body and in every other area of your body, for example, up to 75% of the adult men and over
+
+
+**K=24:** The key difference between mitosis and meiosis is that the mitral root is a very specialized nerve root that runs directly out of the membrane and enters the bloodstream and reaches the body via the blood vessels.
+Now, scientists have found that the mitral root is not a single cell that helps the stem cells in your body to grow and multiply normally.
+This means that mitosis is a very different process than mitosis that occurs in your body and in every other area of your body, for example, up to 75% of the adult men and over
+
+
+## Sample 3
+
+Prompt: `To compute the area of a triangle, you`
+
+
+**K=2:** To compute the area of a triangle, you can calculate the area of the triangle using the equation
+The equation for the equation is:
+where the area of the triangle is:
+where c is the area of the rectangle, so the area of the triangle is :
+As with equation:
+where c = the area of the rectangle and y = the area of the rectangle.
+The equation for the equation is:
+where r represents the area of the rectangle if y=1.
+Since the side of the rectangle is x = the area of the rectangle, this
+
+
+**K=6:** To compute the area of a triangle, you can calculate the area where the triangle is to be measured and determine the height of the circle
+A circle is made up of a triangle, A and B or any other shape that is parallel to the axis of the circle with the length 1. The radius is the sum of the squares of the sides of the triangle and the radius with the length 2. There are some different ways of measuring the circumference of a triangle, while others are more complicated, such as finding a square root, finding
+
+
+**K=12:** To compute the area of a triangle, you can calculate the area where the triangle is to be measured and determine the height of the circle
+A circle is made up of a triangle, A and B or any other shape that is parallel to the axis of the circle with the length 1. The radius is the sum of the squares of the sides of the triangle and the radius with the length 2. There are some different ways of measuring the circumference of a triangle, while others are more complicated, such as finding a square root, finding
+
+
+**K=24:** To compute the area of a triangle, you can calculate the area where the triangle is to be measured and determine the height of the circle
+A circle is made up of a triangle, A and B or any other shape that is parallel to the axis of the circle with the length 1. The radius is the sum of the squares of the sides of the triangle and the radius with the length 2. There are some different ways of measuring the circumference of a triangle, while others are more complicated, such as finding a square root, finding
+
+
+## Sample 4
+
+Prompt: `Q: What is the capital of France?
+A:`
+
+
+**K=2:** Q: What is the capital of France?
+A: First of all, the capital of France is the capital of France. It is also divided into several parts, such as:
+a) The House of the People
+The position of the House of the People was created by the French king Louis XIV in 1608. The capital was later developed as France's capital. It was also during this period that the French king was forced to live in Paris, his son became a Roman Catholic. In 1661, France's first public building was built
+
+
+**K=6:** Q: What is the capital of France?
+A: First of all, the capital of France is the capital of France. It is also divided into several parts, such as:
+a) The capital is the most valuable part of the country;
+b) The capital is the most valuable part of France;
+c) The capital of France consists of 20-30 percent of all capital stock of France;
+d) The capital city is the most valuable part of France;
+e) The capital of France is the most valuable part of France;
+f) The
+
+
+**K=12:** Q: What is the capital of France?
+A: First of all, the capital of France is the capital of France. It is also divided into several parts, such as:
+a) The capital is the most valuable part of the country;
+b) The capital is the most valuable part of France;
+c) The capital of France consists of 20-30 percent of all capital stock of France;
+d) The capital city is the most valuable part of France;
+e) The capital of France is the most valuable part of France;
+f) The
+
+
+**K=24:** Q: What is the capital of France?
+A: First of all, the capital of France is the capital of France. It is also divided into several parts, such as:
+a) The capital is the most valuable part of the country;
+b) The capital is the most valuable part of France;
+c) The capital of France consists of 20-30 percent of all capital stock of France;
+d) The capital city is the most valuable part of France;
+e) The capital of France is the most valuable part of France;
+f) The
+
+
+## Sample 5
+
+Prompt: `In Python, a list comprehension is written as`
+
+
+**K=2:** In Python, a list comprehension is written as
+- (W3X9c) C3X9C3X2
+- (W3X9d) C4X10
+- (H3X6) H3X6F
+- (H3X6) H3X4Y1
+- (S3X9) H3
+- (S4X18) B3X12F2
+- (S4X11) C5H3
+- (S4X18
+
+
+**K=6:** In Python, a list comprehension is written as a list of lists of the most important numbers.
+In addition, the lists of all the rows are a list of all the rows with the same digit. Every table has an equal position.
+All the numbers in a list are the same, but only one row is being used.
+A table contains 100 numbers. A table contains the first digit in the number that contains the last digit.
+If a table contains thousands, tens, ones, tens, tens, tens and ones, then the result is
+
+
+**K=12:** In Python, a list comprehension is written as a list of lists of the most important numbers.
+In addition, the lists of all the rows are a list of all the rows with the same digit. Every table has an equal position.
+All the numbers in a list are the same, but only one row is being used.
+A table contains 100 numbers. A table contains the first digit in the number that contains the last digit.
+If a table contains thousands, tens, ones, tens, tens, tens and ones, then the result is
+
+
+**K=24:** In Python, a list comprehension is written as a list of lists of the most important numbers.
+In addition, the lists of all the rows are a list of all the rows with the same digit. Every table has an equal position.
+All the numbers in a list are the same, but only one row is being used.
+A table contains 100 numbers. A table contains the first digit in the number that contains the last digit.
+If a table contains thousands, tens, ones, tens, tens, tens and ones, then the result is
+
+
+## Sample 6
+
+Prompt: `The Roman Empire fell primarily because`
+
+
+**K=2:** The Roman Empire fell primarily because of a lack of Rome in the West, and also because the Romans took over the role of Rome as a imperial power. The Italian states are the best source of this information, because they are in fact divided into the four major parties, those that are called "Roman" and "Romanian" and "Romanian." The Italian states are the best examples, but it is important to remember that these three people were divided into two groups, the Eastern and the Western Roman. The Western Roman was
+
+
+**K=6:** The Roman Empire fell primarily because of a lack of Rome and the fact that Rome was a vast and important centre of the Roman world. Roman influence continued to be felt in the Roman world until the Renaissance, and Roman society fell in the first half of the 7th century C.E. Despite the fall of the Roman Empire, the city survived relatively quickly, and Roman influence remains in the global scene.
+The Roman Empire was one of the most powerful in history, with a notable and wealthy and powerful Roman state. In addition to
+
+
+**K=12:** The Roman Empire fell primarily because of a lack of Rome and the fact that Rome was a vast and important centre of the Roman world. Roman influence continued to be felt in the Roman world until the Renaissance, and Roman society fell in the first half of the 7th century C.E. Despite the fall of the Roman Empire, the city survived relatively quickly, and Roman influence remains in the global scene.
+The Roman Empire was one of the most powerful in history, with a notable and wealthy and powerful Roman state. In addition to
+
+
+**K=24:** The Roman Empire fell primarily because of a lack of Rome and the fact that Rome was a vast and important centre of the Roman world. Roman influence continued to be felt in the Roman world until the Renaissance, and Roman society fell in the first half of the 7th century C.E. Despite the fall of the Roman Empire, the city survived relatively quickly, and Roman influence remains in the global scene.
+The Roman Empire was one of the most powerful in history, with a notable and wealthy and powerful Roman state. In addition to
+
+
+## Sample 7
+
+Prompt: `Dear Claude,
+
+I wanted to write to you because`
+
+
+**K=2:** Dear Claude,
+
+I wanted to write to you because of it's title I am not a fan of this company. It was just that he was the only one who did this.
+I have always wanted to create a web page on the top of my web page but, once I did this, I'd like to show him the web page and have him write what I think is the best site. So, I am really interested in doing this with my web page. It would be nice to do this for me and it would work for me. I am
+
+
+**K=6:** Dear Claude,
+
+I wanted to write to you because of it's title I am going to focus on this one. It was just that he has been working on it and is now ready to write it. Then I have to do some research and make sure I am not going to write it just to write it out.
+This post is about a little boy who is 10 years old and has been in the army for some six and a half years and was a good one. I've read this book and am very eager to read it to you. I
+
+
+**K=12:** Dear Claude,
+
+I wanted to write to you because of it's title I am going to focus on this one. It was just that he has been working on it and is now ready to write it. Then I have to do some research and make sure I am not going to write it just to write it out.
+This post is about a little boy who is 10 years old and has been in the army for some six and a half years and was a good one. I've read this book and am very eager to read it to you. I
+
+
+**K=24:** Dear Claude,
+
+I wanted to write to you because of it's title I am going to focus on this one. It was just that he has been working on it and is now ready to write it. Then I have to do some research and make sure I am not going to write it just to write it out.
+This post is about a little boy who is 10 years old and has been in the army for some six and a half years and was a good one. I've read this book and am very eager to read it to you. I
+
+
+## Sample 8
+
+Prompt: `Photosynthesis is the process by which plants`
+
+
+**K=2:** Photosynthesis is the process by which plants use the light and energy to produce new growth. The process of photosynthesis or photosynthesis uses light energy from sunlight to split water and the rest of the plant to produce oxygen and hydrogen. Photosynthesis is the process by which plants convert light energy into chemical energy. Photosynthesis is the process by which plants make new, different parts of the plant. Photosynthesis is the process by which plants use sunlight to convert carbon dioxide and water into organic matter.
+How to Get Plants To Provide Care
+To give
+
+
+**K=6:** Photosynthesis is the process by which plants use the light and the other molecules in order to produce their own food, or photosynthesis, which is the process by which plants make their own food. The light of the sun and the water of the plant are absorbed at different points in the spectrum, and all the different organisms of the plant make up a flower by different means.
+To determine the plant’s energy needs accurately, the plant needs to undergo a correct sequence of steps. This can be done by calculating the frequency of light by calculating the
+
+
+**K=12:** Photosynthesis is the process by which plants use the light and the other molecules in order to produce their own food, or photosynthesis, which is the process by which plants make their own food. The light of the sun and the water of the plant are absorbed at different points in the spectrum, and all the different organisms of the plant make up a flower by different means.
+To determine the plant’s energy needs accurately, the plant needs to undergo a correct sequence of steps. This can be done by calculating the frequency of light by calculating the
+
+
+**K=24:** Photosynthesis is the process by which plants use the light and the other molecules in order to produce their own food, or photosynthesis, which is the process by which plants make their own food. The light of the sun and the water of the plant are absorbed at different points in the spectrum, and all the different organisms of the plant make up a flower by different means.
+To determine the plant’s energy needs accurately, the plant needs to undergo a correct sequence of steps. This can be done by calculating the frequency of light by calculating the
+

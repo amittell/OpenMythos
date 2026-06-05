@@ -1,0 +1,118 @@
+{
+  "ckpt_path": "checkpoints_3b_varT_pondernet_round217/step_0021362_full.pt",
+  "step": 21362,
+  "vocab_size": 199998,
+  "trained_max_loop_iters": 12,
+  "depths": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "results": {
+    "4": {
+      "histogram": [
+        0,
+        0,
+        220,
+        65316,
+        0
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 2.99664306640625,
+      "median_halt_step": 3,
+      "elapsed_s": 6.37,
+      "max_budget": 4,
+      "frac_using_full_budget": 0.0
+    },
+    "8": {
+      "histogram": [
+        0,
+        0,
+        220,
+        65316,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 2.99664306640625,
+      "median_halt_step": 3,
+      "elapsed_s": 11.03,
+      "max_budget": 8,
+      "frac_using_full_budget": 0.0
+    },
+    "16": {
+      "histogram": [
+        0,
+        0,
+        220,
+        65316,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 2.99664306640625,
+      "median_halt_step": 3,
+      "elapsed_s": 21.45,
+      "max_budget": 16,
+      "frac_using_full_budget": 0.0
+    },
+    "32": {
+      "histogram": [
+        0,
+        0,
+        220,
+        65316,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "total_tokens": 65536,
+      "mean_halt_step": 2.99664306640625,
+      "median_halt_step": 3,
+      "elapsed_s": 41.91,
+      "max_budget": 32,
+      "frac_using_full_budget": 0.0
+    }
+  }
+}

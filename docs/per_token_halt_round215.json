@@ -1,0 +1,469 @@
+{
+  "ckpt_path": "/home/alexm/OpenMythos/checkpoints_3b_varT_pondernet_round215/step_0018310_full.pt",
+  "step": 18310,
+  "K": 32,
+  "act_threshold": 0.99,
+  "n_tokens": 32768,
+  "halt_step_histogram": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    22088,
+    10680,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "halt_step_mean": 5.325927734375,
+  "halt_step_median": 5.0,
+  "p_first_mean": 0.20061099529266357,
+  "frac_halt_at_1": 0.0,
+  "frac_halt_at_K": 0.0,
+  "by_category": {
+    "punct": {
+      "n_tokens": 3945,
+      "halt_step_mean": 5.36552598225602,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.19925464689731598,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.31406844106463877
+    },
+    "function": {
+      "n_tokens": 9349,
+      "halt_step_mean": 5.276500160444967,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20103013515472412,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.3805754626163226
+    },
+    "content": {
+      "n_tokens": 17373,
+      "halt_step_mean": 5.339722557992287,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20089346170425415,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.5502791688251885
+    },
+    "rare": {
+      "n_tokens": 2101,
+      "halt_step_mean": 5.357448833888625,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.19895705580711365,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0,
+      "accuracy": 0.6558781532603523
+    }
+  },
+  "by_correctness": {
+    "correct": {
+      "n_tokens": 15735,
+      "halt_step_mean": 5.333206228153797,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20033346116542816,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    },
+    "incorrect": {
+      "n_tokens": 17033,
+      "halt_step_mean": 5.319203898315036,
+      "halt_step_median": 5.0,
+      "p_first_mean": 0.20086736977100372,
+      "frac_halt_at_1": 0.0,
+      "frac_halt_at_K": 0.0
+    }
+  },
+  "examples": {
+    "early_halters": [
+      {
+        "token": " ",
+        "category": "punct",
+        "halt_step": 5,
+        "p_first": 0.1904296875,
+        "target": "2",
+        "pred": "3",
+        "correct": false
+      },
+      {
+        "token": " development",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2060546875,
+        "target": " efforts",
+        "pred": " efforts",
+        "correct": true
+      },
+      {
+        "token": " and",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.20703125,
+        "target": " development",
+        "pred": " development",
+        "correct": true
+      },
+      {
+        "token": " federal",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2080078125,
+        "target": " desal",
+        "pred": " and",
+        "correct": false
+      },
+      {
+        "token": " current",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.203125,
+        "target": " federal",
+        "pred": " desal",
+        "correct": false
+      },
+      {
+        "token": " direction",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2080078125,
+        "target": " to",
+        "pred": " for",
+        "correct": false
+      },
+      {
+        "token": " strategic",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.1943359375,
+        "target": " direction",
+        "pred": " plan",
+        "correct": false
+      },
+      {
+        "token": " and",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.1953125,
+        "target": " strategic",
+        "pred": " comprehensive",
+        "correct": false
+      },
+      {
+        "token": " integrated",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.2119140625,
+        "target": " and",
+        "pred": " treatment",
+        "correct": false
+      },
+      {
+        "token": " no",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.193359375,
+        "target": " integrated",
+        "pred": " federal",
+        "correct": false
+      },
+      {
+        "token": " is",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.1875,
+        "target": " no",
+        "pred": " a",
+        "correct": false
+      },
+      {
+        "token": " there",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.19921875,
+        "target": " is",
+        "pred": " is",
+        "correct": true
+      },
+      {
+        "token": ",",
+        "category": "punct",
+        "halt_step": 5,
+        "p_first": 0.2080078125,
+        "target": " there",
+        "pred": " desal",
+        "correct": false
+      },
+      {
+        "token": "2",
+        "category": "rare",
+        "halt_step": 5,
+        "p_first": 0.2021484375,
+        "target": ",",
+        "pred": ",",
+        "correct": true
+      },
+      {
+        "token": " to",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.2001953125,
+        "target": " help",
+        "pred": " address",
+        "correct": false
+      },
+      {
+        "token": " Chapter",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.203125,
+        "target": " ",
+        "pred": " ",
+        "correct": true
+      },
+      {
+        "token": " in",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.19921875,
+        "target": " Chapter",
+        "pred": " Chapter",
+        "correct": true
+      },
+      {
+        "token": " noted",
+        "category": "content",
+        "halt_step": 5,
+        "p_first": 0.203125,
+        "target": " in",
+        "pred": " in",
+        "correct": true
+      },
+      {
+        "token": " as",
+        "category": "function",
+        "halt_step": 5,
+        "p_first": 0.208984375,
+        "target": " noted",
+        "pred": " the",
+        "correct": false
+      },
+      {
+        "token": ",",
+        "category": "punct",
+        "halt_step": 5,
+        "p_first": 0.203125,
+        "target": " as",
+        "pred": " the",
+        "correct": false
+      }
+    ],
+    "late_halters": [
+      {
+        "token": "Exception",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.2021484375,
+        "target": ":",
+        "pred": ":",
+        "correct": true
+      },
+      {
+        "token": "ination",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1943359375,
+        "target": " can",
+        "pred": " are",
+        "correct": false
+      },
+      {
+        "token": " desal",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1923828125,
+        "target": "ination",
+        "pred": "ination",
+        "correct": true
+      },
+      {
+        "token": " int",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.18359375,
+        "target": "akes",
+        "pred": "akes",
+        "correct": true
+      },
+      {
+        "token": " water",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1904296875,
+        "target": " int",
+        "pred": " supply",
+        "correct": false
+      },
+      {
+        "token": " Gesch",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1787109375,
+        "target": "lechts",
+        "pred": "wind",
+        "correct": false
+      },
+      {
+        "token": " well",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.193359375,
+        "target": " understood",
+        "pred": " understood",
+        "correct": true
+      },
+      {
+        "token": " are",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.1884765625,
+        "target": " not",
+        "pred": " discussed",
+        "correct": false
+      },
+      {
+        "token": "G",
+        "category": "rare",
+        "halt_step": 6,
+        "p_first": 0.1845703125,
+        "target": "onos",
+        "pred": ")",
+        "correct": false
+      },
+      {
+        "token": " intake",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1953125,
+        "target": " and",
+        "pred": " and",
+        "correct": true
+      },
+      {
+        "token": " source",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.197265625,
+        "target": " water",
+        "pred": " and",
+        "correct": false
+      },
+      {
+        "token": "ination",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.189453125,
+        "target": " source",
+        "pred": " are",
+        "correct": false
+      },
+      {
+        "token": "-specific",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1923828125,
+        "target": " limitations",
+        "pred": " studies",
+        "correct": false
+      },
+      {
+        "token": " be",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.1982421875,
+        "target": " that",
+        "pred": " assumed",
+        "correct": false
+      },
+      {
+        "token": " ",
+        "category": "punct",
+        "halt_step": 6,
+        "p_first": 0.18359375,
+        "target": "5",
+        "pred": "2",
+        "correct": false
+      },
+      {
+        "token": " Chapter",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.19921875,
+        "target": " ",
+        "pred": " ",
+        "correct": true
+      },
+      {
+        "token": " in",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.189453125,
+        "target": " Chapter",
+        "pred": " Chapter",
+        "correct": true
+      },
+      {
+        "token": " As",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.189453125,
+        "target": " discussed",
+        "pred": " a",
+        "correct": false
+      },
+      {
+        "token": " is",
+        "category": "function",
+        "halt_step": 6,
+        "p_first": 0.1953125,
+        "target": " not",
+        "pred": " not",
+        "correct": true
+      },
+      {
+        "token": " intake",
+        "category": "content",
+        "halt_step": 6,
+        "p_first": 0.1884765625,
+        "target": " and",
+        "pred": " and",
+        "correct": true
+      }
+    ]
+  }
+}

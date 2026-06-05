@@ -1,0 +1,241 @@
+# Multi-depth generation samples (step 24414, depths=[2, 6, 12, 24])
+
+
+## Sample 1
+
+Prompt: `Once upon a time in a small village nestled between two mountains,`
+
+
+**K=2:** Once upon a time in a small village nestled between two mountains, was the scene of a violent encounter. A little girl ran to him from his bed. “I don’t know,” he said. The girl was in tears. “It’s just kind of an adventure,” cried the old man, “that’s not a dog.”
+The girl, who was with her mother at this moment (in the early the next morning), had no idea what she was doing. The girl’s father was not a dog-woman, but a child. She didn’t like
+
+
+**K=6:** Once upon a time in a small village nestled between two mountains, was the scene of a violent encounter. A little girl ran to him from his bed. “I don’t know,” he said. The girl was in tears. “It’s just kind of an adventure,” cried the old man, “that’s not a dog.”
+The girl, who was with her mother at this moment (in the early the next morning), had no idea what she was doing. The girl’s father was not a dog-woman, but a child. She didn’t like
+
+
+**K=12:** Once upon a time in a small village nestled between two mountains, was the scene of a violent encounter. A little girl ran to him from his bed. “I don’t know,” he said. The girl was in tears. “It’s just kind of an adventure,” cried the old man, “that’s not a dog.”
+The girl, who was with her mother at this moment (in the early the next morning), had no idea what she was doing. The girl’s father was not a dog-woman, but a child. She didn’t like
+
+
+**K=24:** Once upon a time in a small village nestled between two mountains, was the scene of a violent encounter. A little girl ran to him from his bed. “I don’t know,” he said. The girl was in tears. “It’s just kind of an adventure,” cried the old man, “that’s not a dog.”
+The girl, who was with her mother at this moment (in the early the next morning), had no idea what she was doing. The girl’s father was not a dog-woman, but a child. She didn’t like
+
+
+## Sample 2
+
+Prompt: `The key difference between mitosis and meiosis is that`
+
+
+**K=2:** The key difference between mitosis and meiosis is that the mitral valve is a place between the mitral and the anastomosis. The mitral valve is an important part of the body for the mitral valve to function as a mechanical support for the proper function of the mitral valve. The mitral valve is the main valve that connects to the mitral and the anastomotic valve by means of a network of vessels in the body as a means of support for the mitral and its anastomose. The mitral
+
+
+**K=6:** The key difference between mitosis and meiosis is that the mitral valve is a place between the mitral and the anastomosis. The mitral valve is an important part of the body for the mitral valve to function as a mechanical support for the proper function of the mitral valve. The mitral valve is the main valve that connects to the mitral and the anastomotic valve by means of a network of vessels in the body as a means of support for the mitral and its anastomose. The mitral
+
+
+**K=12:** The key difference between mitosis and meiosis is that the mitral valve is a place between the mitral and the anastomosis. The mitral valve is an important part of the body for the mitral valve to function as a mechanical support for the proper function of the mitral valve. The mitral valve is the main valve that connects to the mitral and the anastomotic valve by means of a network of vessels in the body as a means of support for the mitral and its anastomose. The mitral
+
+
+**K=24:** The key difference between mitosis and meiosis is that the mitral valve is a place between the mitral and the anastomosis. The mitral valve is an important part of the body for the mitral valve to function as a mechanical support for the proper function of the mitral valve. The mitral valve is the main valve that connects to the mitral and the anastomotic valve by means of a network of vessels in the body as a means of support for the mitral and its anastomose. The mitral
+
+
+## Sample 3
+
+Prompt: `To compute the area of a triangle, you`
+
+
+**K=2:** To compute the area of a triangle, you should be able to compute the area using the equation
+The equation of the line function is:
+A line function is represented by:
+where c is the lines for the line function f(x), and f(x) is the line function.
+As you can see, the lines we have been working with are:
+Here is the rule:
+We have to find the line function f(x) = f(x) = f(x) + f(x) = g(x) = g(x). We have:
+And
+
+
+**K=6:** To compute the area of a triangle, you should be able to compute the area using the equation
+The equation of the line function is:
+A line function is represented by:
+where c is the lines for the line function f(x), and f(x) is the line function.
+As you can see, the lines we have been working with are:
+Here is the rule:
+We have to find the line function f(x) = f(x) = f(x) + f(x) = g(x) = g(x). We have:
+And
+
+
+**K=12:** To compute the area of a triangle, you should be able to compute the area using the equation
+The equation of the line function is:
+A line function is represented by:
+where c is the lines for the line function f(x), and f(x) is the line function.
+As you can see, the lines we have been working with are:
+Here is the rule:
+We have to find the line function f(x) = f(x) = f(x) + f(x) = g(x) = g(x). We have:
+And
+
+
+**K=24:** To compute the area of a triangle, you should be able to compute the area using the equation
+The equation of the line function is:
+A line function is represented by:
+where c is the lines for the line function f(x), and f(x) is the line function.
+As you can see, the lines we have been working with are:
+Here is the rule:
+We have to find the line function f(x) = f(x) = f(x) + f(x) = g(x) = g(x). We have:
+And
+
+
+## Sample 4
+
+Prompt: `Q: What is the capital of France?
+A:`
+
+
+**K=2:** Q: What is the capital of France?
+A: First of all, the name of the country is the "people" or "people" of Paris or the neighboring state of France. In the 12th century, there were many French colonists, but their power was limited. The French colonies of France had no authority, no taxation and no laws. This was because of the British rule during the French Revolution, which was based on a loose system of laws and customs established by the French Republic. Many of these laws were carried through the French
+
+
+**K=6:** Q: What is the capital of France?
+A: First of all, the name of the country is the "people" or "people" of Paris or the neighboring state of France. In the 12th century, there were many French colonists, but their power was limited. The French colonies of France had no authority, no taxation and no laws. This was because of the British rule during the French Revolution, which was based on a loose system of laws and customs established by the French Republic. Many of these laws were carried through the French
+
+
+**K=12:** Q: What is the capital of France?
+A: First of all, the name of the country is the "people" or "people" of Paris or the neighboring state of France. In the 12th century, there were many French colonists, but their power was limited. The French colonies of France had no authority, no taxation and no laws. This was because of the British rule during the French Revolution, which was based on a loose system of laws and customs established by the French Republic. Many of these laws were carried through the French
+
+
+**K=24:** Q: What is the capital of France?
+A: First of all, the name of the country is the "people" or "people" of Paris or the neighboring state of France. In the 12th century, there were many French colonists, but their power was limited. The French colonies of France had no authority, no taxation and no laws. This was because of the British rule during the French Revolution, which was based on a loose system of laws and customs established by the French Republic. Many of these laws were carried through the French
+
+
+## Sample 5
+
+Prompt: `In Python, a list comprehension is written as`
+
+
+**K=2:** In Python, a list comprehension is written as a list of lists. This information is used to generate the table of single or multiple items in the list.
+- An example of a list is a list of lists. This lists can be created to make it easier for you to identify the search results.
+- An example of a list:
+- The list of columns
+- List of lists
+- The listing of columns
+- The list of lists
+- The list of lists
+- The list of lists
+- A list of lists
+-
+
+
+**K=6:** In Python, a list comprehension is written as a list of lists. This information is used to generate the table of single or multiple items in the list.
+- An example of a list is a list of lists. This lists can be created to make it easier for you to identify the search results.
+- An example of a list:
+- The list of columns
+- List of lists
+- The listing of columns
+- The list of lists
+- The list of lists
+- The list of lists
+- A list of lists
+-
+
+
+**K=12:** In Python, a list comprehension is written as a list of lists. This information is used to generate the table of single or multiple items in the list.
+- An example of a list is a list of lists. This lists can be created to make it easier for you to identify the search results.
+- An example of a list:
+- The list of columns
+- List of lists
+- The listing of columns
+- The list of lists
+- The list of lists
+- The list of lists
+- A list of lists
+-
+
+
+**K=24:** In Python, a list comprehension is written as a list of lists. This information is used to generate the table of single or multiple items in the list.
+- An example of a list is a list of lists. This lists can be created to make it easier for you to identify the search results.
+- An example of a list:
+- The list of columns
+- List of lists
+- The listing of columns
+- The list of lists
+- The list of lists
+- The list of lists
+- A list of lists
+-
+
+
+## Sample 6
+
+Prompt: `The Roman Empire fell primarily because`
+
+
+**K=2:** The Roman Empire fell primarily because of a lack of Rome's most important cities and most of the areas now owned by the Romerd were Christianized. Most of the important buildings are still the main building and most of the important buildings are still in the city. The most important buildings are the "Witching Hall" and the "Witching Hall". The most important buildings are the National Theatre, which is situated in the center of the town. The most important features are the central hall and the most interesting part of the
+
+
+**K=6:** The Roman Empire fell primarily because of a lack of Rome's most important cities and most of the areas now owned by the Romerd were Christianized. Most of the important buildings are still the main building and most of the important buildings are still in the city. The most important buildings are the "Witching Hall" and the "Witching Hall". The most important buildings are the National Theatre, which is situated in the center of the town. The most important features are the central hall and the most interesting part of the
+
+
+**K=12:** The Roman Empire fell primarily because of a lack of Rome's most important cities and most of the areas now owned by the Romerd were Christianized. Most of the important buildings are still the main building and most of the important buildings are still in the city. The most important buildings are the "Witching Hall" and the "Witching Hall". The most important buildings are the National Theatre, which is situated in the center of the town. The most important features are the central hall and the most interesting part of the
+
+
+**K=24:** The Roman Empire fell primarily because of a lack of Rome's most important cities and most of the areas now owned by the Romerd were Christianized. Most of the important buildings are still the main building and most of the important buildings are still in the city. The most important buildings are the "Witching Hall" and the "Witching Hall". The most important buildings are the National Theatre, which is situated in the center of the town. The most important features are the central hall and the most interesting part of the
+
+
+## Sample 7
+
+Prompt: `Dear Claude,
+
+I wanted to write to you because`
+
+
+**K=2:** Dear Claude,
+
+I wanted to write to you because of it's simplicity of my own.
+I think it's a little complicated for a student to find the right answer. It's all so simple, it's just the kind of person who gets the real answer. And I think, it's the kind of person who gets the real answer the question of whether or not we can answer it, because we can show you a little more clearly that it's not really useful, but not really practical.
+So what's your problem? We're going to learn about the 3-D model of
+
+
+**K=6:** Dear Claude,
+
+I wanted to write to you because of it's simplicity of my own.
+I think it's a little complicated for a student to find the right answer. It's all so simple, it's just the kind of person who gets the real answer. And I think, it's the kind of person who gets the real answer the question of whether or not we can answer it, because we can show you a little more clearly that it's not really useful, but not really practical.
+So what's your problem? We're going to learn about the 3-D model of
+
+
+**K=12:** Dear Claude,
+
+I wanted to write to you because of it's simplicity of my own.
+I think it's a little complicated for a student to find the right answer. It's all so simple, it's just the kind of person who gets the real answer. And I think, it's the kind of person who gets the real answer the question of whether or not we can answer it, because we can show you a little more clearly that it's not really useful, but not really practical.
+So what's your problem? We're going to learn about the 3-D model of
+
+
+**K=24:** Dear Claude,
+
+I wanted to write to you because of it's simplicity of my own.
+I think it's a little complicated for a student to find the right answer. It's all so simple, it's just the kind of person who gets the real answer. And I think, it's the kind of person who gets the real answer the question of whether or not we can answer it, because we can show you a little more clearly that it's not really useful, but not really practical.
+So what's your problem? We're going to learn about the 3-D model of
+
+
+## Sample 8
+
+Prompt: `Photosynthesis is the process by which plants`
+
+
+**K=2:** Photosynthesis is the process by which plants use the light and the other molecules in the food we eat. It is called photosynthesis, and it is the process by which plants and animals produce food in the presence of sunlight and photosynthesis.
+In the food world, plants are more sensitive because they have evolved many different ways of consuming the sunlight that they obtain. Some are very sensitive to light for long periods of time while others are able to retain the light of the sun. Some, like the plants, are sensitive to light.
+Some plants
+
+
+**K=6:** Photosynthesis is the process by which plants use the light and the other molecules in the food we eat. It is called photosynthesis, and it is the process by which plants and animals produce food in the presence of sunlight and photosynthesis.
+In the food world, plants are more sensitive because they have evolved many different ways of consuming the sunlight that they obtain. Some are very sensitive to light for long periods of time while others are able to retain the light of the sun. Some, like the plants, are sensitive to light.
+Some plants
+
+
+**K=12:** Photosynthesis is the process by which plants use the light and the other molecules in the food we eat. It is called photosynthesis, and it is the process by which plants and animals produce food in the presence of sunlight and photosynthesis.
+In the food world, plants are more sensitive because they have evolved many different ways of consuming the sunlight that they obtain. Some are very sensitive to light for long periods of time while others are able to retain the light of the sun. Some, like the plants, are sensitive to light.
+Some plants
+
+
+**K=24:** Photosynthesis is the process by which plants use the light and the other molecules in the food we eat. It is called photosynthesis, and it is the process by which plants and animals produce food in the presence of sunlight and photosynthesis.
+In the food world, plants are more sensitive because they have evolved many different ways of consuming the sunlight that they obtain. Some are very sensitive to light for long periods of time while others are able to retain the light of the sun. Some, like the plants, are sensitive to light.
+Some plants
+
