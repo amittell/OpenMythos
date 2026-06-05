@@ -286,10 +286,12 @@ jobs:
     script: training/eval_gsm8k_generation.py
     resource_class: [blackwell]
     env_required: [CKPT, OUT]
+    env_defaults:
+      DEPTHS: "4,8"
     input_files: ["{CKPT}"]
     output_pattern: docs/eval_gsm8k_generation_round{round_num}.json
-    estimated_minutes: 30
-    timeout_minutes: 90
+    estimated_minutes: 90
+    timeout_minutes: 240
     priority: 5
     preemptible: true
 

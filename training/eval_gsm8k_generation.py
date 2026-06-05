@@ -149,6 +149,30 @@ def main():
     raw = []
     by_K = {K: [0, 0] for K in depths}
 
+    # Incremental save: a single K loop can take 30-60 min and the gpufarm
+    # timeout has killed prior runs mid-loop, losing all completed K passes.
+    # Write a partial payload after each K so the next-tick output_valid
+    # check sees real data even on timeout.
+    def write_payload(complete):
+        results = {
+            f"K{K}": {"acc": by_K[K][0] / max(1, by_K[K][1]), "n": by_K[K][1]}
+            for K in depths
+        }
+        payload = {
+            "ckpt_path": ckpt_path,
+            "step": ckpt_step,
+            "depths": depths,
+            "limit": limit,
+            "max_new": max_new,
+            "results": results,
+            "complete": complete,
+            "raw": raw,
+        }
+        Path(out_json).parent.mkdir(parents=True, exist_ok=True)
+        with open(out_json, "w") as f:
+            json.dump(payload, f, indent=2)
+        return payload
+
     for K in depths:
         logger.info(f"=== K={K} ===")
         t0 = time.perf_counter()
@@ -186,22 +210,12 @@ def main():
             })
         elapsed = time.perf_counter() - t0
         logger.info(f"K={K}: {by_K[K][0]}/{by_K[K][1]} acc={by_K[K][0]/max(1,by_K[K][1]):.3f}  ({elapsed:.0f}s, skipped={skipped})")
+        write_payload(complete=False)
+        logger.info(f"wrote partial {out_json}  K_done={K}")
 
-    results = {f"K{K}": {"acc": by_K[K][0] / max(1, by_K[K][1]), "n": by_K[K][1]} for K in depths}
-
-    payload = {
-        "ckpt_path": ckpt_path,
-        "step": ckpt_step,
-        "depths": depths,
-        "limit": limit,
-        "max_new": max_new,
-        "results": results,
-        "raw": raw,
-    }
-    Path(out_json).parent.mkdir(parents=True, exist_ok=True)
-    with open(out_json, "w") as f:
-        json.dump(payload, f, indent=2)
+    payload = write_payload(complete=True)
     logger.success(f"wrote {out_json}")
+    results = payload["results"]
 
     print()
     print("GSM8K generation accuracy by K:")
