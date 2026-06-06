@@ -140,7 +140,10 @@ jobs:
   # -------- Per-ckpt evals --------
   - id: inference_benchmark
     script: training/inference_throughput_benchmark.py
-    resource_class: [blackwell]
+    # `auto` resolves to resources.yaml `scheduler.default_resource_class_priority`
+    # ([blackwell, gb10, rtx5090, strix_halo]) so this 5-min benchmark falls
+    # back to GB10 / rtx5090 when Blackwell is busy with longer-running work.
+    resource_class: [auto]
     env_required: [CKPT, OUT]
     env_defaults:
       T_VALUES: "1,2,4,8,16"
@@ -227,7 +230,10 @@ jobs:
 
   - id: sft_lora
     script: training/sft_lora_minibeast.py
-    resource_class: [blackwell]
+    # `auto` resolves to resources.yaml `scheduler.default_resource_class_priority`.
+    # LoRA needs ~24 GB VRAM so any modern GPU fits. Blackwell preferred for
+    # speed, GB10 falls back when Blackwell is busy.
+    resource_class: [auto]
     env_required: [CKPT, OUT_DIR]
     env_defaults:
       DATASET: HuggingFaceH4/ultrachat_200k

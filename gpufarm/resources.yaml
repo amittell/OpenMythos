@@ -2,6 +2,14 @@
 # what each unit is suitable for. Consumed by gpufarm/gaps.py (Layer 1) and
 # the eventual dispatcher (Layer 2).
 
+# Operator-configured scheduling defaults (PR #37 / gpufarm task #158 phase A).
+# Jobs that declare `resource_class: [auto]` inherit this priority order:
+# Blackwell rtx6000 is fastest for dense models, GB10 cluster nodes are next
+# for memory-bound workloads, rtx5090 + Strix Halo are last. The substitution
+# happens at manifest load time so the scheduler always sees a concrete list.
+scheduler:
+  default_resource_class_priority: [blackwell, gb10, rtx5090, strix_halo]
+
 resources:
   # 4-node Spark cluster -- FSDP training over RoCE v2 on the 200 Gbps storage
   # network. These ranks are addressed together (4-rank torchrun) for any
