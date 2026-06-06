@@ -55,6 +55,82 @@ resources:
       works in practice). Use [p]ython3 regex trick for any pgrep/pkill
       to avoid matching own shell command line.
 
+  # Individual GB10 node views -- exist so single-node jobs (inference
+  # benchmarks, LoRA fine-tunes, evals) can dispatch onto a free cluster
+  # node without holding the whole 4-rank cluster lease. Overlap
+  # cluster-4node on hardware: when cluster-4node is busy (training
+  # supervisor active), the operator should NOT submit jobs to these.
+  # When these are busy, the cluster-4node supervisor's vram_free_gb
+  # precondition will refuse to launch (PR #157). Same mutex pattern as
+  # blackwell-host vs blackwell-gpu0/1 -- responsibility on the operator,
+  # not the lease store.
+  #
+  # gx10-2 is intentionally NOT exposed individually right now because it
+  # hosts the in-flight Qwen 35B-A3B-FP8 BCB campaign endpoint (~92 GB
+  # unified memory). Add it back as a fourth entry once that completes.
+  - id: gb10-spark
+    host: kebab-spark.lan
+    ssh_user: alexm
+    cuda_device: 0
+    class: gb10
+    vram_gb: 128
+    priority_tier: 2                # lower than Blackwell but available
+    can_run:
+      - inference_benchmark
+      - sft_lora
+      - per_token_halt
+      - depth_extrap
+      - depth_extrap_k64
+      - reasoning_eval
+      - act_halt_diagnostic
+      - act_halt_histogram
+      - gen_samples_multidepth
+      - eval_listops
+      - eval_gsm8k
+    notes: "Rank-0 node of cluster-4node. Overlaps cluster-4node -- operator-mutex."
+
+  - id: gb10-gx10
+    host: kebab-gx10.lan
+    ssh_user: alexm
+    cuda_device: 0
+    class: gb10
+    vram_gb: 128
+    priority_tier: 2
+    can_run:
+      - inference_benchmark
+      - sft_lora
+      - per_token_halt
+      - depth_extrap
+      - depth_extrap_k64
+      - reasoning_eval
+      - act_halt_diagnostic
+      - act_halt_histogram
+      - gen_samples_multidepth
+      - eval_listops
+      - eval_gsm8k
+    notes: "Rank-1 node of cluster-4node. Overlaps cluster-4node -- operator-mutex."
+
+  - id: gb10-gx10-3
+    host: kebab-gx10-3.lan
+    ssh_user: alexm
+    cuda_device: 0
+    class: gb10
+    vram_gb: 128
+    priority_tier: 2
+    can_run:
+      - inference_benchmark
+      - sft_lora
+      - per_token_halt
+      - depth_extrap
+      - depth_extrap_k64
+      - reasoning_eval
+      - act_halt_diagnostic
+      - act_halt_histogram
+      - gen_samples_multidepth
+      - eval_listops
+      - eval_gsm8k
+    notes: "Rank-3 node of cluster-4node. Overlaps cluster-4node -- operator-mutex."
+
   # Whole-host kebab-rtx6000 view -- exists for jobs that need BOTH GPUs
   # visible simultaneously (single-host multi-rank torchrun, e.g.
   # ``consolidate_single_host``). Without this, a job pinned to
