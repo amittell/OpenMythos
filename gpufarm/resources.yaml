@@ -114,6 +114,9 @@ resources:
     class: blackwell
     vram_gb: 96
     priority_tier: 1                # high-value, SFT + heavy evals
+    auto_recover:
+      mode: dry_run                 # datacenter card with in-band reset; observe before going live
+      max_level: reboot             # full ladder permitted (isolate -> soft_reset -> guarded reboot)
     can_run:
       - sft_lora
       - inference_benchmark
@@ -204,6 +207,10 @@ resources:
     class: rtx5090
     vram_gb: 32
     priority_tier: 2                # best-effort, flaky on heavy CUDA work
+    auto_recover:
+      mode: live                    # validated dry_run on kebab-spark, then flipped live
+      max_level: reboot             # consumer card: ladder is isolate -> guarded host reboot
+      soft_reset: false             # nvidia-smi --gpu-reset is "Not Supported" on the 5090
     # vllm-20b.service holds this GPU continuously serving gpt-oss-20b with
     # an Eagle3 speculator at 131K context, 96 max sequences (~30 GB). The
     # service is a day-to-day inference target outside the eval pipeline;
@@ -261,6 +268,7 @@ resources:
     repo_root: /home/alex/OpenMythos
     cuda_device: null               # AMD APU, no CUDA index. Backend selected by job (ROCm or Vulkan).
     class: strix_halo                # AMD Radeon 8060S (Strix Halo gfx1151)
+    telemetry: rocm                  # poll rocm-smi, not nvidia-smi (else it reads GPU 0's power)
     vram_gb: 128                    # Unified-memory ceiling, NOT what rocm-smi/gpu-metrics-exporter report.
                                     # rocm-smi exposes only the 512 MB dedicated framebuffer carveout
                                     # (`VRAM Total = 536870912` -- intentional, not a bug). The usable
