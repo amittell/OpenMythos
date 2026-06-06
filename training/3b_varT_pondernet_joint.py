@@ -90,6 +90,13 @@ try:
 except ImportError:
     import sync_hook as _fed_sync_hook  # type: ignore
 
+# Bootstrap dispatch (pure-stdlib, separately unit-tested). Decides at startup
+# whether to resume from sharded ckpts in CKPT_DIR, auto-shard-from-full via
+# BOOTSTRAP_CKPT, or fall through to the legacy auto-discovery / fresh-init
+# branch. See OpenMythos #156.
+_sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from bootstrap_dispatch import resolve_bootstrap_mode  # noqa: E402
+
 
 def recurrent_forward_no_act(
     self: RecurrentBlock,
@@ -847,9 +854,20 @@ def main():
     #   3. Round 2.1 (checkpoints_3b_varT_act_v2/step_*_full.pt) as a
     #      fallback if 2.2 has not been consolidated yet
     start_step = 0
-    existing_ckpts = _list_ckpts(ckpt_dir, rank=rank if ddp else 0)
-    if existing_ckpts:
-        latest = existing_ckpts[-1]
+    # OpenMythos #156: factor the resume-vs-bootstrap-vs-fresh dispatch into a
+    # pure-stdlib helper so the decision is testable without torch/FSDP and
+    # so the "CKPT_DIR empty + BOOTSTRAP_CKPT is a full.pt" auto-shard path
+    # is the explicit default rather than an implicit side-effect of the
+    # else-branch's FULL_STATE_DICT load. Complements gpufarm PR #157 (which
+    # prevents the supervisor from launching when cluster VRAM is low).
+    decision = resolve_bootstrap_mode(
+        ckpt_dir=ckpt_dir,
+        rank=rank if ddp else 0,
+        bootstrap_ckpt=os.environ.get("BOOTSTRAP_CKPT"),
+    )
+
+    if decision.mode == "resume_shards":
+        latest = decision.shard_path
         if master:
             logger.info(f"Resuming round 2.3 checkpoint: {latest}")
         start_step = load_checkpoint(model, optimizer, latest, ddp)
@@ -858,17 +876,35 @@ def main():
     else:
         # First launch of round 2.3+: bootstrap model weights. Precedence:
         #   1. BOOTSTRAP_CKPT env var (explicit override; round 2.4 uses
-        #      this to point at the round-2 collapsed ckpt).
+        #      this to point at the round-2 collapsed ckpt). The dispatch
+        #      helper has already vetted existence -- mode == "bootstrap_full"
+        #      means the file is present on this rank's local filesystem.
         #   2. round-2.2 final (`checkpoints_3b_varT_act_v3/step_*_full.pt`).
         #   3. round-2.1 final (`checkpoints_3b_varT_act_v2/`) as fallback.
         # Optimiser is fresh in all cases.
         bootstrap_path = None
         bootstrap_label = ""
-        bootstrap_override = os.environ.get("BOOTSTRAP_CKPT", "").strip()
-        if bootstrap_override:
-            bootstrap_path = bootstrap_override
-            bootstrap_label = f"BOOTSTRAP_CKPT override ({bootstrap_override})"
+
+        if decision.mode == "bootstrap_full":
+            bootstrap_path = decision.bootstrap_path
+            bootstrap_label = f"BOOTSTRAP_CKPT override ({bootstrap_path})"
+            if master:
+                logger.info(
+                    "first-launch bootstrap: CKPT_DIR has no shards; "
+                    f"loading BOOTSTRAP_CKPT={bootstrap_path} at rank 0 "
+                    "and letting FSDP re-shard"
+                )
         else:
+            # mode == "fresh_start": BOOTSTRAP_CKPT either unset or
+            # pointed at a missing file. Surface the missing-path case
+            # so operators don't silently fall through to auto-discovery
+            # when they meant to bootstrap from a specific file.
+            if decision.bootstrap_path is not None and master:
+                logger.warning(
+                    f"BOOTSTRAP_CKPT={decision.bootstrap_path} does not "
+                    "exist on this rank's filesystem; falling back to "
+                    "auto-discovery of round-2.2/round-2.1 finals"
+                )
             v3_candidates = sorted(
                 glob.glob("checkpoints_3b_varT_act_v3/step_*_full.pt")
             )
