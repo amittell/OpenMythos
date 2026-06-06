@@ -187,3 +187,16 @@ rounds:
       - depth_extrap_k64
       - reasoning_eval
       - gen_samples_multidepth
+
+  r221:
+    description: "Round 2.21: training-distribution floor discriminator (T_MIN=1,T_MAX=4 ablation on r2.18, task #155)"
+    # Same architecture and same lambda_p as r2.18, but T_MIN=1, T_MAX=4
+    # instead of T_MIN=2, T_MAX=12. The change exposes the model to
+    # iteration-1 representations during training. If the halt step drops
+    # to 1, the floor is a training-distribution artifact; if it stays at
+    # 2, the floor is architectural. See
+    # docs/experiments/r221_architectural_floor_plan.md for the predictions.
+    ckpt_dir: checkpoints_3b_varT_pondernet_round221
+    ckpt_step: 24414
+    bootstrap: r218
+    eval_bundle: *eval_defaults

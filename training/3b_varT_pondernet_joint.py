@@ -751,8 +751,10 @@ def main():
     # Variable-T: sample T ~ Uniform(T_MIN, T_MAX) per optimizer step.
     # cfg.max_loop_iters drives the LoRAAdapter embedding table size, so it
     # must be at least T_MAX for every sampled depth to index a learned slot.
-    T_MIN = 2
-    T_MAX = 12
+    # r2.21 introduced env overrides so we can ablate the training-time depth
+    # distribution while keeping the model architecture fixed.
+    T_MIN = int(os.environ.get("T_MIN", "2"))
+    T_MAX = int(os.environ.get("T_MAX", "12"))
     cfg.max_loop_iters = T_MAX
 
     bf16_ok = torch.cuda.is_available() and torch.cuda.is_bf16_supported()

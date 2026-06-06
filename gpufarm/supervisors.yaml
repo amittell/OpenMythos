@@ -56,3 +56,54 @@ supervisors:
       sigterm_grace_seconds: 30
       kill_pattern: "python3 .*training/3b_varT"
     notes: "r2.20 non-ACT baseline (T_MAX=1); 50M-token continuation budget. Supervisor id `train-r215` is historical and reused across rounds."
+
+  - id: train-r221
+    owner: alexm
+    resource_id: cluster-4node
+    command: bash training/launch_3b.sh
+    env:
+      SCRIPT: training/3b_varT_pondernet_joint.py
+      PORT: "29521"
+      # r2.21 -- architectural-floor discriminator. See
+      # docs/experiments/r221_architectural_floor_plan.md. Continues from
+      # r2.18 step 24414 (LAMBDA_P=1.0, halt=2 model). Now varies the
+      # training-time T distribution: T_MIN=1 (was 2) exposes the model to
+      # iteration-1 representations, T_MAX=4 (was 12) tightens the upper
+      # bound since the halt distribution sits near 2 anyway. REINIT_HEAD=0
+      # preserves the r2.18 halt head -- the question is whether *more*
+      # training with the new T distribution moves the floor. Bootstrap
+      # shards expected at CKPT_DIR/step_0024414_rank{0..3}.pt -- copy from
+      # round218 before launch.
+      EXTRA_ENV: "CKPT_DIR=checkpoints_3b_varT_pondernet_round221 BOOTSTRAP_CKPT=checkpoints_3b_varT_pondernet_round218/step_0024414_full.pt TARGET_TOKENS=50000000 REINIT_HEAD=0 T_MIN=1 T_MAX=4 LAMBDA_P=1.0 LAMBDA_KL=1.0"
+    liveness:
+      kind: log_staleness
+      host: kebab-spark.lan
+      log_path: /tmp/train_r0.log
+      stale_seconds: 480
+    restart_policy:
+      max_restarts_per_window: 10
+      window_hours: 24
+      backoff_seconds: 60
+      dead_after_grace_restarts: 10
+    preconditions:
+      - check: bond0_active_slave
+        hosts: all_members
+        on_fail: wait
+      - check: dns_resolve
+        name: huggingface.co
+        host: kebab-spark.lan
+        on_fail: wait
+      - check: roce_gid_present
+        host: kebab-spark.lan
+        iface: rocep1s0f1
+        subnet_prefix: "192.168.100."
+        on_fail: wait
+      - check: ssh_reachable
+        hosts: all_members
+        on_fail: wait
+    completion:
+      marker: "Training complete."
+    shutdown:
+      sigterm_grace_seconds: 30
+      kill_pattern: "python3 .*training/3b_varT"
+    notes: "r2.21 training-distribution floor discriminator (T_MIN=1, T_MAX=4 on r2.18 backbone, LAMBDA_P=1.0); 50M-token continuation."
