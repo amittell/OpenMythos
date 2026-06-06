@@ -140,10 +140,13 @@ jobs:
   # -------- Per-ckpt evals --------
   - id: inference_benchmark
     script: training/inference_throughput_benchmark.py
-    # `auto` resolves to resources.yaml `scheduler.default_resource_class_priority`
-    # ([blackwell, gb10, rtx5090, strix_halo]) so this 5-min benchmark falls
-    # back to GB10 / rtx5090 when Blackwell is busy with longer-running work.
-    resource_class: [auto]
+    # Stays Blackwell-only: the script's pinned python_bin
+    # (/home/alexm/venvs/vllm-turboquant/bin/python3) only exists on the
+    # rtx6000 host. Falling back to GB10 cluster nodes silently fails with
+    # "No such file or directory" (rc=127). Future work: install a portable
+    # venv on cluster nodes OR add per-resource python_bin overrides so
+    # auto-place would actually work; see #162.
+    resource_class: [blackwell]
     env_required: [CKPT, OUT]
     env_defaults:
       T_VALUES: "1,2,4,8,16"
@@ -230,10 +233,11 @@ jobs:
 
   - id: sft_lora
     script: training/sft_lora_minibeast.py
-    # `auto` resolves to resources.yaml `scheduler.default_resource_class_priority`.
-    # LoRA needs ~24 GB VRAM so any modern GPU fits. Blackwell preferred for
-    # speed, GB10 falls back when Blackwell is busy.
-    resource_class: [auto]
+    # Stays Blackwell-only for the same reason as inference_benchmark:
+    # the script expects the vllm-turboquant venv which only exists on
+    # rtx6000. See #162 for the fleet venv parity task that would unblock
+    # resource_class: [auto].
+    resource_class: [blackwell]
     env_required: [CKPT, OUT_DIR]
     env_defaults:
       DATASET: HuggingFaceH4/ultrachat_200k
