@@ -75,6 +75,13 @@ supervisors:
       # shards expected at CKPT_DIR/step_0024414_rank{0..3}.pt -- copy from
       # round218 before launch.
       EXTRA_ENV: "CKPT_DIR=checkpoints_3b_varT_pondernet_round221 BOOTSTRAP_CKPT=checkpoints_3b_varT_pondernet_round218/step_0024414_full.pt TARGET_TOKENS=50000000 REINIT_HEAD=0 T_MIN=1 T_MAX=4 LAMBDA_P=1.0 LAMBDA_KL=1.0"
+    # PR #157 unconditional launch-time VRAM guard. r2.21 needs ~100 GiB on
+    # each GB10 cluster node for FSDP rank initialisation; refuse to launch
+    # if the cluster row's cached telemetry shows less. Defaults to 0
+    # (disabled) on other supervisors. The vram_free_gb precondition below
+    # is the same gate at the operator-visible declaration layer; both
+    # check the cached health snapshot, no live nvidia-smi probe.
+    launch_min_vram_gb: 100
     liveness:
       kind: log_staleness
       host: kebab-spark.lan
@@ -101,9 +108,13 @@ supervisors:
       - check: ssh_reachable
         hosts: all_members
         on_fail: wait
+      - check: vram_free_gb
+        hosts: all_members
+        min_gb: 100
+        on_fail: wait
     completion:
       marker: "Training complete."
     shutdown:
       sigterm_grace_seconds: 30
       kill_pattern: "python3 .*training/3b_varT"
-    notes: "r2.21 training-distribution floor discriminator (T_MIN=1, T_MAX=4 on r2.18 backbone, LAMBDA_P=1.0); 50M-token continuation."
+    notes: "r2.21 training-distribution floor discriminator (T_MIN=1, T_MAX=4 on r2.18 backbone, LAMBDA_P=1.0); 50M-token continuation. PR #157 VRAM gate + precondition both at 100 GiB to prevent rank-0 OOM when cluster nodes host external workloads."
