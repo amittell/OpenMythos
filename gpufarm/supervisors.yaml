@@ -28,7 +28,13 @@ supervisors:
       kind: log_staleness
       host: kebab-spark.lan
       log_path: /tmp/train_r0.log
-      stale_seconds: 480
+      # Bumped from 480 (8 min) to 1800 (30 min) to cover FSDP's initial
+      # broadcast of the 16 GB full.pt across 4 GB10 nodes over RoCE/NCCL.
+      # r2.21 was being killed at ~9.5 min in the bootstrap phase before
+      # the first training step could log anything. During real training
+      # the script logs every step (~10s cadence) so 30 min is still
+      # tight enough to catch hangs.
+      stale_seconds: 1800
     restart_policy:
       max_restarts_per_window: 10
       window_hours: 24
@@ -86,7 +92,8 @@ supervisors:
       kind: log_staleness
       host: kebab-spark.lan
       log_path: /tmp/train_r0.log
-      stale_seconds: 480
+      # See train-r215 above for the FSDP-bootstrap rationale.
+      stale_seconds: 1800
     restart_policy:
       max_restarts_per_window: 10
       window_hours: 24
