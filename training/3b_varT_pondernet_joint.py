@@ -524,6 +524,54 @@ def _distribute_checkpoint(final_path: str, keep_last: int = 3) -> None:
             logger.warning(f"Checkpoint prune on {ip} timed out after 60s")
 
 
+def _adapt_t_max_dependent_weights(
+    ckpt_state: dict, model_state: dict
+) -> tuple[dict, list[tuple[str, tuple, tuple]]]:
+    """
+    Make a checkpoint's T-dependent tensors fit the current model when the
+    current cfg.max_loop_iters is smaller than the checkpoint's. The only
+    stored weight whose shape depends on max_loop_iters is
+    `LoRAAdapter.scale.weight` (`nn.Embedding(max_loop_iters, lora_rank)`),
+    so a checkpoint trained at T_MAX=12 has shape [12, lora_rank] while a
+    T_MAX=4 model has [4, lora_rank]. We slice rows 0:T_MAX of the ckpt
+    tensor -- which correspond to depth indices 0..T_MAX-1, the same
+    iterations the smaller model will run -- and feed the slice to
+    load_state_dict. r2.21 bootstraps T_MAX=4 from r2.18's T_MAX=12 ckpt
+    via this path.
+
+    Returns:
+        (adapted_state, [(key, ckpt_shape, model_shape), ...]) -- second
+        item lists every adapted key so the caller can log it. Keys whose
+        shapes match are passed through unchanged.
+
+    Raises:
+        ValueError if the ckpt tensor's first dim is SMALLER than the
+        model's (can't pad rows without inventing weights) or if any other
+        dim mismatches (would need a real reshape decision, not a slice).
+    """
+    adapted = dict(ckpt_state)
+    sliced: list[tuple[str, tuple, tuple]] = []
+    for k, m_t in model_state.items():
+        if k not in adapted:
+            continue
+        c_t = adapted[k]
+        if tuple(c_t.shape) == tuple(m_t.shape):
+            continue
+        if c_t.dim() != m_t.dim() or c_t.shape[1:] != m_t.shape[1:]:
+            raise ValueError(
+                f"bootstrap state_dict shape mismatch at {k!r}: ckpt {tuple(c_t.shape)} "
+                f"vs model {tuple(m_t.shape)} -- only dim-0 truncation supported"
+            )
+        if c_t.shape[0] < m_t.shape[0]:
+            raise ValueError(
+                f"bootstrap state_dict at {k!r}: ckpt dim-0 ({c_t.shape[0]}) is SMALLER "
+                f"than model dim-0 ({m_t.shape[0]}); padding rows would invent weights"
+            )
+        adapted[k] = c_t[: m_t.shape[0]].clone()
+        sliced.append((k, tuple(c_t.shape), tuple(m_t.shape)))
+    return adapted, sliced
+
+
 def bootstrap_model_weights(model, path: str, ddp: bool) -> None:
     """
     Load ONLY the model weights from a full-state-dict ckpt; leave the
@@ -533,17 +581,39 @@ def bootstrap_model_weights(model, path: str, ddp: bool) -> None:
 
     Mirrors load_checkpoint's FSDP FULL_STATE_DICT path but skips the
     `optim_state_dict_to_load` call that would crash on missing optimizer key.
+
+    If the bootstrap ckpt was trained at a larger T_MAX than the current
+    model, T-dependent params (`LoRAAdapter.scale.weight`) are sliced to
+    rows 0:T_MAX via _adapt_t_max_dependent_weights. Any slice events are
+    logged at WARNING level on rank 0 so operators see the architectural
+    delta in supervisor logs.
     """
     ckpt = torch.load(path, map_location="cpu", weights_only=False)
     if not ddp:
-        model.load_state_dict(ckpt["model"])
+        ckpt_model, slices = _adapt_t_max_dependent_weights(
+            ckpt["model"], model.state_dict()
+        )
+        if slices:
+            for k, c_shape, m_shape in slices:
+                logger.warning(
+                    f"bootstrap: sliced {k} {c_shape} -> {m_shape} (T_MAX shrink)"
+                )
+        model.load_state_dict(ckpt_model)
         return
     with FSDP.state_dict_type(
         model,
         StateDictType.FULL_STATE_DICT,
         FullStateDictConfig(offload_to_cpu=True, rank0_only=False),
     ):
-        model.load_state_dict(ckpt["model"])
+        ckpt_model, slices = _adapt_t_max_dependent_weights(
+            ckpt["model"], model.state_dict()
+        )
+        if slices and dist.get_rank() == 0:
+            for k, c_shape, m_shape in slices:
+                logger.warning(
+                    f"bootstrap: sliced {k} {c_shape} -> {m_shape} (T_MAX shrink)"
+                )
+        model.load_state_dict(ckpt_model)
 
 
 def load_checkpoint(model, optimizer, path: str, ddp: bool) -> int:
