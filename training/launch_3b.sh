@@ -63,6 +63,50 @@ NCCL_BASE='NCCL_DEBUG=WARN NCCL_IB_HCA=rocep1s0f1 NCCL_SOCKET_IFNAME=bond0 GLOO_
 #   EXTRA_ENV="CKPT_DIR=foo BOOTSTRAP_CKPT=bar/step.pt"
 EXTRA_ENV=${EXTRA_ENV:-}
 
+# Extract BOOTSTRAP_CKPT from EXTRA_ENV if present so we can pre-distribute
+# the consolidated full.pt to worker nodes. The trainer's bootstrap_full
+# mode (training/bootstrap_dispatch.py, OpenMythos #156) loads the same
+# file on every rank then lets FSDP re-shard in memory -- so the file
+# must exist on each worker's local disk before torchrun starts. Without
+# this step ranks 1..N-1 die instantly with FileNotFoundError, which
+# burns the supervisor's restart budget on a non-recoverable cause.
+# Distribution runs in parallel from rank 0 over the 200G storage fabric
+# (~16 GB takes ~15-30 s per worker). Skips workers whose copy already
+# matches in size (cheap idempotency for re-launches and supervisor
+# restarts; full byte-compare would be too slow on 16 GB).
+BOOTSTRAP_CKPT=""
+for kv in $EXTRA_ENV; do
+  case $kv in BOOTSTRAP_CKPT=*) BOOTSTRAP_CKPT=${kv#BOOTSTRAP_CKPT=};; esac
+done
+
+if [ -n "$BOOTSTRAP_CKPT" ] && [ ${#ACTIVE[@]} -gt 1 ]; then
+  RANK0_HOST=${NODE_HOST[${ACTIVE[0]}]}
+  src_size=$(ssh -q alexm@$RANK0_HOST "stat -c %s ~/OpenMythos/$BOOTSTRAP_CKPT 2>/dev/null || echo 0")
+  if [ "$src_size" = "0" ]; then
+    echo "ERROR: BOOTSTRAP_CKPT '$BOOTSTRAP_CKPT' not found on rank0 host $RANK0_HOST" >&2
+    exit 1
+  fi
+  echo "BOOTSTRAP_CKPT=$BOOTSTRAP_CKPT (${src_size} bytes on $RANK0_HOST); distributing to workers"
+  rel_dir=$(dirname "$BOOTSTRAP_CKPT")
+  for r in "${ACTIVE[@]:1}"; do
+    host=${NODE_HOST[$r]}
+    (
+      dst_size=$(ssh -q alexm@$host "stat -c %s ~/OpenMythos/$BOOTSTRAP_CKPT 2>/dev/null || echo 0")
+      if [ "$dst_size" = "$src_size" ]; then
+        echo "  [rank $r @ $host] already present (size match: $dst_size); skip"
+      else
+        echo "  [rank $r @ $host] rsync start (have=$dst_size, want=$src_size)"
+        ssh -q alexm@$RANK0_HOST "mkdir -p ~/OpenMythos/$rel_dir && rsync -a --partial --inplace --bwlimit=0 ~/OpenMythos/$BOOTSTRAP_CKPT alexm@$host:OpenMythos/$BOOTSTRAP_CKPT"
+        rc=$?
+        echo "  [rank $r @ $host] rsync done rc=$rc"
+        if [ $rc -ne 0 ]; then exit $rc; fi
+      fi
+    ) &
+  done
+  wait
+  echo "BOOTSTRAP_CKPT distribution complete"
+fi
+
 # Fetch per-node RoCE v2 IPv4 GID index via a simple heredoc (outer quoting is tricky)
 get_gid() {
   ssh -q alexm@$1 bash -s << 'EOF'
