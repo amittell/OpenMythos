@@ -75,8 +75,13 @@ resources:
     class: gb10
     vram_gb: 128
     priority_tier: 2                # lower than Blackwell but available
+    # inference_benchmark is intentionally excluded -- the job pins
+    # python_bin=/home/alexm/venvs/vllm-turboquant/bin/python3 which only
+    # exists on the rtx6000 Blackwell host. Dispatching here resulted in
+    # bash rc=127 ("No such file or directory") that the old reap loop
+    # silently treated as completed when a stale prior-round output file
+    # existed at the same worker-relative path. See gpufarm #163.
     can_run:
-      - inference_benchmark
       - sft_lora
       - per_token_halt
       - depth_extrap
@@ -97,8 +102,8 @@ resources:
     class: gb10
     vram_gb: 128
     priority_tier: 2
+    # inference_benchmark excluded -- see gb10-spark note above (#163).
     can_run:
-      - inference_benchmark
       - sft_lora
       - per_token_halt
       - depth_extrap
@@ -137,8 +142,8 @@ resources:
     class: gb10
     vram_gb: 128
     priority_tier: 2
+    # inference_benchmark excluded -- see gb10-spark note above (#163).
     can_run:
-      - inference_benchmark
       - sft_lora
       - per_token_halt
       - depth_extrap
@@ -229,6 +234,7 @@ resources:
       - serve-qwen36-27b-fp8         # qwen eval campaign (preempts gpt-oss-120b)
       - serve-qwen3-coder-next-fp8
       - serve-qwen36-35b-a3b-bf16
+      - qwen36_evalplus_rerun
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
     # Verified 2026-06-03 against actual running units. The previous list
     # claimed embedding lived on GPU 0; in reality kebab-rtx-embedding
@@ -279,6 +285,7 @@ resources:
       - serve-qwen36-35b-a3b-fp8     # qwen eval campaign (preempts coder + embedding)
       - serve-qwen36-27b-bf16
       - serve-cluster-35b-a3b-bf16   # qwen cluster eval campaign (gpu1:8002 leg)
+      - qwen36_evalplus_rerun
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
     # Verified 2026-06-03 against actual running units. GPU 1 now hosts
     # kebab-rtx-vllm-coder-gpu1 (Qwen3-Coder-Next FP8 80B MoE, ~75 GB

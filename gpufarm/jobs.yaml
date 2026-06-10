@@ -305,6 +305,37 @@ jobs:
     priority: 5
     preemptible: true
 
+  # -------- Qwen3.6 evalplus HE+/MBPP+ rerun (max_new_tokens fix) --------
+  # Re-runs HumanEval+ and MBPP+ for the qwen36_cascade_run3 campaign with
+  # the max_new_tokens=32768 thinking-mode fix. The original campaign's
+  # bench_driver.sh did NOT override evalplus's default max_new_tokens=768,
+  # which truncated Qwen3.6 mid-<think> on 164/165 samples and produced
+  # 51-58% pass@1 scores that are pseudocode-from-thinking, not real code.
+  # See memory: evalplus-max-tokens-thinking-trap.
+  #
+  # Each invocation handles ONE model variant on ONE Blackwell. Submit 4
+  # times (one per Qwen3.6 variant); 2 will run in parallel (one per GPU)
+  # and 2 will queue. requires_exclusive evicts the production vLLM units
+  # on whichever Blackwell GPU is assigned so we get the full 96 GB. Each
+  # variant takes ~60-90 min wall.
+  - id: qwen36_evalplus_rerun
+    script: scripts/qwen_campaign/qwen36_evalplus_rerun.sh
+    resource_class: [blackwell]
+    env_required: [MODEL_PATH, MODEL_TAG, SERVED_NAME, OUT_ROOT]
+    env_defaults:
+      MAX_NEW_TOKENS: "32768"
+      TEMP: "0.6"
+      TOP_P: "0.95"
+    output_pattern: "{OUT_ROOT}/{MODEL_TAG}/rerun.done"
+    estimated_minutes: 90
+    timeout_minutes: 240
+    priority: 4
+    preemptible: false
+    max_retries: 1
+    requires_exclusive: true       # need full 96 GB Blackwell -- evicts prod vLLM
+    # No python_bin -- this is a bash driver; it dispatches docker + the
+    # benchmarks/evalplus-venv python on the host directly.
+
   # -------- Toy depth-required task (paper Tier 2.4) --------
   # Trains a ~50M-param recurrent-depth toy model on nested-XOR expressions
   # of variable depth d in {1..8}, sweeping LAMBDA_P to discriminate the
