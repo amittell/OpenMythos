@@ -197,3 +197,86 @@ models:
           should release one before reserving the other.
     conflicts_with_models:
       - qwen3-32b-vllm
+
+  # ---------------------------------------------------------------------
+  # Qwen eval campaign (Option A): bare-docker vLLM endpoints stood up on
+  # blackwell-gpu0 (port 8000) / blackwell-gpu1 (port 8002) for the
+  # kebab-cruelist code-eval suites. Each serve preempts the production
+  # external_lease on its GPU (gpt-oss-120b on gpu0; coder+embedding on
+  # gpu1) and gpufarm restores it on release/TTL/failure. Mirrors
+  # kebab-rtx6000:/home/alexm/cascade/start_endpoint_v2.sh.
+  # ---------------------------------------------------------------------
+  - id: qwen36-27b-fp8
+    family: vllm
+    vram_gb_min: 50
+    vram_gb_max: 96
+    default_resource_class: blackwell
+    launch_by_resource:
+      blackwell-gpu0:
+        transport: ssh+docker
+        container_name: kebab-vllm-eval-gpu0
+        deploy_command: "docker run -d --name kebab-vllm-eval-gpu0 --gpus device=0 -p 8000:8000 -v /models:/models:ro --shm-size=32g vllm/vllm-openai:v0.21.0 --model /models/Qwen3.6-27B-FP8 --served-model-name qwen3.6-27b qwen3.6-27b-fp8 --max-model-len 262144 --gpu-memory-utilization 0.95 --max-num-seqs 4 --tensor-parallel-size 1 --trust-remote-code"
+        port: 8000
+        health_path: /v1/models
+        served_name: qwen3.6-27b
+        deploy_health_timeout_sec: 1200
+
+  - id: qwen36-35b-a3b-fp8
+    family: vllm
+    vram_gb_min: 50
+    vram_gb_max: 96
+    default_resource_class: blackwell
+    launch_by_resource:
+      blackwell-gpu1:
+        transport: ssh+docker
+        container_name: kebab-vllm-eval-gpu1
+        deploy_command: "docker run -d --name kebab-vllm-eval-gpu1 --gpus device=1 -p 8002:8000 -v /models:/models:ro --shm-size=32g vllm/vllm-openai:v0.21.0 --model /models/Qwen3.6-35B-A3B-FP8 --served-model-name qwen3.6-35b-a3b qwen3.6-35b-a3b-fp8 --max-model-len 262144 --gpu-memory-utilization 0.95 --max-num-seqs 2 --tensor-parallel-size 1 --trust-remote-code"
+        port: 8002
+        health_path: /v1/models
+        served_name: qwen3.6-35b-a3b
+        deploy_health_timeout_sec: 1200
+
+  - id: qwen3-coder-next-fp8
+    family: vllm
+    vram_gb_min: 50
+    vram_gb_max: 96
+    default_resource_class: blackwell
+    launch_by_resource:
+      blackwell-gpu0:
+        transport: ssh+docker
+        container_name: kebab-vllm-eval-gpu0
+        deploy_command: "docker run -d --name kebab-vllm-eval-gpu0 --gpus device=0 -p 8000:8000 -v /models:/models:ro --shm-size=32g vllm/vllm-openai:v0.21.0 --model /models/Qwen3-Coder-Next-FP8 --served-model-name qwen3-coder-next-bench qwen3-coder-next --max-model-len 262144 --gpu-memory-utilization 0.95 --max-num-seqs 2 --tensor-parallel-size 1 --trust-remote-code"
+        port: 8000
+        health_path: /v1/models
+        served_name: qwen3-coder-next-bench
+        deploy_health_timeout_sec: 1200
+
+  - id: qwen36-27b-bf16
+    family: vllm
+    vram_gb_min: 50
+    vram_gb_max: 96
+    default_resource_class: blackwell
+    launch_by_resource:
+      blackwell-gpu1:
+        transport: ssh+docker
+        container_name: kebab-vllm-eval-gpu1
+        deploy_command: "docker run -d --name kebab-vllm-eval-gpu1 --gpus device=1 -p 8002:8000 -v /models:/models:ro --shm-size=32g vllm/vllm-openai:v0.21.0 --model /models/Qwen3.6-27B --served-model-name qwen3.6-27b qwen3.6-27b-bf16 --max-model-len 262144 --gpu-memory-utilization 0.95 --max-num-seqs 4 --tensor-parallel-size 1 --trust-remote-code"
+        port: 8002
+        health_path: /v1/models
+        served_name: qwen3.6-27b
+        deploy_health_timeout_sec: 1200
+
+  - id: qwen36-35b-a3b-bf16
+    family: vllm
+    vram_gb_min: 50
+    vram_gb_max: 96
+    default_resource_class: blackwell
+    launch_by_resource:
+      blackwell-gpu0:
+        transport: ssh+docker
+        container_name: kebab-vllm-eval-gpu0
+        deploy_command: "docker run -d --name kebab-vllm-eval-gpu0 --gpus device=0 -p 8000:8000 -v /models:/models:ro --shm-size=32g vllm/vllm-openai:v0.21.0 --model /models/Qwen3.6-35B-A3B --served-model-name qwen3.6-35b-a3b qwen3.6-35b-a3b-bf16 --max-model-len 262144 --gpu-memory-utilization 0.95 --max-num-seqs 2 --tensor-parallel-size 1 --trust-remote-code"
+        port: 8000
+        health_path: /v1/models
+        served_name: qwen3.6-35b-a3b
+        deploy_health_timeout_sec: 1200

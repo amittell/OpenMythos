@@ -205,6 +205,9 @@ resources:
       - gen_samples_multidepth
       - eval_listops
       - eval_gsm8k
+      - serve-qwen36-27b-fp8         # qwen eval campaign (preempts gpt-oss-120b)
+      - serve-qwen3-coder-next-fp8
+      - serve-qwen36-35b-a3b-bf16
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
     # Verified 2026-06-03 against actual running units. The previous list
     # claimed embedding lived on GPU 0; in reality kebab-rtx-embedding
@@ -252,6 +255,8 @@ resources:
       - eval_listops
       - eval_gsm8k
       - toy_depth_task         # paper Tier 2.4, pinned here via requires_resource
+      - serve-qwen36-35b-a3b-fp8     # qwen eval campaign (preempts coder + embedding)
+      - serve-qwen36-27b-bf16
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
     # Verified 2026-06-03 against actual running units. GPU 1 now hosts
     # kebab-rtx-vllm-coder-gpu1 (Qwen3-Coder-Next FP8 80B MoE, ~75 GB

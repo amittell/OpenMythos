@@ -336,3 +336,55 @@ jobs:
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
     max_retries: 1
     requires_exclusive: true       # one toy run at a time on gpu1
+
+  # ---------------------------------------------------------------------
+  # Qwen eval campaign serve jobs (Option A). Each is an inference_deployment
+  # pinned to a GPU; submit with env model_id=<the matching model>. The serve
+  # preempts the production external_lease on its GPU (stop -> serve ->
+  # restore on release/TTL/failure). The kebab-cruelist orchestrator enqueues
+  # these and runs the code-eval drivers against the served endpoint.
+  # ---------------------------------------------------------------------
+  - id: serve-qwen36-27b-fp8
+    resource_class: [blackwell]
+    job_type: inference_deployment
+    duration_hours: 24.0
+    requires_resource: blackwell-gpu0
+    on_ttl_expiry: release
+    on_health_failure: hold_and_alert
+    preempts_external_lease: true
+
+  - id: serve-qwen36-35b-a3b-fp8
+    resource_class: [blackwell]
+    job_type: inference_deployment
+    duration_hours: 24.0
+    requires_resource: blackwell-gpu1
+    on_ttl_expiry: release
+    on_health_failure: hold_and_alert
+    preempts_external_lease: true
+
+  - id: serve-qwen3-coder-next-fp8
+    resource_class: [blackwell]
+    job_type: inference_deployment
+    duration_hours: 24.0
+    requires_resource: blackwell-gpu0
+    on_ttl_expiry: release
+    on_health_failure: hold_and_alert
+    preempts_external_lease: true
+
+  - id: serve-qwen36-27b-bf16
+    resource_class: [blackwell]
+    job_type: inference_deployment
+    duration_hours: 24.0
+    requires_resource: blackwell-gpu1
+    on_ttl_expiry: release
+    on_health_failure: hold_and_alert
+    preempts_external_lease: true
+
+  - id: serve-qwen36-35b-a3b-bf16
+    resource_class: [blackwell]
+    job_type: inference_deployment
+    duration_hours: 24.0
+    requires_resource: blackwell-gpu0
+    on_ttl_expiry: release
+    on_health_failure: hold_and_alert
+    preempts_external_lease: true
