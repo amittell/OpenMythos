@@ -388,3 +388,49 @@ jobs:
     on_ttl_expiry: release
     on_health_failure: hold_and_alert
     preempts_external_lease: true
+
+  # ---------------------------------------------------------------------
+  # Qwen CLUSTER eval campaign serve jobs (Option A, multi-node). One per
+  # serve target: 4 GB10 nodes (free, no preemption) + rtx6000 gpu1 (holds
+  # the coder lease, so it preempts). Submit each with env model_id=<model>.
+  # ---------------------------------------------------------------------
+  - id: serve-cluster-coder-next-fp8
+    resource_class: [gb10]
+    job_type: inference_deployment
+    duration_hours: 24.0
+    requires_resource: gb10-spark
+    on_ttl_expiry: release
+    on_health_failure: hold_and_alert
+
+  - id: serve-cluster-27b-fp8
+    resource_class: [gb10]
+    job_type: inference_deployment
+    duration_hours: 24.0
+    requires_resource: gb10-gx10
+    on_ttl_expiry: release
+    on_health_failure: hold_and_alert
+
+  - id: serve-cluster-35b-a3b-fp8
+    resource_class: [gb10]
+    job_type: inference_deployment
+    duration_hours: 24.0
+    requires_resource: gb10-gx10-2
+    on_ttl_expiry: release
+    on_health_failure: hold_and_alert
+
+  - id: serve-cluster-27b-bf16
+    resource_class: [gb10]
+    job_type: inference_deployment
+    duration_hours: 24.0
+    requires_resource: gb10-gx10-3
+    on_ttl_expiry: release
+    on_health_failure: hold_and_alert
+
+  - id: serve-cluster-35b-a3b-bf16
+    resource_class: [blackwell]
+    job_type: inference_deployment
+    duration_hours: 24.0
+    requires_resource: blackwell-gpu1
+    on_ttl_expiry: release
+    on_health_failure: hold_and_alert
+    preempts_external_lease: true

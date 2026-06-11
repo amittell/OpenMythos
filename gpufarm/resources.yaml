@@ -87,6 +87,7 @@ resources:
       - gen_samples_multidepth
       - eval_listops
       - eval_gsm8k
+      - serve-cluster-coder-next-fp8     # qwen cluster eval campaign
     notes: "Rank-0 node of cluster-4node. Overlaps cluster-4node -- operator-mutex."
 
   - id: gb10-gx10
@@ -108,7 +109,26 @@ resources:
       - gen_samples_multidepth
       - eval_listops
       - eval_gsm8k
+      - serve-cluster-27b-fp8            # qwen cluster eval campaign
     notes: "Rank-1 node of cluster-4node. Overlaps cluster-4node -- operator-mutex."
+
+  - id: gb10-gx10-2
+    host: kebab-gx10-2.lan
+    ssh_user: alexm
+    cuda_device: 0
+    class: gb10
+    vram_gb: 128
+    priority_tier: 2
+    can_run:
+      - inference_benchmark
+      - per_token_halt
+      - depth_extrap
+      - reasoning_eval
+      - gen_samples_multidepth
+      - eval_listops
+      - eval_gsm8k
+      - serve-cluster-35b-a3b-fp8        # qwen cluster eval campaign
+    notes: "Rank-2 node of cluster-4node. Overlaps cluster-4node -- operator-mutex."
 
   - id: gb10-gx10-3
     host: kebab-gx10-3.lan
@@ -129,6 +149,7 @@ resources:
       - gen_samples_multidepth
       - eval_listops
       - eval_gsm8k
+      - serve-cluster-27b-bf16           # qwen cluster eval campaign
     notes: "Rank-3 node of cluster-4node. Overlaps cluster-4node -- operator-mutex."
 
   # Whole-host kebab-rtx6000 view -- exists for jobs that need BOTH GPUs
@@ -257,6 +278,7 @@ resources:
       - toy_depth_task         # paper Tier 2.4, pinned here via requires_resource
       - serve-qwen36-35b-a3b-fp8     # qwen eval campaign (preempts coder + embedding)
       - serve-qwen36-27b-bf16
+      - serve-cluster-35b-a3b-bf16   # qwen cluster eval campaign (gpu1:8002 leg)
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
     # Verified 2026-06-03 against actual running units. GPU 1 now hosts
     # kebab-rtx-vllm-coder-gpu1 (Qwen3-Coder-Next FP8 80B MoE, ~75 GB
