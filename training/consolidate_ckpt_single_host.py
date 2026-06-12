@@ -99,15 +99,23 @@ from open_mythos.variants import mythos_3b  # noqa: E402
 
 
 def main() -> None:
-    if len(sys.argv) != 3:
+    # Accept either positional argv (manual invocation, mirroring the docstring
+    # example) or env vars (gpufarm's executor declares env_required and
+    # renders them into the process environment, not argv). argv wins when
+    # both are present.
+    if len(sys.argv) == 3:
+        src_pattern = sys.argv[1]
+        dst_path = sys.argv[2]
+    elif len(sys.argv) == 1 and os.environ.get("SRC_PATTERN") and os.environ.get("DST_PATH"):
+        src_pattern = os.environ["SRC_PATTERN"]
+        dst_path = os.environ["DST_PATH"]
+    else:
         print(
-            "usage: consolidate_ckpt_single_host.py SRC_PATTERN DST_PATH",
+            "usage: consolidate_ckpt_single_host.py SRC_PATTERN DST_PATH "
+            "(or set SRC_PATTERN= and DST_PATH= in the environment)",
             file=sys.stderr,
         )
         sys.exit(2)
-
-    src_pattern = sys.argv[1]
-    dst_path = sys.argv[2]
 
     rank = int(os.environ["RANK"])
     local_rank = int(os.environ["LOCAL_RANK"])
