@@ -37,6 +37,13 @@ resources:
     vram_gb: 128                    # GB10 unified memory per node
     priority_tier: 0                # most precious (training only)
     can_run: [train_round, train_round_joint, consolidate, eval_4node]
+    # Hardware-overlap mutex (gpufarm vSphere phase 2): the four gb10-*
+    # entries below are per-node views of this same physical hardware.
+    # The scheduler refuses to match cluster-4node while any node view
+    # is occupied (run, reservation, external use, active supervisor)
+    # and vice versa. Declarations must stay symmetric; the manifest
+    # loader validates at startup and refuses to load on asymmetry.
+    shares_hardware_with: [gb10-spark, gb10-gx10, gb10-gx10-2, gb10-gx10-3]
     recovery_hook: |
       # Cluster doesn't have automatic recovery; on NCCL hang the retry_cluster
       # supervisor handles SIGKILL + relaunch (see retry_cluster_training.sh).
@@ -58,16 +65,14 @@ resources:
   # Individual GB10 node views -- exist so single-node jobs (inference
   # benchmarks, LoRA fine-tunes, evals) can dispatch onto a free cluster
   # node without holding the whole 4-rank cluster lease. Overlap
-  # cluster-4node on hardware: when cluster-4node is busy (training
-  # supervisor active), the operator should NOT submit jobs to these.
-  # When these are busy, the cluster-4node supervisor's vram_free_gb
-  # precondition will refuse to launch (PR #157). Same mutex pattern as
-  # blackwell-host vs blackwell-gpu0/1 -- responsibility on the operator,
-  # not the lease store.
-  #
-  # gx10-2 is intentionally NOT exposed individually right now because it
-  # hosts the in-flight Qwen 35B-A3B-FP8 BCB campaign endpoint (~92 GB
-  # unified memory). Add it back as a fourth entry once that completes.
+  # cluster-4node on hardware, declared via the symmetric
+  # shares_hardware_with entries (gpufarm vSphere phase 2): the
+  # scheduler now ENFORCES the mutex that used to be operator
+  # responsibility -- while cluster-4node is occupied (run, reservation,
+  # external use, or an active training supervisor) these views are
+  # unmatchable, and any one of them being busy blocks cluster-4node.
+  # The cluster-4node supervisor's vram_free_gb precondition (PR #157)
+  # remains as defense in depth at launch time.
   - id: gb10-spark
     host: kebab-spark.lan
     ssh_user: alexm
@@ -93,7 +98,8 @@ resources:
       - eval_listops
       - eval_gsm8k
       - serve-cluster-coder-next-fp8     # qwen cluster eval campaign
-    notes: "Rank-0 node of cluster-4node. Overlaps cluster-4node -- operator-mutex."
+    shares_hardware_with: [cluster-4node]
+    notes: "Rank-0 node of cluster-4node. Overlap enforced by the scheduler via shares_hardware_with."
 
   - id: gb10-gx10
     host: kebab-gx10.lan
@@ -115,7 +121,8 @@ resources:
       - eval_listops
       - eval_gsm8k
       - serve-cluster-27b-fp8            # qwen cluster eval campaign
-    notes: "Rank-1 node of cluster-4node. Overlaps cluster-4node -- operator-mutex."
+    shares_hardware_with: [cluster-4node]
+    notes: "Rank-1 node of cluster-4node. Overlap enforced by the scheduler via shares_hardware_with."
 
   - id: gb10-gx10-2
     host: kebab-gx10-2.lan
@@ -133,7 +140,8 @@ resources:
       - eval_listops
       - eval_gsm8k
       - serve-cluster-35b-a3b-fp8        # qwen cluster eval campaign
-    notes: "Rank-2 node of cluster-4node. Overlaps cluster-4node -- operator-mutex."
+    shares_hardware_with: [cluster-4node]
+    notes: "Rank-2 node of cluster-4node. Overlap enforced by the scheduler via shares_hardware_with."
 
   - id: gb10-gx10-3
     host: kebab-gx10-3.lan
@@ -155,7 +163,8 @@ resources:
       - eval_listops
       - eval_gsm8k
       - serve-cluster-27b-bf16           # qwen cluster eval campaign
-    notes: "Rank-3 node of cluster-4node. Overlaps cluster-4node -- operator-mutex."
+    shares_hardware_with: [cluster-4node]
+    notes: "Rank-3 node of cluster-4node. Overlap enforced by the scheduler via shares_hardware_with."
 
   # Whole-host kebab-rtx6000 view -- exists for jobs that need BOTH GPUs
   # visible simultaneously (single-host multi-rank torchrun, e.g.
@@ -177,12 +186,11 @@ resources:
   # trigger that actually evicts them.
   #
   # Scheduler note: this resource overlaps blackwell-gpu0 and
-  # blackwell-gpu1 on hardware -- the lease store currently has no
-  # resource-mutex feature, so it is the OPERATOR's responsibility
-  # to verify the host is free before submitting a job pinned here.
-  # In practice ``consolidate_single_host`` only runs once per round,
-  # after the cluster training step finishes, so there is no concurrent
-  # demand for blackwell-gpu0/1.
+  # blackwell-gpu1 on hardware, declared via the symmetric
+  # shares_hardware_with entries (gpufarm vSphere phase 2). The
+  # scheduler now ENFORCES the mutex: blackwell-host is unmatchable
+  # while either GPU view is occupied (run, reservation, external use,
+  # active supervisor), and a run here blocks both GPU views.
   - id: blackwell-host
     host: kebab-rtx6000.lan
     ssh_user: alexm
@@ -192,6 +200,7 @@ resources:
     priority_tier: 1                # same tier as the per-GPU views
     can_run:
       - consolidate_single_host
+    shares_hardware_with: [blackwell-gpu0, blackwell-gpu1]
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
     # Verified 2026-06-03: actual UNION of per-GPU services on kebab-rtx6000.
     # GPU 0 hosts vllm (gpt-oss-120b). GPU 1 hosts vllm-coder-gpu1
@@ -235,6 +244,7 @@ resources:
       - serve-qwen3-coder-next-fp8
       - serve-qwen36-35b-a3b-bf16
       - qwen36_evalplus_rerun
+    shares_hardware_with: [blackwell-host]
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
     # Verified 2026-06-03 against actual running units. The previous list
     # claimed embedding lived on GPU 0; in reality kebab-rtx-embedding
@@ -286,6 +296,7 @@ resources:
       - serve-qwen36-27b-bf16
       - serve-cluster-35b-a3b-bf16   # qwen cluster eval campaign (gpu1:8002 leg)
       - qwen36_evalplus_rerun
+    shares_hardware_with: [blackwell-host]
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
     # Verified 2026-06-03 against actual running units. GPU 1 now hosts
     # kebab-rtx-vllm-coder-gpu1 (Qwen3-Coder-Next FP8 80B MoE, ~75 GB
