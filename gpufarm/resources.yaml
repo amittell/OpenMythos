@@ -305,15 +305,23 @@ resources:
     # previous declaration named kebab-rtx-vision-cuda.service which does
     # NOT exist as a unit on the host. Any job dispatched here will trigger
     # requires_exclusive eviction of both units.
+    #
+    # kebab-rtx-embedding is now a first-class tracked co-tenant (see
+    # co_tenant_services below): the rogue probe treats its PID/container
+    # as known -- never rogue, never masking -- even when the coder lease
+    # is RELEASED to run an eval, while its ~10 GB is subtracted from the
+    # scored free-VRAM headroom so best-fit does not over-promise it.
     conflicts_with:
       - {service: kebab-rtx-vllm-coder-gpu1.service, scope: system}
       - {service: kebab-rtx-embedding.service, scope: system}
     external_lease:
       service: kebab-rtx-vllm-coder-gpu1
-      description: "Qwen3-Coder-Next-FP8 vLLM (docker --gpus device=1, ~75 GB) + co-tenant kebab-rtx-embedding ~10 GB"
+      description: "Qwen3-Coder-Next-FP8 vLLM (docker --gpus device=1, ~75 GB); kebab-rtx-embedding (~10 GB) is a tracked co_tenant_service"
       held_vram_gb: 85
       state: held
       scope: system
+    co_tenant_services:
+      - {service: kebab-rtx-embedding, vram_gb: 10, description: "Qwen3-Embedding-8B, always-on"}
     # Same kebab-rtx6000 FastAPI router as gpu0 (host-level surface, not per-GPU).
     router:
       url: http://kebab-rtx6000.lan:8080
