@@ -16,6 +16,23 @@
 [^2]: LCB codegeneration / testoutputprediction / codeexecution all failed rc=1 with `KeyError: 'qwen3.6-35b-a3b'` in lcb_runner's LanguageModelStore (tracked as task #159). Re-run after fixing the registry entry.
 [^3]: 27B-FP8's BCB phase was running on rtx6000 GPU1 when the rebalanced endpoint was torn down mid-run. 400/1140 BCB samples were generated before disconnection.
 
+## CORRECTED HE+/MBPP+ rerun (max_new_tokens fix, 2026-06-12/13)
+
+The headline HE+/MBPP+ numbers above for all four Qwen3.6 variants are **invalid** — artifacts of evalplus's 768-token default truncating thinking-mode mid-reasoning (see task #165, memory `evalplus-max-tokens-thinking-trap`). Rerun with `max_new_tokens=32768` and `--reasoning-parser qwen3`:
+
+| Model | HumanEval (base) | HumanEval+ | MBPP (base) | MBPP+ | was HE+ / MBPP+ (invalid) |
+|---|---:|---:|---:|---:|---:|
+| Qwen3.6-27B-BF16 | 98.2% | **94.5%** | 96.0% | **82.5%** | 51.2% / 56.1% |
+| Qwen3.6-27B-FP8 | 98.8% | **93.3%** | 96.3% | **81.2%** | 54.9% / 58.2% |
+| Qwen3.6-35B-A3B-BF16 | pending | pending | pending | pending | 52.4% / 54.8% |
+| Qwen3.6-35B-A3B-FP8 | pending | pending | pending | pending | 53.7% / 57.7% |
+
+The truncation fix moved 27B HE+ from ~51-55% to ~93-94% — confirming the entire original campaign's HE+/MBPP+ column was a truncation artifact, not the models' real ability. Real scores land in the expected 80-95% range.
+
+**FP8 vs BF16 (27B):** HE+ 93.3 vs 94.5 (-1.2 pt), MBPP+ 81.2 vs 82.5 (-1.3 pt). Quantization parity confirmed at the real ability level (BF16 marginally higher, within n=1 sampling noise).
+
+**Rerun method (valid, reproducible):** vLLM `--max-model-len 65536 --reasoning-parser qwen3`; evalplus `DecoderBase.max_new_tokens` patched 768 -> 32768; driver `scripts/qwen_campaign/qwen36_evalplus_rerun.sh` + remote variant on kebab-cruelist. 35B-A3B variants not yet rerun (need a Blackwell window).
+
 ## Qwen-official LCB v6 reference
 
 | Model | Qwen official LCB v6 | This run BCB (proxy) |
