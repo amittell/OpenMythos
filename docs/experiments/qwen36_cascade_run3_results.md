@@ -16,22 +16,35 @@
 [^2]: LCB codegeneration / testoutputprediction / codeexecution all failed rc=1 with `KeyError: 'qwen3.6-35b-a3b'` in lcb_runner's LanguageModelStore (tracked as task #159). Re-run after fixing the registry entry.
 [^3]: 27B-FP8's BCB phase was running on rtx6000 GPU1 when the rebalanced endpoint was torn down mid-run. 400/1140 BCB samples were generated before disconnection.
 
-## CORRECTED HE+/MBPP+ rerun (max_new_tokens fix, 2026-06-12/13)
+## CORRECTED HE+/MBPP+ rerun (max_new_tokens fix, 2026-06-12/14) — FINAL
 
-The headline HE+/MBPP+ numbers above for all four Qwen3.6 variants are **invalid** — artifacts of evalplus's 768-token default truncating thinking-mode mid-reasoning (see task #165, memory `evalplus-max-tokens-thinking-trap`). Rerun with `max_new_tokens=32768` and `--reasoning-parser qwen3`:
+The headline HE+/MBPP+ numbers above for all four Qwen3.6 variants are **invalid** — artifacts of evalplus's 768-token default truncating thinking-mode mid-reasoning (see task #165, memory `evalplus-max-tokens-thinking-trap`). Reran all four with `max_new_tokens=32768`. All five-model comparison, valid scores:
 
-| Model | HumanEval (base) | HumanEval+ | MBPP (base) | MBPP+ | was HE+ / MBPP+ (invalid) |
-|---|---:|---:|---:|---:|---:|
-| Qwen3.6-27B-BF16 | 98.2% | **94.5%** | 96.0% | **82.5%** | 51.2% / 56.1% |
-| Qwen3.6-27B-FP8 | 98.8% | **93.3%** | 96.3% | **81.2%** | 54.9% / 58.2% |
-| Qwen3.6-35B-A3B-BF16 | pending | pending | pending | pending | 52.4% / 54.8% |
-| Qwen3.6-35B-A3B-FP8 | pending | pending | pending | pending | 53.7% / 57.7% |
+### Full model comparison (corrected)
 
-The truncation fix moved 27B HE+ from ~51-55% to ~93-94% — confirming the entire original campaign's HE+/MBPP+ column was a truncation artifact, not the models' real ability. Real scores land in the expected 80-95% range.
+| Model | Type | HumanEval (base) | HumanEval+ | MBPP (base) | MBPP+ | BigCodeBench |
+|---|---|---:|---:|---:|---:|---:|
+| Qwen3.6-27B-BF16 | 27B dense, thinking | 98.2% | **94.5%** | 96.0% | **82.5%** | 51.4% |
+| Qwen3.6-27B-FP8 | 27B dense, thinking | 98.8% | **93.3%** | 96.3% | **81.2%** | n/a [^c] |
+| Qwen3.6-35B-A3B-BF16 | 35B MoE / 3B active, thinking | 97.0% | **93.9%** | 76.7% | **65.3%** | 50.0% |
+| Qwen3.6-35B-A3B-FP8 | 35B MoE / 3B active, thinking | 97.0% | **92.7%** | 78.3% | **67.2%** | 50.0% |
+| Qwen3-Coder-Next-FP8 | 80B MoE, non-thinking | — | 89.0% | — | 77.0% | 48.0% |
 
-**FP8 vs BF16 (27B):** HE+ 93.3 vs 94.5 (-1.2 pt), MBPP+ 81.2 vs 82.5 (-1.3 pt). Quantization parity confirmed at the real ability level (BF16 marginally higher, within n=1 sampling noise).
+was (invalid, truncation artifacts): 27B-BF16 51.2/56.1 · 27B-FP8 54.9/58.2 · 35B-A3B-BF16 52.4/54.8 · 35B-A3B-FP8 53.7/57.7
 
-**Rerun method (valid, reproducible):** vLLM `--max-model-len 65536 --reasoning-parser qwen3`; evalplus `DecoderBase.max_new_tokens` patched 768 -> 32768; driver `scripts/qwen_campaign/qwen36_evalplus_rerun.sh` + remote variant on kebab-cruelist. 35B-A3B variants not yet rerun (need a Blackwell window).
+[^c]: 27B-FP8 BCB was interrupted at 400/1140 in the original campaign; not re-run.
+
+### Reads
+
+- **Truncation fix vindicated:** HE+ jumped from ~51-55% to ~89-95% across the board — the entire original HE+/MBPP+ column was a 768-token truncation artifact, not model ability.
+- **FP8 ≈ BF16 (quantization parity)** holds for both families: 27B (HE+ -1.2, MBPP+ -1.3), 35B-A3B (HE+ -1.2, MBPP+ **+1.9**). All within n=1 sampling noise.
+- **27B dense is the strongest overall** (94.5 HE+, 82.5 MBPP+).
+- **The 35B-A3B sparse MoE matches 27B dense on HumanEval+ (~93-94%) but is much weaker on MBPP+ (~65-67% vs 82.5%)** — the 3B-active-param budget shows up on MBPP-style breadth, not on HumanEval's narrower competitive-programming style.
+- **Coder-Next (80B MoE, non-thinking)** trails on HE+ (89%) but its MBPP+ (77%) beats both thinking 35B-A3B variants — a non-thinking specialist coder out-MBPPs the thinking generalist MoE.
+
+### Method + caveats (valid, reproducible)
+
+vLLM `--max-model-len 65536`; evalplus `DecoderBase.max_new_tokens` patched 768 -> 32768; driver `scripts/qwen_campaign/qwen36_evalplus_rerun.sh` + remote variant on kebab-cruelist. **35B reruns ran WITHOUT `--reasoning-parser`** (it makes some 35B-A3B responses return `content=None`, crash-aborting codegen — see memory note); content carries the thinking-as-prose + code block, sanitize extracts the code. 35B-A3B-FP8 raw had duplicate task entries from an earlier aborted attempt (722/284 lines vs 378/164 tasks); re-scored on deduped (one-sample-per-task) sets — the values above are the deduped numbers (MBPP+ 67.2 deduped vs 66.4 contaminated). 35B ran in parallel: BF16 on rtx6000 GPU1, FP8 on GB10 gb10-gx10-2. LCB never executed for the Qwen3.6 family (registry KeyError #159 fixed but not re-run).
 
 ## Qwen-official LCB v6 reference
 
