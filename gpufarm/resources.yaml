@@ -10,6 +10,36 @@
 scheduler:
   default_resource_class_priority: [blackwell, gb10, rtx5090, strix_halo]
 
+# Host-scoped inference router registry (router-aware gpufarm, task #172).
+# One entry per PHYSICAL router, de-duplicated by host -- distinct from the
+# per-resource `router:` blocks below (which are GPU-scoped and drive the
+# conflict refresh / HostOps). mini-beast fronts BOTH the RTX 5090 and the
+# Strix Halo 8060S behind one router on :8080, so the router is a host fact,
+# not a GPU fact; a top-level list de-duplicates that cleanly.
+#
+# The endpoint catalog poll iterates this block, GETting each router's
+# /v1/models (+ /backends, /admin/models/status where advertised) to build the
+# client-ready `gpufarm endpoints` view. base_url clients hit is always
+# http://HOST:8080/v1 (the router), never an internal 127.0.0.1:80xx backend.
+# Absent block => empty catalog (fully backwards compatible).
+routers:
+  - host: kebab-rtx6000.lan
+    url: http://kebab-rtx6000.lan:8080
+    kind: fastapi                      # FastAPI/uvicorn; /v1/models is DYNAMIC
+    health_path: /health               # NOT /healthz, NOT /v1/health
+    models_path: /v1/models            # reports actually-served upstream ids
+    admin_status_path: /admin/models/status
+    # 2x Blackwell PRO 6000 behind this router (cuda 0 language, 1 vision/ocr/tts).
+
+  - host: mini-beast.lan
+    url: http://mini-beast.lan:8080
+    kind: python-router                # stdlib http.server; /v1/models is STATIC
+    health_path: /health
+    models_path: /v1/models            # static capability list; live state via /backends
+    backends_path: /backends           # live per-backend loaded/down (mini-beast only)
+    admin_status_path: /admin/models/status
+    # ONE router fronts BOTH the RTX 5090 (cuda 0) and the Strix Halo 8060S (Vulkan).
+
 resources:
   # 4-node Spark cluster -- FSDP training over RoCE v2 on the 200 Gbps storage
   # network. These ranks are addressed together (4-rank torchrun) for any
