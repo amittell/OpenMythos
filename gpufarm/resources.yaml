@@ -273,6 +273,7 @@ resources:
       - serve-qwen36-27b-fp8         # qwen eval campaign (preempts gpt-oss-120b)
       - serve-qwen3-coder-next-fp8
       - serve-qwen36-35b-a3b-bf16
+      - reserve-blackwell-gpu0       # #173 generic reservation carrier (any model on gpu0)
       - qwen36_evalplus_rerun
     shares_hardware_with: [blackwell-host]
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
@@ -325,6 +326,7 @@ resources:
       - serve-qwen36-35b-a3b-fp8     # qwen eval campaign (preempts coder + embedding)
       - serve-qwen36-27b-bf16
       - serve-cluster-35b-a3b-bf16   # qwen cluster eval campaign (gpu1:8002 leg)
+      - reserve-blackwell-gpu1       # #173 generic reservation carrier (any model on gpu1)
       - qwen36_evalplus_rerun
     shares_hardware_with: [blackwell-host]
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3

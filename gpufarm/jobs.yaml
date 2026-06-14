@@ -421,6 +421,34 @@ jobs:
     preempts_external_lease: true
 
   # ---------------------------------------------------------------------
+  # Generic per-GPU reservation carrier jobs (#173). `gpufarm reserve
+  # blackwell-gpuN --model <id>` resolves to these. They are MODEL-AGNOSTIC:
+  # the model is supplied by the reservation's env model_id; the job only
+  # carries the resource pin + TTL + external-lease preemption policy. One
+  # per Blackwell GPU so reservation job-resolution is unambiguous even
+  # though several model-named serve-* jobs also pin each GPU (the
+  # /reservations handler prefers `reserve-<resource_id>` when multiple
+  # inference-deployment jobs target a resource).
+  # ---------------------------------------------------------------------
+  - id: reserve-blackwell-gpu0
+    resource_class: [blackwell]
+    job_type: inference_deployment
+    duration_hours: 24.0
+    requires_resource: blackwell-gpu0
+    on_ttl_expiry: release
+    on_health_failure: hold_and_alert
+    preempts_external_lease: true
+
+  - id: reserve-blackwell-gpu1
+    resource_class: [blackwell]
+    job_type: inference_deployment
+    duration_hours: 24.0
+    requires_resource: blackwell-gpu1
+    on_ttl_expiry: release
+    on_health_failure: hold_and_alert
+    preempts_external_lease: true
+
+  # ---------------------------------------------------------------------
   # Qwen CLUSTER eval campaign serve jobs (Option A, multi-node). One per
   # serve target: 4 GB10 nodes (free, no preemption) + rtx6000 gpu1 (holds
   # the coder lease, so it preempts). Submit each with env model_id=<model>.

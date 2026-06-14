@@ -72,6 +72,22 @@ models:
         notes: |
           Docker (not podman) via vllm/vllm-openai:v0.19.0 image; --gpus device=0
           pin (survey:509). Container name 'kebab-vllm' (survey:508).
+      blackwell-gpu1:
+        # GPU1 path is a docker eval container (GPU0 uses the production
+        # systemd unit kebab-rtx-vllm.service). Mirrors the live unit's
+        # vLLM args on device=1 / host port 8002, so gpt-oss-120b is
+        # startable on EITHER Blackwell via gpufarm (#173).
+        # GSP-WEDGE RISK: gpt-oss-120b is an FP4/FP8 MoE; per memory
+        # rtx6000_gsp_wedge, sustained inference can hard-lock the
+        # Blackwell (recovery is a COLD power-cycle only -- never warm
+        # reboot a wedged rtx6000). Stand up deliberately, not on a loop.
+        transport: ssh+docker
+        container_name: kebab-vllm-eval-gpu1
+        deploy_command: "docker run -d --name kebab-vllm-eval-gpu1 --gpus device=1 -p 8002:8000 -v /models:/models:ro --shm-size=32g vllm/vllm-openai:v0.19.0 --model /models/gpt-oss-120b --served-model-name gpt-oss-120b --max-model-len 131072 --gpu-memory-utilization 0.85 --tensor-parallel-size 1 --enable-auto-tool-choice --tool-call-parser openai --reasoning-parser openai_gptoss --trust-remote-code"
+        port: 8002
+        health_path: /v1/models
+        served_name: gpt-oss-120b
+        deploy_health_timeout_sec: 1800
 
   # ---------------------------------------------------------------------
   # Qwen3-VL-32B-Instruct-FP8 vision-language.
@@ -220,6 +236,14 @@ models:
         health_path: /v1/models
         served_name: qwen3.6-27b
         deploy_health_timeout_sec: 1200
+      blackwell-gpu1:                  # #173: startable on either Blackwell GPU
+        transport: ssh+docker
+        container_name: kebab-vllm-eval-gpu1
+        deploy_command: "docker run -d --name kebab-vllm-eval-gpu1 --gpus device=1 -p 8002:8000 -v /models:/models:ro --shm-size=32g vllm/vllm-openai:v0.21.0 --model /models/Qwen3.6-27B-FP8 --served-model-name qwen3.6-27b qwen3.6-27b-fp8 --max-model-len 262144 --gpu-memory-utilization 0.95 --max-num-seqs 4 --tensor-parallel-size 1 --trust-remote-code"
+        port: 8002
+        health_path: /v1/models
+        served_name: qwen3.6-27b
+        deploy_health_timeout_sec: 1200
       gb10-gx10:
         transport: ssh+docker
         container_name: kebab-vllm-eval-gpu0
@@ -235,6 +259,14 @@ models:
     vram_gb_max: 96
     default_resource_class: blackwell
     launch_by_resource:
+      blackwell-gpu0:                  # #173: startable on either Blackwell GPU
+        transport: ssh+docker
+        container_name: kebab-vllm-eval-gpu0
+        deploy_command: "docker run -d --name kebab-vllm-eval-gpu0 --gpus device=0 -p 8000:8000 -v /models:/models:ro --shm-size=32g vllm/vllm-openai:v0.21.0 --model /models/Qwen3.6-35B-A3B-FP8 --served-model-name qwen3.6-35b-a3b qwen3.6-35b-a3b-fp8 --max-model-len 262144 --gpu-memory-utilization 0.95 --max-num-seqs 2 --tensor-parallel-size 1 --trust-remote-code"
+        port: 8000
+        health_path: /v1/models
+        served_name: qwen3.6-35b-a3b
+        deploy_health_timeout_sec: 1200
       blackwell-gpu1:
         transport: ssh+docker
         container_name: kebab-vllm-eval-gpu1
@@ -263,6 +295,14 @@ models:
         container_name: kebab-vllm-eval-gpu0
         deploy_command: "docker run -d --name kebab-vllm-eval-gpu0 --gpus device=0 -p 8000:8000 -v /models:/models:ro --shm-size=32g vllm/vllm-openai:v0.21.0 --model /models/Qwen3-Coder-Next-FP8 --served-model-name qwen3-coder-next-bench qwen3-coder-next --max-model-len 262144 --gpu-memory-utilization 0.95 --max-num-seqs 2 --tensor-parallel-size 1 --trust-remote-code"
         port: 8000
+        health_path: /v1/models
+        served_name: qwen3-coder-next-bench
+        deploy_health_timeout_sec: 1200
+      blackwell-gpu1:                  # #173: startable on either Blackwell GPU
+        transport: ssh+docker
+        container_name: kebab-vllm-eval-gpu1
+        deploy_command: "docker run -d --name kebab-vllm-eval-gpu1 --gpus device=1 -p 8002:8000 -v /models:/models:ro --shm-size=32g vllm/vllm-openai:v0.21.0 --model /models/Qwen3-Coder-Next-FP8 --served-model-name qwen3-coder-next-bench qwen3-coder-next --max-model-len 262144 --gpu-memory-utilization 0.95 --max-num-seqs 2 --tensor-parallel-size 1 --trust-remote-code"
+        port: 8002
         health_path: /v1/models
         served_name: qwen3-coder-next-bench
         deploy_health_timeout_sec: 1200
