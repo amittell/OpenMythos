@@ -277,18 +277,20 @@ resources:
       - qwen36_evalplus_rerun
     shares_hardware_with: [blackwell-host]
     python_bin: /home/alexm/venvs/vllm-turboquant/bin/python3
-    # Verified 2026-06-03 against actual running units. The previous list
-    # claimed embedding lived on GPU 0; in reality kebab-rtx-embedding
-    # runs on GPU 1 alongside coder-next (the embedding service is small,
-    # ~10 GB, and shares GPU 1 with the dominant coder model). The only
-    # GPU-0-resident production service is kebab-rtx-vllm (gpt-oss-120b
-    # via docker run --gpus device=0, holds ~85 GB at steady state).
+    # GPU-0 standing default (2026-06-15): Qwen3.6-27B-FP8 dense
+    # (kebab-rtx-vllm-27b-fp8.service, docker --gpus device=0, ~53 GB at
+    # gmu 0.9) replaced gpt-oss-120b as the always-on language default. It is
+    # what a gpufarm reserve on blackwell-gpu0 preempts + restores on release.
+    # gpt-oss-120b is now a GPU-0 standby (kebab-rtx-vllm.service, normally
+    # inactive); if it is ever loaded, the router's /admin/models/status feeds
+    # it into conflicts_with via the live refresh, so it is still evicted.
+    # kebab-rtx-embedding is offloaded to mini-beast (#171), not GPU 0.
     conflicts_with:
-      - {service: kebab-rtx-vllm.service, scope: system}
+      - {service: kebab-rtx-vllm-27b-fp8.service, scope: system}
     external_lease:
-      service: kebab-rtx-vllm
-      description: "gpt-oss-120b vLLM (system-scope, docker --gpus device=0, ~85 GB held)"
-      held_vram_gb: 85
+      service: kebab-rtx-vllm-27b-fp8
+      description: "Qwen3.6-27B-FP8 dense default language (system-scope, docker --gpus device=0, ~53 GB held)"
+      held_vram_gb: 53
       state: held
       scope: system
     # kebab-rtx6000 FastAPI router (sibling_repos_survey.md:412-481).
